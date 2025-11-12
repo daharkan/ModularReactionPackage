@@ -1,0 +1,233 @@
+#include "BusboardSerialManager.h"
+#include "src/common/Cell.h"
+#include <QCoreApplication>
+#include <chrono>
+#include <thread>
+#include <sstream>
+
+#define BAUDRATE 115200
+#define BUSBOARD_HANDSHAKE "bb"
+
+BusboardSerialManager* BusboardSerialManager::m_instance = nullptr;
+
+
+BusboardSerialManager::BusboardSerialManager() : QObject() {
+    m_messageQueue = "";
+}
+
+
+
+BusboardSerialManager* BusboardSerialManager::getInstance()
+{
+    if(m_instance == nullptr){
+        m_instance = new BusboardSerialManager();
+    }
+    return m_instance;
+}
+
+std::string removeNonAlphanumeric(const std::string& str) {
+    std::string result;
+    std::copy_if(str.begin(), str.end(), std::back_inserter(result), [](char c) {
+        return std::isalnum(static_cast<unsigned char>(c));
+    });
+    return result;
+}
+bool BusboardSerialManager::connectAndAssignThePort()
+{    
+    QList<QSerialPortInfo> comPorts = QSerialPortInfo::availablePorts();
+    //qDebug() << "tss refreshAndInit";
+
+    for (int i = 0; i < comPorts.size(); i++) {
+        //qDebug() << " tss com port processing..." << comPorts.at(i).portName();
+
+        QSerialPort *tmpSerial = new QSerialPort(comPorts.at(i).portName());
+        tmpSerial->setPortName(comPorts.at(i).portName());
+        tmpSerial->setBaudRate(BAUDRATE);
+        tmpSerial->setDataBits(QSerialPort::Data8);
+        tmpSerial->setParity(QSerialPort::NoParity);
+        tmpSerial->setStopBits(QSerialPort::OneStop);
+        tmpSerial->setFlowControl(QSerialPort::SoftwareControl);
+        tmpSerial->open(QIODevice::ReadWrite);
+       // tmpSerial->set(500, 500, 500); // Set read, write, and event timeouts (in milliseconds)
+
+        int cnt = 0;
+        if(tmpSerial->isOpen()){
+            while (cnt < 50) {
+                tmpSerial->waitForReadyRead(50);
+                QString incoming="";
+
+                if(tmpSerial->bytesAvailable() > 4){
+                    incoming = tmpSerial->readLine();
+                }else{
+                    cnt++;
+                    continue;
+                }
+
+                if(incoming.contains(BUSBOARD_HANDSHAKE)){
+                    std::stringstream ss(incoming.toStdString());
+                    std::string token;
+
+                    // Read tokens separated by '#' delimiter
+                    std::getline(ss, token, '#'); // Serial number, ignoring
+                    m_recievedBusboardSerial = removeNonAlphanumeric(token);
+
+                    qDebug() << "connected to " << tmpSerial->portName() << " with the serial: " << m_recievedBusboardSerial;
+
+                    m_serialPort = tmpSerial;
+                    m_serialPort->clearError();
+                    connect(m_serialPort, &QSerialPort::readyRead, this, &BusboardSerialManager::serialRecieved);
+                    return true;
+                }
+
+                cnt++;
+            }  //while waiting BUSBOARD_HANDSHAKE
+        }
+        qDebug() << " tss com port closing..." << comPorts.at(i).portName();
+        tmpSerial->close();
+
+    } //for all com ports
+
+    return false;
+}
+
+void BusboardSerialManager::sendExampleString(QString str)
+{
+    writeString(str, m_serialPort);
+
+}
+
+bool BusboardSerialManager::isSerialPortOK()
+{
+    //qDebug() << "::: " << m_serialPort->error();
+    return (m_serialPort->isOpen() && (m_serialPort->error() == QSerialPort::NoError));
+}
+
+bool BusboardSerialManager::writeCellUpdateString(QString str)
+{
+    //qDebug() << "-BusboardSerialManager::writeCellUpdateString-";
+
+    if(!m_serialPort){
+        return false;
+    }
+
+    writeString2Queue(str);
+
+   // qDebug() << "-BusboardSerialManager::writeCellUpdateString-----";
+
+    return true;
+}
+
+void BusboardSerialManager::serialRecieved()
+{
+
+    if(m_writing){
+        return;
+    }
+
+    QByteArray data;
+    while (m_serialPort->isOpen() && m_serialPort->waitForReadyRead(-1)) {
+        while (m_serialPort->bytesAvailable() > 0) {
+            char ch;
+            if (m_serialPort->getChar(&ch)) {
+                if (ch == '\n') {
+                    QString incoming(data);
+                    QString dataString = incoming.remove("\r").remove(" ").remove("\u0000");
+
+                    qDebug() << "dataString:" << dataString;
+                    QCoreApplication::processEvents();
+
+                    if(dataString.contains("GO") && m_messageQueue.size() > 0){
+                        writeString(m_messageQueue, m_serialPort);
+                        clearMessageQueue();
+                        return;
+
+                    }
+
+                    if(dataString.count("#") != 8){
+                        return;
+                    }
+
+
+                    Cell cell;
+                    cell.updateStatusFromBoard(dataString.toStdString());
+                    qDebug() << "cell id: " << cell.cellID();
+                    QCoreApplication::processEvents();
+
+                    emit sgn_updateCell(cell);
+
+                    //qDebug() << std::chrono::system_clock::now().time_since_epoch()/1000000 << " -  incoming:  " << dataString;
+                    data.clear();
+
+                    return;
+                } else {
+                    data.append(ch);
+                }
+            }
+        }
+    }
+
+
+
+
+}
+
+
+
+
+void BusboardSerialManager::writeString(QString str, QSerialPort *port)
+{
+    QCoreApplication::processEvents();
+
+    if(port == nullptr)
+        throw std::exception();
+
+    if(m_sleeping){
+        return;
+    }
+    m_writing = true;
+    str.append( "\n");
+    str.append( "\0");
+    QByteArray ba = str.toUtf8();
+    port->write(ba);
+    qDebug() << "outgoing: " << str;
+
+
+    port->flush();
+    port->clear();
+
+    m_writing = false;
+
+}
+
+void BusboardSerialManager::writeString2Queue(QString str)
+{
+    //if(!m_messageQueue.contains(str)){
+        m_messageQueue = m_messageQueue + str;
+    //}
+}
+
+void BusboardSerialManager::clearMessageQueue()
+{
+    m_messageQueue = "";
+}
+
+
+void BusboardSerialManager::delay(int msec)
+{
+    m_sleeping = true;
+
+    auto startTime = std::chrono::steady_clock::now();
+    auto endTime = startTime + std::chrono::milliseconds(msec);
+
+    while (std::chrono::steady_clock::now() < endTime) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Small sleep to prevent high CPU usage
+    }
+
+    m_sleeping = false;
+}
+
+std::string BusboardSerialManager::recievedBusboardSerial() const
+{
+    return m_recievedBusboardSerial;
+}

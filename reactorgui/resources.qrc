@@ -1,0 +1,551 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/icons/align center.svg</file>
+        <file>resources/icons/align justify.svg</file>
+        <file>resources/icons/align left.svg</file>
+        <file>resources/icons/align right.svg</file>
+        <file>resources/icons/alt.svg</file>
+        <file>resources/icons/arrow right.svg</file>
+        <file>resources/icons/arrow up.svg</file>
+        <file>resources/icons/artboard.svg</file>
+        <file>resources/icons/at.svg</file>
+        <file>resources/icons/attachment.svg</file>
+        <file>resources/icons/backward.svg</file>
+        <file>resources/icons/badge.svg</file>
+        <file>resources/icons/bank note.svg</file>
+        <file>resources/icons/bar chart.svg</file>
+        <file>resources/icons/basket ball.svg</file>
+        <file>resources/icons/battery high.svg</file>
+        <file>resources/icons/battery low.svg</file>
+        <file>resources/icons/bed.svg</file>
+        <file>resources/icons/bell.svg</file>
+        <file>resources/icons/bin.svg</file>
+        <file>resources/icons/block.svg</file>
+        <file>resources/icons/bluetooth.svg</file>
+        <file>resources/icons/book.svg</file>
+        <file>resources/icons/box.svg</file>
+        <file>resources/icons/brightness.svg</file>
+        <file>resources/icons/brush.svg</file>
+        <file>resources/icons/bucket.svg</file>
+        <file>resources/icons/building.svg</file>
+        <file>resources/icons/calendar.svg</file>
+        <file>resources/icons/camera.svg</file>
+        <file>resources/icons/car.svg</file>
+        <file>resources/icons/card.svg</file>
+        <file>resources/icons/chat.svg</file>
+        <file>resources/icons/circle bottom left.svg</file>
+        <file>resources/icons/circle bottom right.svg</file>
+        <file>resources/icons/circle down.svg</file>
+        <file>resources/icons/circle left.svg</file>
+        <file>resources/icons/circle right.svg</file>
+        <file>resources/icons/circle top left.svg</file>
+        <file>resources/icons/circle top right.svg</file>
+        <file>resources/icons/circle up.svg</file>
+        <file>resources/icons/clock.svg</file>
+        <file>resources/icons/cloud.svg</file>
+        <file>resources/icons/cmd.svg</file>
+        <file>resources/icons/collapse.svg</file>
+        <file>resources/icons/comment.svg</file>
+        <file>resources/icons/contrast.svg</file>
+        <file>resources/icons/corner arrow.svg</file>
+        <file>resources/icons/cube.svg</file>
+        <file>resources/icons/cup.svg</file>
+        <file>resources/icons/cursor.svg</file>
+        <file>resources/icons/desktop.svg</file>
+        <file>resources/icons/disk.svg</file>
+        <file>resources/icons/dollar.svg</file>
+        <file>resources/icons/download.svg</file>
+        <file>resources/icons/drawer.svg</file>
+        <file>resources/icons/drop.svg</file>
+        <file>resources/icons/earth.svg</file>
+        <file>resources/icons/edit.svg</file>
+        <file>resources/icons/education.svg</file>
+        <file>resources/icons/eject.svg</file>
+        <file>resources/icons/euro.svg</file>
+        <file>resources/icons/expand.svg</file>
+        <file>resources/icons/external.svg</file>
+        <file>resources/icons/eye.svg</file>
+        <file>resources/icons/factory.svg</file>
+        <file>resources/icons/fast forward.svg</file>
+        <file>resources/icons/file add.svg</file>
+        <file>resources/icons/file remove.svg</file>
+        <file>resources/icons/file.svg</file>
+        <file>resources/icons/files.svg</file>
+        <file>resources/icons/filter.svg</file>
+        <file>resources/icons/fire.svg</file>
+        <file>resources/icons/first aid.svg</file>
+        <file>resources/icons/flag.svg</file>
+        <file>resources/icons/floppy.svg</file>
+        <file>resources/icons/folder add.svg</file>
+        <file>resources/icons/folder remove.svg</file>
+        <file>resources/icons/folder.svg</file>
+        <file>resources/icons/fork knife.svg</file>
+        <file>resources/icons/form.svg</file>
+        <file>resources/icons/frame.svg</file>
+        <file>resources/icons/full screen.svg</file>
+        <file>resources/icons/gift.svg</file>
+        <file>resources/icons/glass.svg</file>
+        <file>resources/icons/glasses.svg</file>
+        <file>resources/icons/grid.svg</file>
+        <file>resources/icons/group.svg</file>
+        <file>resources/icons/headset.svg</file>
+        <file>resources/icons/heart.svg</file>
+        <file>resources/icons/hide sdebar vert.svg</file>
+        <file>resources/icons/hide sidebar horiz.svg</file>
+        <file>resources/icons/home.svg</file>
+        <file>resources/icons/id.svg</file>
+        <file>resources/icons/image.svg</file>
+        <file>resources/icons/info.svg</file>
+        <file>resources/icons/invoice.svg</file>
+        <file>resources/icons/juice.svg</file>
+        <file>resources/icons/key.svg</file>
+        <file>resources/icons/lamp.svg</file>
+        <file>resources/icons/layers.svg</file>
+        <file>resources/icons/leaf.svg</file>
+        <file>resources/icons/left right.svg</file>
+        <file>resources/icons/left.svg</file>
+        <file>resources/icons/lego block.svg</file>
+        <file>resources/icons/life buoy.svg</file>
+        <file>resources/icons/light bulb.svg</file>
+        <file>resources/icons/link.svg</file>
+        <file>resources/icons/list.svg</file>
+        <file>resources/icons/loading.svg</file>
+        <file>resources/icons/logout.svg</file>
+        <file>resources/icons/mail open.svg</file>
+        <file>resources/icons/mail.svg</file>
+        <file>resources/icons/map.svg</file>
+        <file>resources/icons/margin.svg</file>
+        <file>resources/icons/megaphone.svg</file>
+        <file>resources/icons/meh.svg</file>
+        <file>resources/icons/menu circle dots.svg</file>
+        <file>resources/icons/menu circle.svg</file>
+        <file>resources/icons/menu dots.svg</file>
+        <file>resources/icons/menu lines.svg</file>
+        <file>resources/icons/microphone.svg</file>
+        <file>resources/icons/minus.svg</file>
+        <file>resources/icons/mobile.svg</file>
+        <file>resources/icons/mouse.svg</file>
+        <file>resources/icons/move diagonal.svg</file>
+        <file>resources/icons/move horizontal.svg</file>
+        <file>resources/icons/move vertical.svg</file>
+        <file>resources/icons/move.svg</file>
+        <file>resources/icons/mug.svg</file>
+        <file>resources/icons/music.svg</file>
+        <file>resources/icons/network.svg</file>
+        <file>resources/icons/new file.svg</file>
+        <file>resources/icons/newspaper.svg</file>
+        <file>resources/icons/next.svg</file>
+        <file>resources/icons/no.svg</file>
+        <file>resources/icons/notes.svg</file>
+        <file>resources/icons/objects.svg</file>
+        <file>resources/icons/padding.svg</file>
+        <file>resources/icons/padlock open.svg</file>
+        <file>resources/icons/padlock.svg</file>
+        <file>resources/icons/paint brush.svg</file>
+        <file>resources/icons/paper plane.svg</file>
+        <file>resources/icons/pause.svg</file>
+        <file>resources/icons/pen.svg</file>
+        <file>resources/icons/pencil ruler.svg</file>
+        <file>resources/icons/pencil.svg</file>
+        <file>resources/icons/phone.svg</file>
+        <file>resources/icons/pie chart.svg</file>
+        <file>resources/icons/pin 2.svg</file>
+        <file>resources/icons/pin point.svg</file>
+        <file>resources/icons/pin.svg</file>
+        <file>resources/icons/play.svg</file>
+        <file>resources/icons/plug.svg</file>
+        <file>resources/icons/plus.svg</file>
+        <file>resources/icons/pound.svg</file>
+        <file>resources/icons/power on.svg</file>
+        <file>resources/icons/previous.svg</file>
+        <file>resources/icons/printer.svg</file>
+        <file>resources/icons/projector.svg</file>
+        <file>resources/icons/question.svg</file>
+        <file>resources/icons/quote.svg</file>
+        <file>resources/icons/record.svg</file>
+        <file>resources/icons/recycle.svg</file>
+        <file>resources/icons/redo.svg</file>
+        <file>resources/icons/refresh.svg</file>
+        <file>resources/icons/rotate clock.svg</file>
+        <file>resources/icons/rotate counter.svg</file>
+        <file>resources/icons/sad.svg</file>
+        <file>resources/icons/scales.svg</file>
+        <file>resources/icons/search.svg</file>
+        <file>resources/icons/selection.svg</file>
+        <file>resources/icons/settings.svg</file>
+        <file>resources/icons/shapes.svg</file>
+        <file>resources/icons/share.svg</file>
+        <file>resources/icons/shield.svg</file>
+        <file>resources/icons/shopping cart.svg</file>
+        <file>resources/icons/show sidebar horiz.svg</file>
+        <file>resources/icons/show sidebar vert.svg</file>
+        <file>resources/icons/shuffle.svg</file>
+        <file>resources/icons/sign.svg</file>
+        <file>resources/icons/signal.svg</file>
+        <file>resources/icons/skull.svg</file>
+        <file>resources/icons/sliders.svg</file>
+        <file>resources/icons/small screen.svg</file>
+        <file>resources/icons/smile.svg</file>
+        <file>resources/icons/soap.svg</file>
+        <file>resources/icons/speed o meter.svg</file>
+        <file>resources/icons/star.svg</file>
+        <file>resources/icons/stop.svg</file>
+        <file>resources/icons/styling tools.svg</file>
+        <file>resources/icons/suitcase.svg</file>
+        <file>resources/icons/syringe.svg</file>
+        <file>resources/icons/table.svg</file>
+        <file>resources/icons/TAD_Logo.png</file>
+        <file>resources/icons/tad_small.png</file>
+        <file>resources/icons/tag.svg</file>
+        <file>resources/icons/target.svg</file>
+        <file>resources/icons/terminal.svg</file>
+        <file>resources/icons/text.svg</file>
+        <file>resources/icons/thumbs down.svg</file>
+        <file>resources/icons/thumbs up.svg</file>
+        <file>resources/icons/thunderbolt.svg</file>
+        <file>resources/icons/tie.svg</file>
+        <file>resources/icons/toggles.svg</file>
+        <file>resources/icons/trophy.svg</file>
+        <file>resources/icons/truck.svg</file>
+        <file>resources/icons/tube.svg</file>
+        <file>resources/icons/tv.svg</file>
+        <file>resources/icons/umbrella.svg</file>
+        <file>resources/icons/undo.svg</file>
+        <file>resources/icons/up down.svg</file>
+        <file>resources/icons/up.svg</file>
+        <file>resources/icons/update.svg</file>
+        <file>resources/icons/upload.svg</file>
+        <file>resources/icons/user add.svg</file>
+        <file>resources/icons/user remove.svg</file>
+        <file>resources/icons/user.svg</file>
+        <file>resources/icons/users.svg</file>
+        <file>resources/icons/video camera.svg</file>
+        <file>resources/icons/video.svg</file>
+        <file>resources/icons/volume down.svg</file>
+        <file>resources/icons/volume mute.svg</file>
+        <file>resources/icons/volume up.svg</file>
+        <file>resources/icons/wallet.svg</file>
+        <file>resources/icons/wand.svg</file>
+        <file>resources/icons/warning.svg</file>
+        <file>resources/icons/wi fi.svg</file>
+        <file>resources/icons/window.svg</file>
+        <file>resources/icons/wrench.svg</file>
+        <file>resources/icons/yes.svg</file>
+        <file>resources/icons/zoom in.svg</file>
+        <file>resources/icons/zoom out.svg</file>
+        <file>resources/qss/bf/add_bottom.png</file>
+        <file>resources/qss/bf/add_left.png</file>
+        <file>resources/qss/bf/add_right.png</file>
+        <file>resources/qss/bf/add_top.png</file>
+        <file>resources/qss/bf/branch_close.png</file>
+        <file>resources/qss/bf/branch_open.png</file>
+        <file>resources/qss/bf/calendar_nextmonth.png</file>
+        <file>resources/qss/bf/calendar_prevmonth.png</file>
+        <file>resources/qss/bf/checkbox_checked.png</file>
+        <file>resources/qss/bf/checkbox_checked_disable.png</file>
+        <file>resources/qss/bf/checkbox_parcial.png</file>
+        <file>resources/qss/bf/checkbox_parcial_disable.png</file>
+        <file>resources/qss/bf/checkbox_unchecked.png</file>
+        <file>resources/qss/bf/checkbox_unchecked_disable.png</file>
+        <file>resources/qss/bf/radiobutton_checked.png</file>
+        <file>resources/qss/bf/radiobutton_checked_disable.png</file>
+        <file>resources/qss/bf/radiobutton_unchecked.png</file>
+        <file>resources/qss/bf/radiobutton_unchecked_disable.png</file>
+        <file>resources/qss/black/add_bottom.png</file>
+        <file>resources/qss/black/add_left.png</file>
+        <file>resources/qss/black/add_right.png</file>
+        <file>resources/qss/black/add_top.png</file>
+        <file>resources/qss/black/branch_close.png</file>
+        <file>resources/qss/black/branch_open.png</file>
+        <file>resources/qss/black/calendar_nextmonth.png</file>
+        <file>resources/qss/black/calendar_prevmonth.png</file>
+        <file>resources/qss/black/checkbox_checked.png</file>
+        <file>resources/qss/black/checkbox_checked_disable.png</file>
+        <file>resources/qss/black/checkbox_parcial.png</file>
+        <file>resources/qss/black/checkbox_parcial_disable.png</file>
+        <file>resources/qss/black/checkbox_unchecked.png</file>
+        <file>resources/qss/black/checkbox_unchecked_disable.png</file>
+        <file>resources/qss/black/radiobutton_checked.png</file>
+        <file>resources/qss/black/radiobutton_checked_disable.png</file>
+        <file>resources/qss/black/radiobutton_unchecked.png</file>
+        <file>resources/qss/black/radiobutton_unchecked_disable.png</file>
+        <file>resources/qss/blue/add_bottom.png</file>
+        <file>resources/qss/blue/add_left.png</file>
+        <file>resources/qss/blue/add_right.png</file>
+        <file>resources/qss/blue/add_top.png</file>
+        <file>resources/qss/blue/branch_close.png</file>
+        <file>resources/qss/blue/branch_open.png</file>
+        <file>resources/qss/blue/calendar_nextmonth.png</file>
+        <file>resources/qss/blue/calendar_prevmonth.png</file>
+        <file>resources/qss/blue/checkbox_checked.png</file>
+        <file>resources/qss/blue/checkbox_checked_disable.png</file>
+        <file>resources/qss/blue/checkbox_parcial.png</file>
+        <file>resources/qss/blue/checkbox_parcial_disable.png</file>
+        <file>resources/qss/blue/checkbox_unchecked.png</file>
+        <file>resources/qss/blue/checkbox_unchecked_disable.png</file>
+        <file>resources/qss/blue/radiobutton_checked.png</file>
+        <file>resources/qss/blue/radiobutton_checked_disable.png</file>
+        <file>resources/qss/blue/radiobutton_unchecked.png</file>
+        <file>resources/qss/blue/radiobutton_unchecked_disable.png</file>
+        <file>resources/qss/darkblack/add_bottom.png</file>
+        <file>resources/qss/darkblack/add_left.png</file>
+        <file>resources/qss/darkblack/add_right.png</file>
+        <file>resources/qss/darkblack/add_top.png</file>
+        <file>resources/qss/darkblack/branch_close.png</file>
+        <file>resources/qss/darkblack/branch_open.png</file>
+        <file>resources/qss/darkblack/calendar_nextmonth.png</file>
+        <file>resources/qss/darkblack/calendar_prevmonth.png</file>
+        <file>resources/qss/darkblack/checkbox_checked.png</file>
+        <file>resources/qss/darkblack/checkbox_checked_disable.png</file>
+        <file>resources/qss/darkblack/checkbox_parcial.png</file>
+        <file>resources/qss/darkblack/checkbox_parcial_disable.png</file>
+        <file>resources/qss/darkblack/checkbox_unchecked.png</file>
+        <file>resources/qss/darkblack/checkbox_unchecked_disable.png</file>
+        <file>resources/qss/darkblack/radiobutton_checked.png</file>
+        <file>resources/qss/darkblack/radiobutton_checked_disable.png</file>
+        <file>resources/qss/darkblack/radiobutton_unchecked.png</file>
+        <file>resources/qss/darkblack/radiobutton_unchecked_disable.png</file>
+        <file>resources/qss/darkblue/add_bottom.png</file>
+        <file>resources/qss/darkblue/add_left.png</file>
+        <file>resources/qss/darkblue/add_right.png</file>
+        <file>resources/qss/darkblue/add_top.png</file>
+        <file>resources/qss/darkblue/branch_close.png</file>
+        <file>resources/qss/darkblue/branch_open.png</file>
+        <file>resources/qss/darkblue/calendar_nextmonth.png</file>
+        <file>resources/qss/darkblue/calendar_prevmonth.png</file>
+        <file>resources/qss/darkblue/checkbox_checked.png</file>
+        <file>resources/qss/darkblue/checkbox_checked_disable.png</file>
+        <file>resources/qss/darkblue/checkbox_parcial.png</file>
+        <file>resources/qss/darkblue/checkbox_parcial_disable.png</file>
+        <file>resources/qss/darkblue/checkbox_unchecked.png</file>
+        <file>resources/qss/darkblue/checkbox_unchecked_disable.png</file>
+        <file>resources/qss/darkblue/radiobutton_checked.png</file>
+        <file>resources/qss/darkblue/radiobutton_checked_disable.png</file>
+        <file>resources/qss/darkblue/radiobutton_unchecked.png</file>
+        <file>resources/qss/darkblue/radiobutton_unchecked_disable.png</file>
+        <file>resources/qss/darkgray/add_bottom.png</file>
+        <file>resources/qss/darkgray/add_left.png</file>
+        <file>resources/qss/darkgray/add_right.png</file>
+        <file>resources/qss/darkgray/add_top.png</file>
+        <file>resources/qss/darkgray/branch_close.png</file>
+        <file>resources/qss/darkgray/branch_open.png</file>
+        <file>resources/qss/darkgray/calendar_nextmonth.png</file>
+        <file>resources/qss/darkgray/calendar_prevmonth.png</file>
+        <file>resources/qss/darkgray/checkbox_checked.png</file>
+        <file>resources/qss/darkgray/checkbox_checked_disable.png</file>
+        <file>resources/qss/darkgray/checkbox_parcial.png</file>
+        <file>resources/qss/darkgray/checkbox_parcial_disable.png</file>
+        <file>resources/qss/darkgray/checkbox_unchecked.png</file>
+        <file>resources/qss/darkgray/checkbox_unchecked_disable.png</file>
+        <file>resources/qss/darkgray/radiobutton_checked.png</file>
+        <file>resources/qss/darkgray/radiobutton_checked_disable.png</file>
+        <file>resources/qss/darkgray/radiobutton_unchecked.png</file>
+        <file>resources/qss/darkgray/radiobutton_unchecked_disable.png</file>
+        <file>resources/qss/flatblack/add_bottom.png</file>
+        <file>resources/qss/flatblack/add_left.png</file>
+        <file>resources/qss/flatblack/add_right.png</file>
+        <file>resources/qss/flatblack/add_top.png</file>
+        <file>resources/qss/flatblack/branch_close.png</file>
+        <file>resources/qss/flatblack/branch_open.png</file>
+        <file>resources/qss/flatblack/calendar_nextmonth.png</file>
+        <file>resources/qss/flatblack/calendar_prevmonth.png</file>
+        <file>resources/qss/flatblack/checkbox_checked.png</file>
+        <file>resources/qss/flatblack/checkbox_checked_disable.png</file>
+        <file>resources/qss/flatblack/checkbox_parcial.png</file>
+        <file>resources/qss/flatblack/checkbox_parcial_disable.png</file>
+        <file>resources/qss/flatblack/checkbox_unchecked.png</file>
+        <file>resources/qss/flatblack/checkbox_unchecked_disable.png</file>
+        <file>resources/qss/flatblack/radiobutton_checked.png</file>
+        <file>resources/qss/flatblack/radiobutton_checked_disable.png</file>
+        <file>resources/qss/flatblack/radiobutton_unchecked.png</file>
+        <file>resources/qss/flatblack/radiobutton_unchecked_disable.png</file>
+        <file>resources/qss/flatwhite/add_bottom.png</file>
+        <file>resources/qss/flatwhite/add_left.png</file>
+        <file>resources/qss/flatwhite/add_right.png</file>
+        <file>resources/qss/flatwhite/add_top.png</file>
+        <file>resources/qss/flatwhite/branch_close.png</file>
+        <file>resources/qss/flatwhite/branch_open.png</file>
+        <file>resources/qss/flatwhite/calendar_nextmonth.png</file>
+        <file>resources/qss/flatwhite/calendar_prevmonth.png</file>
+        <file>resources/qss/flatwhite/checkbox_checked.png</file>
+        <file>resources/qss/flatwhite/checkbox_checked_disable.png</file>
+        <file>resources/qss/flatwhite/checkbox_parcial.png</file>
+        <file>resources/qss/flatwhite/checkbox_parcial_disable.png</file>
+        <file>resources/qss/flatwhite/checkbox_unchecked.png</file>
+        <file>resources/qss/flatwhite/checkbox_unchecked_disable.png</file>
+        <file>resources/qss/flatwhite/radiobutton_checked.png</file>
+        <file>resources/qss/flatwhite/radiobutton_checked_disable.png</file>
+        <file>resources/qss/flatwhite/radiobutton_unchecked.png</file>
+        <file>resources/qss/flatwhite/radiobutton_unchecked_disable.png</file>
+        <file>resources/qss/gray/add_bottom.png</file>
+        <file>resources/qss/gray/add_left.png</file>
+        <file>resources/qss/gray/add_right.png</file>
+        <file>resources/qss/gray/add_top.png</file>
+        <file>resources/qss/gray/branch_close.png</file>
+        <file>resources/qss/gray/branch_open.png</file>
+        <file>resources/qss/gray/calendar_nextmonth.png</file>
+        <file>resources/qss/gray/calendar_prevmonth.png</file>
+        <file>resources/qss/gray/checkbox_checked.png</file>
+        <file>resources/qss/gray/checkbox_checked_disable.png</file>
+        <file>resources/qss/gray/checkbox_parcial.png</file>
+        <file>resources/qss/gray/checkbox_parcial_disable.png</file>
+        <file>resources/qss/gray/checkbox_unchecked.png</file>
+        <file>resources/qss/gray/checkbox_unchecked_disable.png</file>
+        <file>resources/qss/gray/radiobutton_checked.png</file>
+        <file>resources/qss/gray/radiobutton_checked_disable.png</file>
+        <file>resources/qss/gray/radiobutton_unchecked.png</file>
+        <file>resources/qss/gray/radiobutton_unchecked_disable.png</file>
+        <file>resources/qss/lightblack/add_bottom.png</file>
+        <file>resources/qss/lightblack/add_left.png</file>
+        <file>resources/qss/lightblack/add_right.png</file>
+        <file>resources/qss/lightblack/add_top.png</file>
+        <file>resources/qss/lightblack/branch_close.png</file>
+        <file>resources/qss/lightblack/branch_open.png</file>
+        <file>resources/qss/lightblack/calendar_nextmonth.png</file>
+        <file>resources/qss/lightblack/calendar_prevmonth.png</file>
+        <file>resources/qss/lightblack/checkbox_checked.png</file>
+        <file>resources/qss/lightblack/checkbox_checked_disable.png</file>
+        <file>resources/qss/lightblack/checkbox_parcial.png</file>
+        <file>resources/qss/lightblack/checkbox_parcial_disable.png</file>
+        <file>resources/qss/lightblack/checkbox_unchecked.png</file>
+        <file>resources/qss/lightblack/checkbox_unchecked_disable.png</file>
+        <file>resources/qss/lightblack/radiobutton_checked.png</file>
+        <file>resources/qss/lightblack/radiobutton_checked_disable.png</file>
+        <file>resources/qss/lightblack/radiobutton_unchecked.png</file>
+        <file>resources/qss/lightblack/radiobutton_unchecked_disable.png</file>
+        <file>resources/qss/lightblue/add_bottom.png</file>
+        <file>resources/qss/lightblue/add_left.png</file>
+        <file>resources/qss/lightblue/add_right.png</file>
+        <file>resources/qss/lightblue/add_top.png</file>
+        <file>resources/qss/lightblue/branch_close.png</file>
+        <file>resources/qss/lightblue/branch_open.png</file>
+        <file>resources/qss/lightblue/calendar_nextmonth.png</file>
+        <file>resources/qss/lightblue/calendar_prevmonth.png</file>
+        <file>resources/qss/lightblue/checkbox_checked.png</file>
+        <file>resources/qss/lightblue/checkbox_checked_disable.png</file>
+        <file>resources/qss/lightblue/checkbox_parcial.png</file>
+        <file>resources/qss/lightblue/checkbox_parcial_disable.png</file>
+        <file>resources/qss/lightblue/checkbox_unchecked.png</file>
+        <file>resources/qss/lightblue/checkbox_unchecked_disable.png</file>
+        <file>resources/qss/lightblue/radiobutton_checked.png</file>
+        <file>resources/qss/lightblue/radiobutton_checked_disable.png</file>
+        <file>resources/qss/lightblue/radiobutton_unchecked.png</file>
+        <file>resources/qss/lightblue/radiobutton_unchecked_disable.png</file>
+        <file>resources/qss/lightgray/add_bottom.png</file>
+        <file>resources/qss/lightgray/add_left.png</file>
+        <file>resources/qss/lightgray/add_right.png</file>
+        <file>resources/qss/lightgray/add_top.png</file>
+        <file>resources/qss/lightgray/branch_close.png</file>
+        <file>resources/qss/lightgray/branch_open.png</file>
+        <file>resources/qss/lightgray/calendar_nextmonth.png</file>
+        <file>resources/qss/lightgray/calendar_prevmonth.png</file>
+        <file>resources/qss/lightgray/checkbox_checked.png</file>
+        <file>resources/qss/lightgray/checkbox_checked_disable.png</file>
+        <file>resources/qss/lightgray/checkbox_parcial.png</file>
+        <file>resources/qss/lightgray/checkbox_parcial_disable.png</file>
+        <file>resources/qss/lightgray/checkbox_unchecked.png</file>
+        <file>resources/qss/lightgray/checkbox_unchecked_disable.png</file>
+        <file>resources/qss/lightgray/radiobutton_checked.png</file>
+        <file>resources/qss/lightgray/radiobutton_checked_disable.png</file>
+        <file>resources/qss/lightgray/radiobutton_unchecked.png</file>
+        <file>resources/qss/lightgray/radiobutton_unchecked_disable.png</file>
+        <file>resources/qss/psblack/add_bottom.png</file>
+        <file>resources/qss/psblack/add_left.png</file>
+        <file>resources/qss/psblack/add_right.png</file>
+        <file>resources/qss/psblack/add_top.png</file>
+        <file>resources/qss/psblack/branch_close.png</file>
+        <file>resources/qss/psblack/branch_open.png</file>
+        <file>resources/qss/psblack/calendar_nextmonth.png</file>
+        <file>resources/qss/psblack/calendar_prevmonth.png</file>
+        <file>resources/qss/psblack/checkbox_checked.png</file>
+        <file>resources/qss/psblack/checkbox_checked_disable.png</file>
+        <file>resources/qss/psblack/checkbox_parcial.png</file>
+        <file>resources/qss/psblack/checkbox_parcial_disable.png</file>
+        <file>resources/qss/psblack/checkbox_unchecked.png</file>
+        <file>resources/qss/psblack/checkbox_unchecked_disable.png</file>
+        <file>resources/qss/psblack/radiobutton_checked.png</file>
+        <file>resources/qss/psblack/radiobutton_checked_disable.png</file>
+        <file>resources/qss/psblack/radiobutton_unchecked.png</file>
+        <file>resources/qss/psblack/radiobutton_unchecked_disable.png</file>
+        <file>resources/qss/silvery/add_bottom.png</file>
+        <file>resources/qss/silvery/add_left.png</file>
+        <file>resources/qss/silvery/add_right.png</file>
+        <file>resources/qss/silvery/add_top.png</file>
+        <file>resources/qss/silvery/branch_close.png</file>
+        <file>resources/qss/silvery/branch_open.png</file>
+        <file>resources/qss/silvery/calendar_nextmonth.png</file>
+        <file>resources/qss/silvery/calendar_prevmonth.png</file>
+        <file>resources/qss/silvery/checkbox_checked.png</file>
+        <file>resources/qss/silvery/checkbox_checked_disable.png</file>
+        <file>resources/qss/silvery/checkbox_parcial.png</file>
+        <file>resources/qss/silvery/checkbox_parcial_disable.png</file>
+        <file>resources/qss/silvery/checkbox_unchecked.png</file>
+        <file>resources/qss/silvery/checkbox_unchecked_disable.png</file>
+        <file>resources/qss/silvery/radiobutton_checked.png</file>
+        <file>resources/qss/silvery/radiobutton_checked_disable.png</file>
+        <file>resources/qss/silvery/radiobutton_unchecked.png</file>
+        <file>resources/qss/silvery/radiobutton_unchecked_disable.png</file>
+        <file>resources/qss/test/add_bottom.png</file>
+        <file>resources/qss/test/add_left.png</file>
+        <file>resources/qss/test/add_right.png</file>
+        <file>resources/qss/test/add_top.png</file>
+        <file>resources/qss/test/branch_close.png</file>
+        <file>resources/qss/test/branch_open.png</file>
+        <file>resources/qss/test/calendar_nextmonth.png</file>
+        <file>resources/qss/test/calendar_prevmonth.png</file>
+        <file>resources/qss/test/checkbox_checked.png</file>
+        <file>resources/qss/test/checkbox_checked_disable.png</file>
+        <file>resources/qss/test/checkbox_parcial.png</file>
+        <file>resources/qss/test/checkbox_parcial_disable.png</file>
+        <file>resources/qss/test/checkbox_unchecked.png</file>
+        <file>resources/qss/test/checkbox_unchecked_disable.png</file>
+        <file>resources/qss/test/radiobutton_checked.png</file>
+        <file>resources/qss/test/radiobutton_checked_disable.png</file>
+        <file>resources/qss/test/radiobutton_unchecked.png</file>
+        <file>resources/qss/test/radiobutton_unchecked_disable.png</file>
+        <file>resources/qss/AMOLED.qss</file>
+        <file>resources/qss/Aqua.qss</file>
+        <file>resources/qss/bf.css</file>
+        <file>resources/qss/black.css</file>
+        <file>resources/qss/blue.css</file>
+        <file>resources/qss/blueglass.qss</file>
+        <file>resources/qss/coffee.qss</file>
+        <file>resources/qss/ConsoleStyle.qss</file>
+        <file>resources/qss/dark.qss</file>
+        <file>resources/qss/darkblack.css</file>
+        <file>resources/qss/darkblue.css</file>
+        <file>resources/qss/darkgray.css</file>
+        <file>resources/qss/darkRed.qss</file>
+        <file>resources/qss/darkstyle.qss</file>
+        <file>resources/qss/ElegantDark.qss</file>
+        <file>resources/qss/flatblack.css</file>
+        <file>resources/qss/flatwhite.css</file>
+        <file>resources/qss/gray.css</file>
+        <file>resources/qss/light.qss</file>
+        <file>resources/qss/lightblack.css</file>
+        <file>resources/qss/lightblue.css</file>
+        <file>resources/qss/lightgray.css</file>
+        <file>resources/qss/ManjaroMix.qss</file>
+        <file>resources/qss/MaterialDark.qss</file>
+        <file>resources/qss/night.qss</file>
+        <file>resources/qss/psblack.css</file>
+        <file>resources/qss/silvery.css</file>
+        <file>resources/qss/ssa.qss</file>
+        <file>resources/qss/test.css</file>
+        <file>resources/qss/Ubuntu.qss</file>
+        <file>resources/icons/linearupstepdown.png</file>
+        <file>resources/icons/standard.png</file>
+        <file>resources/icons/stepuplineardown.png</file>
+        <file>resources/icons/stepupstepdown.png</file>
+        <file>resources/icons/linearUp.png</file>
+        <file>resources/icons/linearDown.png</file>
+        <file>resources/icons/platue.png</file>
+        <file>resources/icons/stepUp.png</file>
+        <file>resources/icons/stepDown.png</file>
+        <file>resources/icons/customGraph.png</file>
+        <file>resources/icons/secondDegs.png</file>
+        <file>resources/icons/linears.png</file>
+        <file>resources/icons/steps.png</file>
+        <file>resources/qss/default.qss</file>
+    </qresource>
+</RCC>

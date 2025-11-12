@@ -1,0 +1,21 @@
+
+QPushButton
+{
+    border-width: 1px;
+    border-color: #1e1e1e;
+    border-style: solid;
+    border-radius: 3;
+    padding: 3px;
+    font-size: 12px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+QPushButton:checked {
+            background-color: gray;
+        }
+QCheckBox:disabled
+{
+color: #414141;
+}
+
