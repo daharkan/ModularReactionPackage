@@ -33,6 +33,11 @@ std::vector<Cell>& BusboardV1::getCellArray()
     return m_cellArray;
 }
 
+FlowStatus BusboardV1::flowStatus() const
+{
+    return m_flowStatus;
+}
+
 bool BusboardV1::sendUpdateString(QString str)
 {
     return BusboardSerialManager::getInstance()->writeCellUpdateString(str);
@@ -74,5 +79,8 @@ void BusboardV1::cellStatusUpdated(Cell &cell)
 
         //qDebug() << "updating cell status pos " << idx << " with inner: " << cell.currentTempInner() << " with rpm: " << cell.currentRPM();
         m_cellArray[idx-1] = cell;
+        m_flowStatus.setFlowRateLpm(cell.flowRateLpm());
+        m_flowStatus.setFlowTemp(cell.flowTemp());
+        m_flowStatus.setTimestamp(Cell::getCurrentTimeMillis());
     }
 }

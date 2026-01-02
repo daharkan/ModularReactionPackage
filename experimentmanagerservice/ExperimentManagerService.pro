@@ -14,6 +14,7 @@ SOURCES += \
         src/common/CellTarget.cpp \
         src/common/CellVisuals.cpp \
         src/common/CellVisualsHistory.cpp \
+        src/common/FlowStatus.cpp \
         src/common/RedisDBManager.cpp \
         src/ServiceRunner.cpp \
         src/common/User.cpp \
@@ -33,6 +34,7 @@ HEADERS += \
     src/common/CellTarget.h \
     src/common/CellVisuals.h \
     src/common/CellVisualsHistory.h \
+    src/common/FlowStatus.h \
     src/common/RedisDBManager.h \
     src/ServiceRunner.h \
     src/common/User.h \

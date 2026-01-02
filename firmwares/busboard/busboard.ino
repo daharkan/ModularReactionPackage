@@ -28,6 +28,14 @@ static const uint8_t PIN_S4_TX = 9;
 static const uint8_t PIN_S5_RX = 10;
 static const uint8_t PIN_S5_TX = 23;
 
+// ---------- Flow sensor pins ----------
+static const uint8_t PIN_FLOW_TEMP  = 17; // A3
+static const uint8_t PIN_FLOW_PULSE = 25; // digital 25
+
+// Flow conversion
+static const float FLOW_PULSES_PER_LITER = 450.0f; // TODO: calibrate
+static const uint16_t FLOW_CALC_PERIOD_MS = 500;
+
 // ---------- SoftwareSerial instances ----------
 SoftwareSerial ss1(PIN_S1_RX, PIN_S1_TX);
 SoftwareSerial ss2(PIN_S2_RX, PIN_S2_TX);
@@ -47,6 +55,44 @@ static uint8_t lineLen[5] = {0, 0, 0, 0, 0};
 
 static uint8_t rrIndex = 0;
 static uint32_t lastGoMs = 0;
+
+// ---------- Flow measurement state ----------
+static volatile uint32_t g_flowPulses = 0;
+static uint32_t flow_lastCalcMs = 0;
+static uint32_t flow_lastPulses = 0;
+static float flow_hz = 0.0f;
+static float flow_lpm = 0.0f;
+
+static void IRAM_ATTR flow_isr() {
+  g_flowPulses++;
+}
+
+static void flow_update() {
+  uint32_t now = millis();
+  if ((uint32_t)(now - flow_lastCalcMs) < FLOW_CALC_PERIOD_MS) return;
+
+  uint32_t pulses;
+  noInterrupts();
+  pulses = g_flowPulses;
+  interrupts();
+
+  uint32_t dp = pulses - flow_lastPulses;
+  float dt = (now - flow_lastCalcMs) / 1000.0f;
+
+  if (dt > 0.0f) {
+    flow_hz = dp / dt;
+    flow_lpm = (flow_hz * 60.0f) / FLOW_PULSES_PER_LITER;
+  }
+
+  flow_lastPulses = pulses;
+  flow_lastCalcMs = now;
+}
+
+static float flow_temp_mv() {
+  uint16_t adc = (uint16_t)analogRead(PIN_FLOW_TEMP);
+  const float vref = 5.0f;
+  return (adc * (vref * 1000.0f)) / 1023.0f;
+}
 
 static int calculateChecksum(const char* message) {
   int checksum = 0;
@@ -90,7 +136,11 @@ static void flushLine(uint8_t slotIdx) {
   }
 
   Serial.print(BUSBOARD_PREFIX);
-  Serial.println(msg);
+  Serial.print(msg);
+  Serial.print('#');
+  Serial.print(flow_lpm, 3);
+  Serial.print('#');
+  Serial.println(flow_temp_mv(), 1);
 
   lineLen[slotIdx] = 0;
 }
@@ -183,12 +233,22 @@ void setup() {
     SSS[i]->begin(SLAVE_BAUD);
   }
 
+  pinMode(PIN_FLOW_PULSE, INPUT_PULLUP);
+  pinMode(PIN_FLOW_TEMP, INPUT);
+
+  int irq = digitalPinToInterrupt(PIN_FLOW_PULSE);
+  if (irq != NOT_AN_INTERRUPT) {
+    attachInterrupt(irq, flow_isr, RISING);
+  }
+  flow_lastCalcMs = millis();
+
   Serial.println(BUSBOARD_HELLO);
   lastGoMs = millis();
 }
 
 void loop() {
   rrPollOnce();
+  flow_update();
 
   char line[128];
   if (readLineFromPC(line, sizeof(line))) {

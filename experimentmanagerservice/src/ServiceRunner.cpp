@@ -158,6 +158,9 @@ void ServiceRunner::startServiceLoop()
         RedisDBManager::getInstance()->pushCellList(cellsToDB);
         QCoreApplication::processEvents();
 
+        RedisDBManager::getInstance()->pushFlowStatus(m_busboard->flowStatus());
+        QCoreApplication::processEvents();
+
         RedisDBManager::getInstance()->pushBusboardCellIds(m_busboard->busboardID(), cellIDList);
         QCoreApplication::processEvents();
 

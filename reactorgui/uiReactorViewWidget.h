@@ -2,6 +2,7 @@
 #define UIREACTORVIEWWIDGET_H
 
 #include <QWidget>
+#include <QTimer>
 
 namespace Ui {
 class ReactorViewWidget;
@@ -15,8 +16,12 @@ public:
     explicit ReactorViewWidget(QWidget *parent = nullptr);
     ~ReactorViewWidget();
 
+private slots:
+    void updateFlowStatus();
+
 private:
     Ui::ReactorViewWidget *ui;
+    QTimer *m_flowTimer = nullptr;
 };
 
 #endif // UIREACTORVIEWWIDGET_H

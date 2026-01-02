@@ -5,6 +5,7 @@
 #include "Cell.h"
 #include "CellTarget.h"
 #include "CellVisualsHistory.h"
+#include "FlowStatus.h"
 
 #define DB_CELLTABLE_KEY "cells"
 #define DB_TARGETTABLE_KEY "targets"
@@ -12,6 +13,7 @@
 
 #define DB_CELLJSON_KEY "cell"
 #define DB_TARGETJSON_KEY "celltarget"
+#define DB_FLOW_KEY "flowstatus"
 
 class RedisDBManager: public QObject
 {
@@ -32,6 +34,8 @@ public:
     bool pushCellVisuals(std::string cellID, CellVisualsHistory history);
     CellVisualsHistory getCellVisualsHistory(std::string cellID);
     bool isConnected();
+    bool pushFlowStatus(const FlowStatus& flowStatus);
+    FlowStatus getFlowStatus();
 
 
 private:

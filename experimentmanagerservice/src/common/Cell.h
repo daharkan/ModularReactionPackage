@@ -69,6 +69,12 @@ public:
     float stirrerMotorAmp() const;
     void setStirrerMotorAmp(float newStirrerMotorAmp);
 
+    float flowRateLpm() const;
+    void setFlowRateLpm(float newFlowRateLpm);
+
+    float flowTemp() const;
+    void setFlowTemp(float newFlowTemp);
+
 private:
     int m_positionIdx = -1;
     bool m_isPlugged = false;
@@ -80,6 +86,8 @@ private:
     float m_currentTempExt = 0;
     float m_assignedTemp = 0;
     float m_stirrerMotorAmp = 0;
+    float m_flowRateLpm = 0;
+    float m_flowTemp = 0;
     Experiment m_assignedExperiment;
     unsigned long m_lastUpdatedTimestamp = 0;
     unsigned long m_peltierUseMinute = 0;

@@ -143,7 +143,7 @@ void BusboardSerialManager::serialRecieved()
 
                     }
 
-                    if(dataString.count("#") != 8){
+                    if(dataString.count("#") < 8){
                         return;
                     }
 
