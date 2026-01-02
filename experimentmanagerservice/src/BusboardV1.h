@@ -4,6 +4,7 @@
 #include "IBusboard.h"
 #include "BusboardSerialManager.h"
 #include "common/Cell.h"
+#include "common/FlowStatus.h"
 
 #define CELL_COUNT 10
 
@@ -20,9 +21,11 @@ public:
     std::vector<std::string> getCellIdList() override;
 
     std::vector<Cell>& getCellArray() override;
+    FlowStatus flowStatus() const;
 
 private:
     std::vector<Cell> m_cellArray;
+    FlowStatus m_flowStatus;
     float calculateTargetTemp(Cell cell);
     int calculateTargetRPM(Cell cell);
 

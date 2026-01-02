@@ -215,6 +215,49 @@ bool RedisDBManager::pushCellTargets(std::vector<CellTarget> celltargets)
     }
 }
 
+bool RedisDBManager::pushFlowStatus(const FlowStatus& flowStatus)
+{
+    Document document;
+    document.SetObject();
+
+    Document::AllocatorType& allocator = document.GetAllocator();
+    Value flowJSON = flowStatus.toJSON(allocator);
+    document.AddMember(DB_FLOW_KEY, flowJSON, allocator);
+
+    StringBuffer buffer;
+    Writer<StringBuffer> writer(buffer);
+    document.Accept(writer);
+
+    std::string jsonString = buffer.GetString();
+    m_client.set(DB_FLOW_KEY, jsonString);
+    m_client.sync_commit();
+    return true;
+}
+
+FlowStatus RedisDBManager::getFlowStatus()
+{
+    FlowStatus flowStatus;
+    std::future<cpp_redis::reply> future_reply = m_client.get(DB_FLOW_KEY);
+    m_client.sync_commit();
+
+    if (future_reply.wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
+        std::cerr << "Error: Timeout occurred while waiting for reply" << std::endl;
+        return flowStatus;
+    }
+
+    cpp_redis::reply reply = future_reply.get();
+    if (!reply.is_string()) {
+        return flowStatus;
+    }
+
+    Document document;
+    document.Parse(reply.as_string().c_str());
+    if (document.HasMember(DB_FLOW_KEY)) {
+        flowStatus.fromJSON(document[DB_FLOW_KEY]);
+    }
+    return flowStatus;
+}
+
 bool RedisDBManager::pushBusboardCellIds(std::string busboardID, std::vector<std::string> cellIDs)
 {
     Document doc;

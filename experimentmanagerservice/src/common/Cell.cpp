@@ -19,6 +19,8 @@ Cell::Cell(const Cell& other)
     m_currentTempExt(other.m_currentTempExt),
     m_assignedTemp(other.m_assignedTemp),
     m_stirrerMotorAmp(other.m_stirrerMotorAmp),
+    m_flowRateLpm(other.m_flowRateLpm),
+    m_flowTemp(other.m_flowTemp),
     m_assignedExperiment(other.m_assignedExperiment),
     m_lastUpdatedTimestamp(other.m_lastUpdatedTimestamp),
     m_peltierUseMinute(other.m_peltierUseMinute),
@@ -38,6 +40,8 @@ Cell& Cell::operator=(const Cell& other) {
         m_currentTempInner = other.m_currentTempInner;
         m_currentTempExt = other.m_currentTempExt;
         m_stirrerMotorAmp = other.m_stirrerMotorAmp;
+        m_flowRateLpm = other.m_flowRateLpm;
+        m_flowTemp = other.m_flowTemp;
         m_assignedExperiment = other.m_assignedExperiment;
         m_peltierUseMinute = other.m_peltierUseMinute;
         m_heaterUseMinute = other.m_heaterUseMinute;
@@ -109,6 +113,8 @@ Value Cell::toJSON(Document::AllocatorType& allocator) const {
     cellObject.AddMember("currentTempInner", m_currentTempInner, allocator);
     cellObject.AddMember("currentTempExt", m_currentTempExt, allocator);
     cellObject.AddMember("stirrerMotorAmp", m_stirrerMotorAmp, allocator);
+    cellObject.AddMember("flowRateLpm", m_flowRateLpm, allocator);
+    cellObject.AddMember("flowTemp", m_flowTemp, allocator);
     cellObject.AddMember("assignedExperiment", m_assignedExperiment.toJSON(allocator), allocator);
     cellObject.AddMember("peltierUseMinute", m_peltierUseMinute, allocator);
     cellObject.AddMember("heaterUseMinute", m_heaterUseMinute, allocator);
@@ -128,6 +134,8 @@ void Cell::fromJSON(const Value& json) {
     m_currentTempInner = json["currentTempInner"].GetFloat();
     m_currentTempExt = json["currentTempExt"].GetFloat();
     m_stirrerMotorAmp = json["stirrerMotorAmp"].GetFloat();
+    m_flowRateLpm = json.HasMember("flowRateLpm") ? json["flowRateLpm"].GetFloat() : 0.0f;
+    m_flowTemp = json.HasMember("flowTemp") ? json["flowTemp"].GetFloat() : 0.0f;
     m_assignedExperiment.fromJSON(json["assignedExperiment"]);
     m_peltierUseMinute = json["peltierUseMinute"].GetUint64();
     m_heaterUseMinute = json["heaterUseMinute"].GetUint64();
@@ -176,6 +184,14 @@ void Cell::updateStatusFromBoard(std::string statusDataStringFromBoard)
 
     std::getline(ss, token, '#'); // target RPM
     m_assignedRPM = std::stoi(token);
+
+    if (std::getline(ss, token, '#')) {
+        m_flowRateLpm = std::stof(token);
+    }
+
+    if (std::getline(ss, token, '#')) {
+        m_flowTemp = std::stof(token);
+    }
 
 }
 
@@ -322,6 +338,8 @@ bool Cell::updateBoardRelatedAttributes(Cell other)
     m_currentTempInner = other.m_currentTempInner;
     m_currentTempExt = other.m_currentTempExt;
     m_stirrerMotorAmp = other.m_stirrerMotorAmp;
+    m_flowRateLpm = other.m_flowRateLpm;
+    m_flowTemp = other.m_flowTemp;
     m_lastUpdatedTimestamp = getCurrentTimeMillis();
 
     return true;
@@ -335,4 +353,24 @@ float Cell::stirrerMotorAmp() const
 void Cell::setStirrerMotorAmp(float newStirrerMotorAmp)
 {
     m_stirrerMotorAmp = newStirrerMotorAmp;
+}
+
+float Cell::flowRateLpm() const
+{
+    return m_flowRateLpm;
+}
+
+void Cell::setFlowRateLpm(float newFlowRateLpm)
+{
+    m_flowRateLpm = newFlowRateLpm;
+}
+
+float Cell::flowTemp() const
+{
+    return m_flowTemp;
+}
+
+void Cell::setFlowTemp(float newFlowTemp)
+{
+    m_flowTemp = newFlowTemp;
 }

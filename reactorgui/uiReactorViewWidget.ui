@@ -19,6 +19,51 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="flowLayout">
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTop</set>
+     </property>
+     <item>
+      <layout class="QHBoxLayout" name="flowRateLayout">
+       <item>
+        <widget class="QLabel" name="flowRateLabel">
+         <property name="text">
+          <string>Flow (L/min):</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="flowRateValueLabel">
+         <property name="text">
+          <string>--</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="flowTempLayout">
+       <item>
+        <widget class="QLabel" name="flowTempLabel">
+         <property name="text">
+          <string>Flow Temp (mV):</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="flowTempValueLabel">
+         <property name="text">
+          <string>--</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
