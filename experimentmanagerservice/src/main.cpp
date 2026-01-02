@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
                 continue;
             }
         }
-        qDebug() << "waiting for busboard...";
+        std::cout << "waiting for busboard..." << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
         // Process events in the Qt event loop

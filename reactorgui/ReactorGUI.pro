@@ -109,11 +109,11 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-INCLUDEPATH += /home/huser/Dev/TAD_Workspace/Projects/experimentmanagerservice/src/common/
-INCLUDEPATH += /home/huser/Dev/Externals/qwt-6.2.0/src
-DEPENDPATH += /home/huser/Dev/Externals/qwt-6.2.0/lib/
-LIBS += -L/home/huser/Dev/Externals/qwt-6.2.0/lib/
-LIBS += -ltacopie -lcpp_redis -lqwt
+INCLUDEPATH += ../experimentmanagerservice/src/common/
+INCLUDEPATH += ../../../Externals/qwt-6.2.0/src
+DEPENDPATH +=  ../../../Externals/qwt-6.2.0/lib/
+LIBS += -L../../../../../Externals/qwt-6.2.0/lib/
+LIBS += -ltacopie -lcpp_redis -lqwt -L/usr/local/lib
 
 RESOURCES += \
     resources.qrc

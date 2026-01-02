@@ -81,4 +81,4 @@ HEADERS += \
 
 
 
-LIBS += -ltacopie -lcpp_redis
+LIBS += -ltacopie -lcpp_redis -L/usr/local/lib
