@@ -136,6 +136,20 @@ void BusboardSerialManager::serialRecieved()
                     qDebug() << "dataString:" << dataString;
                     QCoreApplication::processEvents();
 
+                    if(dataString.startsWith("presence#")){
+                        QStringList parts = dataString.split('#');
+                        if (parts.size() >= 3) {
+                            bool okSlot = false;
+                            int slotIndex = parts.at(1).toInt(&okSlot);
+                            bool okPresent = false;
+                            int presentVal = parts.at(2).toInt(&okPresent);
+                            if (okSlot && okPresent) {
+                                emit sgn_presenceUpdate(slotIndex, presentVal == 1);
+                            }
+                        }
+                        return;
+                    }
+
                     if(dataString.contains("GO") && m_messageQueue.size() > 0){
                         writeString(m_messageQueue, m_serialPort);
                         clearMessageQueue();
@@ -150,6 +164,7 @@ void BusboardSerialManager::serialRecieved()
 
                     Cell cell;
                     cell.updateStatusFromBoard(dataString.toStdString());
+                    cell.setIsPlugged(true);
                     qDebug() << "cell id: " << cell.cellID();
                     QCoreApplication::processEvents();
 

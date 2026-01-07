@@ -7,6 +7,8 @@
 #include <chrono>
 #include <thread>
 #include <QCoreApplication>
+#include <QProcess>
+#include <QThread>
 #include <fstream>
 
 using namespace std;
@@ -23,11 +25,40 @@ void writeJSONToFile(const std::string& jsonString, const std::string& filename)
     }
 }
 
+bool ensureRedisRunning(const std::string& host, int port)
+{
+    cpp_redis::client client;
+    client.connect(host, port);
+    if (client.is_connected()) {
+        return true;
+    }
+
+    QString program = "redis-server";
+    QStringList arguments;
+    arguments << "--bind" << QString::fromStdString(host);
+    arguments << "--port" << QString::number(port);
+
+    bool started = QProcess::startDetached(program, arguments);
+    if (!started) {
+        std::cerr << "Failed to start redis-server process." << std::endl;
+        return false;
+    }
+
+    for (int attempt = 0; attempt < 10; ++attempt) {
+        QThread::msleep(200);
+        client.connect(host, port);
+        if (client.is_connected()) {
+            return true;
+        }
+    }
+
+    std::cerr << "redis-server did not become available after start attempt." << std::endl;
+    return false;
+}
+
 int main(int argc, char *argv[])
 {
-
-    cpp_redis::client client;
-    client.connect("127.0.0.1", 6379);
+    ensureRedisRunning("127.0.0.1", 6379);
 
 /*
 

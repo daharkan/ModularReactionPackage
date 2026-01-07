@@ -8,6 +8,7 @@ BusboardV1::BusboardV1()
     m_cellArray.resize(CELL_COUNT, Cell());
     m_cellCount = CELL_COUNT;
     QObject::connect(BusboardSerialManager::getInstance(), &BusboardSerialManager::sgn_updateCell, this, &BusboardV1::cellStatusUpdated);
+    QObject::connect(BusboardSerialManager::getInstance(), &BusboardSerialManager::sgn_presenceUpdate, this, &BusboardV1::presenceStatusUpdated);
 }
 
 bool BusboardV1::connectBoard()
@@ -83,4 +84,15 @@ void BusboardV1::cellStatusUpdated(Cell &cell)
         m_flowStatus.setFlowTemp(cell.flowTemp());
         m_flowStatus.setTimestamp(Cell::getCurrentTimeMillis());
     }
+}
+
+void BusboardV1::presenceStatusUpdated(int slotIndex, bool isPresent)
+{
+    if (slotIndex < 1 || slotIndex > CELL_COUNT) {
+        return;
+    }
+
+    Cell &cell = m_cellArray[slotIndex - 1];
+    cell.setIsPlugged(isPresent);
+    cell.setLastUpdatedTimestamp(Cell::getCurrentTimeMillis());
 }
