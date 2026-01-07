@@ -11,6 +11,7 @@ static const uint32_t SLAVE_BAUD = 115200;
 
 static const uint16_t RR_LISTEN_US = 1500;
 static const uint16_t GO_INTERVAL_MS = 200;
+static const bool INTERLOCK_ACTIVE_LOW = false;
 
 // ---------- Pin map (new board) ----------
 static const uint8_t PIN_S1_RX = 2;
@@ -27,6 +28,13 @@ static const uint8_t PIN_S4_TX = 9;
 
 static const uint8_t PIN_S5_RX = 10;
 static const uint8_t PIN_S5_TX = 23;
+
+// ---------- Interlocks ----------
+static const uint8_t PIN_IL1 = 26;
+static const uint8_t PIN_IL2 = 19;
+static const uint8_t PIN_IL3 = 18;
+static const uint8_t PIN_IL4 = 16;
+static const uint8_t PIN_IL5 = 14;
 
 // ---------- Flow sensor pins ----------
 static const uint8_t PIN_FLOW_TEMP  = 17; // A3
@@ -49,6 +57,10 @@ static const uint8_t SLOT_COUNT = 5;
 static const char BUSBOARD_PREFIX[] = "bb_000#";
 static const char BUSBOARD_HELLO[] = "bb_000#HELLO";
 
+static const uint8_t IL_PINS[5] = { PIN_IL1, PIN_IL2, PIN_IL3, PIN_IL4, PIN_IL5 };
+static bool present[5] = { false, false, false, false, false };
+static bool presentPrev[5] = { false, false, false, false, false };
+
 // per-slot line buffers
 static char lineBuf[5][128];
 static uint8_t lineLen[5] = {0, 0, 0, 0, 0};
@@ -62,6 +74,23 @@ static uint32_t flow_lastCalcMs = 0;
 static uint32_t flow_lastPulses = 0;
 static float flow_hz = 0.0f;
 static float flow_lpm = 0.0f;
+
+static inline bool readInterlock1Present() {
+  return (PINE & (1 << PE3)) != 0;
+}
+
+static inline bool readInterlockPresent(uint8_t pin) {
+  int v = digitalRead(pin);
+  if (INTERLOCK_ACTIVE_LOW) return (v == LOW);
+  return (v == HIGH);
+}
+
+static void logPresenceChange(uint8_t slot1based, bool isPresent) {
+  Serial.print(F("presence#"));
+  Serial.print(slot1based);
+  Serial.print(F("#"));
+  Serial.println(isPresent ? F("1") : F("0"));
+}
 
 static void IRAM_ATTR flow_isr() {
   g_flowPulses++;
@@ -178,6 +207,24 @@ static void rrPollOnce() {
   }
 }
 
+static void pollInterlocks() {
+  for (uint8_t i = 1; i < SLOT_COUNT; i++) {
+    present[i] = readInterlockPresent(IL_PINS[i]);
+    if (present[i] != presentPrev[i]) {
+      presentPrev[i] = present[i];
+      logPresenceChange(i + 1, present[i]);
+      if (!present[i]) flushLine(i);
+    }
+  }
+
+  present[0] = readInterlock1Present();
+  if (present[0] != presentPrev[0]) {
+    presentPrev[0] = present[0];
+    logPresenceChange(1, present[0]);
+    if (!present[0]) flushLine(0);
+  }
+}
+
 static bool readLineFromPC(char* out, size_t outSize) {
   if (!Serial.available()) return false;
   size_t len = Serial.readBytesUntil('\n', out, outSize - 1);
@@ -229,6 +276,15 @@ static void sendUpdateToSlot(uint8_t slotIdx, const char* line) {
 void setup() {
   Serial.begin(PC_BAUD);
 
+  for (uint8_t i = 1; i < SLOT_COUNT; i++) {
+    pinMode(IL_PINS[i], INPUT_PULLUP);
+    present[i] = presentPrev[i] = readInterlockPresent(IL_PINS[i]);
+  }
+
+  DDRE  &= ~(1 << PE3);
+  PORTE |=  (1 << PE3);
+  present[0] = presentPrev[0] = readInterlock1Present();
+
   for (uint8_t i = 0; i < SLOT_COUNT; i++) {
     SSS[i]->begin(SLAVE_BAUD);
   }
@@ -243,10 +299,14 @@ void setup() {
   flow_lastCalcMs = millis();
 
   Serial.println(BUSBOARD_HELLO);
+  for (uint8_t i = 0; i < SLOT_COUNT; i++) {
+    logPresenceChange(i + 1, present[i]);
+  }
   lastGoMs = millis();
 }
 
 void loop() {
+  pollInterlocks();
   rrPollOnce();
   flow_update();
 

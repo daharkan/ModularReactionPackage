@@ -33,6 +33,7 @@ private:
 
 private slots:
     void cellStatusUpdated(Cell& cell);
+    void presenceStatusUpdated(int slotIndex, bool isPresent);
 
 };
 

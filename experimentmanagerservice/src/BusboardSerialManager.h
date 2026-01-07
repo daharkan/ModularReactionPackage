@@ -41,6 +41,7 @@ private slots:
 
 signals:
     void sgn_updateCell(Cell& cell);
+    void sgn_presenceUpdate(int slotIndex, bool isPresent);
 
 };
 
