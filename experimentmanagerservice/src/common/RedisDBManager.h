@@ -22,6 +22,7 @@ class RedisDBManager: public QObject
 public:
     static RedisDBManager* getInstance();
     bool connectToDB(std::string hostname, int port);
+    bool initializeSchema(bool reset);
     std::vector<Cell> getCellList(std::vector<std::string> cellIDList);
     std::vector<CellTarget> getCellTargets(std::vector<std::string> cellIDList);
     std::vector<std::string> getBusboardCellIds(std::string busboardID);
