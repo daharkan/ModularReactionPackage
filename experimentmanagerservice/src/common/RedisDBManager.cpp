@@ -1,4 +1,5 @@
 #include "RedisDBManager.h"
+#include <optional>
 
 
 
@@ -21,7 +22,78 @@ RedisDBManager* RedisDBManager::getInstance()
 bool RedisDBManager::connectToDB(std::string hostname, int port)
 {
     m_client.connect(hostname, port);
-    return m_client.is_connected();
+    if (!m_client.is_connected()) {
+        return false;
+    }
+    return initializeSchema(false);
+}
+
+bool RedisDBManager::initializeSchema(bool reset)
+{
+    if (!m_client.is_connected()) {
+        return false;
+    }
+
+    if (reset) {
+        m_client.flushdb();
+        m_client.sync_commit();
+    }
+
+    auto getKeyType = [&](const std::string& key) -> std::optional<std::string> {
+        std::future<cpp_redis::reply> future_reply = m_client.type(key);
+        m_client.sync_commit();
+        if (future_reply.wait_for(std::chrono::seconds(1)) == std::future_status::timeout) {
+            std::cerr << "Error: Timeout occurred while waiting for reply" << std::endl;
+            return std::nullopt;
+        }
+
+        cpp_redis::reply reply = future_reply.get();
+        if (!reply.is_string()) {
+            return std::nullopt;
+        }
+        return reply.as_string();
+    };
+
+    auto ensureHashKey = [&](const std::string& key) -> bool {
+        std::optional<std::string> keyType = getKeyType(key);
+        if (!keyType.has_value()) {
+            return false;
+        }
+        if (keyType.value() == "none") {
+            m_client.hset(key, "__schema__", "1");
+            m_client.sync_commit();
+            return true;
+        }
+        if (keyType.value() == "hash") {
+            m_client.hsetnx(key, "__schema__", "1");
+            m_client.sync_commit();
+            return true;
+        }
+        return false;
+    };
+
+    if (!ensureHashKey(DB_CELLTABLE_KEY)) {
+        return false;
+    }
+    if (!ensureHashKey(DB_TARGETTABLE_KEY)) {
+        return false;
+    }
+    if (!ensureHashKey(DB_CELLIDS_TABLE_KEY)) {
+        return false;
+    }
+
+    std::optional<std::string> flowKeyType = getKeyType(DB_FLOW_KEY);
+    if (!flowKeyType.has_value()) {
+        return false;
+    }
+    if (flowKeyType.value() == "none") {
+        FlowStatus flowStatus;
+        pushFlowStatus(flowStatus);
+    } else if (flowKeyType.value() != "string") {
+        return false;
+    }
+
+    return true;
 }
 
 std::vector<Cell> RedisDBManager::getCellList(std::vector<std::string> cellIDList)
@@ -60,8 +132,20 @@ std::vector<Cell> RedisDBManager::getCellList(std::vector<std::string> cellIDLis
         Document jsonDocument;
         jsonDocument.Parse(jsonString.c_str());
 
+        const Value* cellValue = nullptr;
+        if (jsonDocument.IsObject() && jsonDocument.HasMember(DB_CELLJSON_KEY) && jsonDocument[DB_CELLJSON_KEY].IsObject()) {
+            cellValue = &jsonDocument[DB_CELLJSON_KEY];
+        } else if (jsonDocument.IsObject()) {
+            cellValue = &jsonDocument;
+        }
+
+        if (!cellValue) {
+            cells.push_back(Cell());
+            continue;
+        }
+
         // Pass the Value object from the parsed JSON to fromJSON method
-        cell.fromJSON(jsonDocument[DB_CELLJSON_KEY]);
+        cell.fromJSON(*cellValue);
         cells.push_back(cell);
     }
     return cells;
@@ -104,9 +188,19 @@ std::vector<CellTarget> RedisDBManager::getCellTargets(std::vector<std::string> 
                 Document jsonDocument;
                 jsonDocument.Parse(jsonString.c_str());
 
-                // Pass the Value object from the parsed JSON to fromJSON method
+                const Value* targetValue = nullptr;
+                if (jsonDocument.IsObject() && jsonDocument.HasMember(DB_TARGETJSON_KEY) && jsonDocument[DB_TARGETJSON_KEY].IsObject()) {
+                    targetValue = &jsonDocument[DB_TARGETJSON_KEY];
+                } else if (jsonDocument.IsObject()) {
+                    targetValue = &jsonDocument;
+                }
 
-                celltarget.fromJSON(jsonDocument[DB_TARGETJSON_KEY]);
+                if (!targetValue) {
+                    continue;
+                }
+
+                // Pass the Value object from the parsed JSON to fromJSON method
+                celltarget.fromJSON(*targetValue);
                 celltargets.push_back(celltarget);
             } else {
                 //std::cerr << "Error: Failed to retrieve value: getCellTargets" << std::endl;
@@ -146,10 +240,21 @@ std::vector<std::string> RedisDBManager::getBusboardCellIds(std::string busboard
         }
     }
 
+    const Value* cellidsValue = nullptr;
+    if (doc.IsArray()) {
+        cellidsValue = &doc;
+    } else if (doc.IsObject() && doc.HasMember(DB_CELLIDS_TABLE_KEY) && doc[DB_CELLIDS_TABLE_KEY].IsArray()) {
+        cellidsValue = &doc[DB_CELLIDS_TABLE_KEY];
+    }
+
+    if (!cellidsValue) {
+        return cellids;
+    }
+
     // Iterate over the JSON array and extract strings
-    for (SizeType i = 0; i < doc.Size(); ++i) {
-        if (doc[i].IsString()) {
-            cellids.push_back(doc[i].GetString());
+    for (SizeType i = 0; i < cellidsValue->Size(); ++i) {
+        if ((*cellidsValue)[i].IsString()) {
+            cellids.push_back((*cellidsValue)[i].GetString());
         }
     }
 
@@ -167,8 +272,15 @@ bool RedisDBManager::pushCellTarget(CellTarget celltarget)
     // Convert the Cell object to JSON
     Value cellJSON = celltarget.toJSON(allocator);
 
+    Value cellJSONWrapper(cellJSON, allocator);
+
     // Add the cellJSON object to the main JSON document
-    document.AddMember(DB_TARGETJSON_KEY, cellJSON, allocator);
+    document.AddMember(DB_TARGETJSON_KEY, cellJSONWrapper, allocator);
+    for (auto itr = cellJSON.MemberBegin(); itr != cellJSON.MemberEnd(); ++itr) {
+        Value key(itr->name, allocator);
+        Value value(itr->value, allocator);
+        document.AddMember(key, value, allocator);
+    }
 
     // Prepare writer and string buffer to convert JSON to string
     StringBuffer buffer;
@@ -182,6 +294,7 @@ bool RedisDBManager::pushCellTarget(CellTarget celltarget)
     //std::cout << "FROMBOARD <--- pushing jsonString: " << jsonString << std::endl;
 
     m_client.sync_commit();
+    return true;
 }
 
 bool RedisDBManager::pushCellTargets(std::vector<CellTarget> celltargets)
@@ -197,8 +310,15 @@ bool RedisDBManager::pushCellTargets(std::vector<CellTarget> celltargets)
         // Convert the Cell object to JSON
         Value cellJSON = celltargets.at(i).toJSON(allocator);
 
+        Value cellJSONWrapper(cellJSON, allocator);
+
         // Add the cellJSON object to the main JSON document
-        document.AddMember(DB_TARGETJSON_KEY, cellJSON, allocator);
+        document.AddMember(DB_TARGETJSON_KEY, cellJSONWrapper, allocator);
+        for (auto itr = cellJSON.MemberBegin(); itr != cellJSON.MemberEnd(); ++itr) {
+            Value key(itr->name, allocator);
+            Value value(itr->value, allocator);
+            document.AddMember(key, value, allocator);
+        }
 
         // Prepare writer and string buffer to convert JSON to string
         StringBuffer buffer;
@@ -213,6 +333,7 @@ bool RedisDBManager::pushCellTargets(std::vector<CellTarget> celltargets)
 
         m_client.sync_commit();
     }
+    return true;
 }
 
 bool RedisDBManager::pushFlowStatus(const FlowStatus& flowStatus)
@@ -222,7 +343,13 @@ bool RedisDBManager::pushFlowStatus(const FlowStatus& flowStatus)
 
     Document::AllocatorType& allocator = document.GetAllocator();
     Value flowJSON = flowStatus.toJSON(allocator);
-    document.AddMember(DB_FLOW_KEY, flowJSON, allocator);
+    Value flowJSONWrapper(flowJSON, allocator);
+    document.AddMember(DB_FLOW_KEY, flowJSONWrapper, allocator);
+    for (auto itr = flowJSON.MemberBegin(); itr != flowJSON.MemberEnd(); ++itr) {
+        Value key(itr->name, allocator);
+        Value value(itr->value, allocator);
+        document.AddMember(key, value, allocator);
+    }
 
     StringBuffer buffer;
     Writer<StringBuffer> writer(buffer);
@@ -252,8 +379,15 @@ FlowStatus RedisDBManager::getFlowStatus()
 
     Document document;
     document.Parse(reply.as_string().c_str());
-    if (document.HasMember(DB_FLOW_KEY)) {
-        flowStatus.fromJSON(document[DB_FLOW_KEY]);
+    const Value* flowValue = nullptr;
+    if (document.IsObject() && document.HasMember(DB_FLOW_KEY) && document[DB_FLOW_KEY].IsObject()) {
+        flowValue = &document[DB_FLOW_KEY];
+    } else if (document.IsObject()) {
+        flowValue = &document;
+    }
+
+    if (flowValue) {
+        flowStatus.fromJSON(*flowValue);
     }
     return flowStatus;
 }
@@ -282,6 +416,7 @@ bool RedisDBManager::pushBusboardCellIds(std::string busboardID, std::vector<std
     //std::cout << "FROMBOARD <--- pushing jsonString: " << jsonString << std::endl;
 
     m_client.sync_commit();
+    return true;
 }
 
 bool RedisDBManager::pushCellList(std::vector<Cell> cells)
@@ -305,8 +440,15 @@ bool RedisDBManager::pushCellList(std::vector<Cell> cells)
         // Convert the Cell object to JSON
         Value cellJSON = cells.at(i).toJSON(allocator);
 
+        Value cellJSONWrapper(cellJSON, allocator);
+
         // Add the cellJSON object to the main JSON document
-        document.AddMember(DB_CELLJSON_KEY, cellJSON, allocator);
+        document.AddMember(DB_CELLJSON_KEY, cellJSONWrapper, allocator);
+        for (auto itr = cellJSON.MemberBegin(); itr != cellJSON.MemberEnd(); ++itr) {
+            Value key(itr->name, allocator);
+            Value value(itr->value, allocator);
+            document.AddMember(key, value, allocator);
+        }
 
         // Prepare writer and string buffer to convert JSON to string
         StringBuffer buffer;
@@ -321,6 +463,7 @@ bool RedisDBManager::pushCellList(std::vector<Cell> cells)
 
         m_client.sync_commit();
     }
+    return true;
 }
 
 bool RedisDBManager::pushCellVisuals(std::string cellID, CellVisualsHistory history)
