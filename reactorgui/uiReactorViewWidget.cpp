@@ -28,7 +28,20 @@ void ReactorViewWidget::updateFlowStatus()
         return;
     }
 
-    FlowStatus flowStatus = RedisDBManager::getInstance()->getFlowStatus();
+    if (m_busboardId.empty()) {
+        std::vector<std::string> busboardIds = RedisDBManager::getInstance()->getBusboardIds();
+        if (!busboardIds.empty()) {
+            m_busboardId = busboardIds.front();
+        }
+    }
+
+    if (m_busboardId.empty()) {
+        ui->flowRateValueLabel->setText("--");
+        ui->flowTempValueLabel->setText("--");
+        return;
+    }
+
+    FlowStatus flowStatus = RedisDBManager::getInstance()->getFlowStatus(m_busboardId);
 
     if (flowStatus.timestamp() == 0) {
         ui->flowRateValueLabel->setText("--");

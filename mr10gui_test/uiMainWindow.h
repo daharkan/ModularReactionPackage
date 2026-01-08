@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTimer>
+#include <string>
 #include <cpp_redis/cpp_redis>
 #include "../experimentmanagerservice/src/common/RedisDBManager.h"
 #include "../experimentmanagerservice/src/common/Cell.h"
@@ -23,6 +25,8 @@ public:
 private:
     Ui::MainWindow *ui;
     std::vector<Cell> m_cells;
+    QTimer *m_updateTimer = nullptr;
+    std::string m_busboardId;
 
     double m_prevVal = 0;
     unsigned long m_prevTime = 0;
