@@ -21,7 +21,7 @@ public:
     std::vector<std::string> getCellIdList() override;
 
     std::vector<Cell>& getCellArray() override;
-    FlowStatus flowStatus() const;
+    FlowStatus flowStatus() const override;
 
 private:
     std::vector<Cell> m_cellArray;

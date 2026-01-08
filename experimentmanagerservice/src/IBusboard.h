@@ -3,6 +3,7 @@
 
 #include "qobject.h"
 #include "src/common/Cell.h"
+#include "src/common/FlowStatus.h"
 
 class IBusboard : public QObject
 {
@@ -16,6 +17,7 @@ public:
     virtual std::vector<Cell>& getCellArray() = 0;
     virtual bool sendUpdateString(QString str) = 0;
     virtual std::vector<std::string> getCellIdList() = 0;
+    virtual FlowStatus flowStatus() const = 0;
 
     std::string busboardID() const;
     void setBusboardID(const std::string &newBusboardID);

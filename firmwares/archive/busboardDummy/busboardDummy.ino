@@ -75,7 +75,7 @@ void parseMessage(char *input, int *positionIndex, double *targetTmp, int *targe
 
 void setup() {
   Serial.begin(BAUD);     // For debugging
- 
+  Serial.println(BUSBOARD_HELLO);
 }
 
 char serial[10], cell1serial[10];
@@ -91,6 +91,7 @@ int rpm1;
 int incomingChecksum, calculatedChecksum;
 
 #define BUSBOARD_PREFIX "bb_000#"
+#define BUSBOARD_HELLO "bb_000#HELLO"
 
 void loop() {
 
@@ -117,6 +118,8 @@ Serial.flush();
   int rpm = 11 + analogRead(A3);
   float xAccel1 = 13.0 + (analogRead(A4))%5;
   float xAccel2 = 15.0 + (analogRead(A5))%4;
+  float flowRateLpm = 1.0 + (analogRead(A0)) % 5;
+  float flowTemp = 23.0 + (analogRead(A1)) % 7;
 
   char innerStr[9];
   char extStr[9];
@@ -128,7 +131,7 @@ Serial.flush();
   dtostrf(amp, 3, 1, ampStr);      // Convert double to string
   dtostrf(targetTmp1, 3, 1, targetTempStr);      // Convert double to string
 
-  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d", "s25_111" , 1, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm1);
+  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d#%.2f#%.1f", "s25_111" , 1, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm1, flowRateLpm, flowTemp);
 
   Serial.print(BUSBOARD_PREFIX);
   Serial.println(incomingMessageUNO1);
@@ -145,7 +148,7 @@ Serial.flush();
   dtostrf(amp, 3, 1, ampStr);      // Convert double to string
   dtostrf(targetTmp2, 3, 1, targetTempStr);      // Convert double to string
 
-  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d", "s25_222" , 2, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm2);
+  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d#%.2f#%.1f", "s25_222" , 2, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm2, flowRateLpm, flowTemp);
 
   Serial.print(BUSBOARD_PREFIX);
   Serial.println(incomingMessageUNO1);
@@ -162,7 +165,7 @@ Serial.flush();
   dtostrf(amp, 3, 1, ampStr);      // Convert double to string
   dtostrf(targetTmp3, 3, 1, targetTempStr);      // Convert double to string
 
-  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d", "s25_333" , 3, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm3);
+  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d#%.2f#%.1f", "s25_333" , 3, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm3, flowRateLpm, flowTemp);
 
   Serial.print(BUSBOARD_PREFIX);
   Serial.println(incomingMessageUNO1);
@@ -182,7 +185,7 @@ Serial.flush();
   dtostrf(amp, 3, 1, ampStr);      // Convert double to string
   dtostrf(targetTmp4, 3, 1, targetTempStr);      // Convert double to string
 
-  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d", "s25_444" , 4, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm4);
+  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d#%.2f#%.1f", "s25_444" , 4, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm4, flowRateLpm, flowTemp);
 
   Serial.print(BUSBOARD_PREFIX);
   Serial.println(incomingMessageUNO1);
@@ -202,7 +205,7 @@ Serial.flush();
   dtostrf(amp, 3, 1, ampStr);      // Convert double to string
   dtostrf(targetTmp5, 3, 1, targetTempStr);      // Convert double to string
 
-  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d", "s25_555" , 5, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm5);
+  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d#%.2f#%.1f", "s25_555" , 5, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm5, flowRateLpm, flowTemp);
 
   Serial.print(BUSBOARD_PREFIX);
   Serial.println(incomingMessageUNO1);
@@ -220,7 +223,7 @@ Serial.flush();
   dtostrf(amp, 3, 1, ampStr);      // Convert double to string
   dtostrf(targetTmp6, 3, 1, targetTempStr);      // Convert double to string
 
-  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d", "s25_666" , 6, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm6);
+  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d#%.2f#%.1f", "s25_666" , 6, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm6, flowRateLpm, flowTemp);
 
   Serial.print(BUSBOARD_PREFIX);
   Serial.println(incomingMessageUNO1);
@@ -238,7 +241,7 @@ Serial.flush();
   dtostrf(amp, 3, 1, ampStr);      // Convert double to string
   dtostrf(targetTmp7, 3, 1, targetTempStr);      // Convert double to string
 
-  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d", "s25_777" , 7, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm7);
+  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d#%.2f#%.1f", "s25_777" , 7, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm7, flowRateLpm, flowTemp);
 
   Serial.print(BUSBOARD_PREFIX);
   Serial.println(incomingMessageUNO1);
@@ -256,7 +259,7 @@ Serial.flush();
   dtostrf(amp, 3, 1, ampStr);      // Convert double to string
   dtostrf(targetTmp8, 3, 1, targetTempStr);      // Convert double to string
 
-  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d", "s25_888" , 8, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm8);
+  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d#%.2f#%.1f", "s25_888" , 8, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm8, flowRateLpm, flowTemp);
 
   Serial.print(BUSBOARD_PREFIX);
   Serial.println(incomingMessageUNO1);
@@ -274,7 +277,7 @@ Serial.flush();
   dtostrf(amp, 3, 1, ampStr);      // Convert double to string
   dtostrf(targetTmp9, 3, 1, targetTempStr);      // Convert double to string
 
-  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d", "s25_999" , 9, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm9);
+  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d#%.2f#%.1f", "s25_999" , 9, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm9, flowRateLpm, flowTemp);
 
   Serial.print(BUSBOARD_PREFIX);
   Serial.println(incomingMessageUNO1);
@@ -292,7 +295,7 @@ Serial.flush();
   dtostrf(amp, 3, 1, ampStr);      // Convert double to string
   dtostrf(targetTmp10, 3, 1, targetTempStr);      // Convert double to string
 
-  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d", "s25_101010" , 10, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm10);
+  snprintf(incomingMessageUNO1, MESSAGE_LENGTH, "%s#%d#%s#%s#%d#%s#%s#%d#%.2f#%.1f", "s25_101010" , 10, innerStr, extStr, rpm, ampStr, targetTempStr, targetRpm10, flowRateLpm, flowTemp);
 
   Serial.print(BUSBOARD_PREFIX);
   Serial.println(incomingMessageUNO1);
@@ -301,7 +304,7 @@ Serial.flush();
 
   
 
-  Serial.println("GOGOGOGO");
+  Serial.println("GO");
     delay(20);
 
   // PC'den gelen update'ler alınıyor
