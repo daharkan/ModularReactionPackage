@@ -7,13 +7,22 @@
 #include "CellVisualsHistory.h"
 #include "FlowStatus.h"
 
-#define DB_CELLTABLE_KEY "cells"
-#define DB_TARGETTABLE_KEY "targets"
-#define DB_CELLIDS_TABLE_KEY "cellids"
+#define DB_SCHEMA_VERSION_KEY "mr10:schema_version"
+#define DB_SCHEMA_VERSION_VALUE "2"
+
+#define DB_BUSBOARD_IDS_KEY "mr10:busboard_ids"
+#define DB_BUSBOARD_TABLE_KEY "mr10:busboards"
+#define DB_CELLTABLE_KEY "mr10:cells"
+#define DB_TARGETTABLE_KEY "mr10:targets"
+#define DB_USERS_TABLE_KEY "mr10:users"
+#define DB_EXPERIMENTS_TABLE_KEY "mr10:experiments"
 
 #define DB_CELLJSON_KEY "cell"
 #define DB_TARGETJSON_KEY "celltarget"
-#define DB_FLOW_KEY "flowstatus"
+#define DB_BUSBOARDJSON_KEY "busboard"
+#define DB_BUSBOARD_FLOW_KEY "flowStatus"
+#define DB_BUSBOARD_CELLIDS_KEY "cellIDs"
+#define DB_BUSBOARD_LAST_UPDATED_KEY "lastUpdatedTimestamp"
 
 class RedisDBManager: public QObject
 {
@@ -26,6 +35,7 @@ public:
     std::vector<Cell> getCellList(std::vector<std::string> cellIDList);
     std::vector<CellTarget> getCellTargets(std::vector<std::string> cellIDList);
     std::vector<std::string> getBusboardCellIds(std::string busboardID);
+    std::vector<std::string> getBusboardIds();
 
     bool pushCellTarget(CellTarget celltarget);
     bool pushCellTargets(std::vector<CellTarget> celltargets);
@@ -35,8 +45,8 @@ public:
     bool pushCellVisuals(std::string cellID, CellVisualsHistory history);
     CellVisualsHistory getCellVisualsHistory(std::string cellID);
     bool isConnected();
-    bool pushFlowStatus(const FlowStatus& flowStatus);
-    FlowStatus getFlowStatus();
+    bool pushFlowStatus(const std::string& busboardID, const FlowStatus& flowStatus);
+    FlowStatus getFlowStatus(const std::string& busboardID);
 
 
 private:

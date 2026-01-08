@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QTimer>
+#include <string>
 
 namespace Ui {
 class ReactorViewWidget;
@@ -22,6 +23,7 @@ private slots:
 private:
     Ui::ReactorViewWidget *ui;
     QTimer *m_flowTimer = nullptr;
+    std::string m_busboardId;
 };
 
 #endif // UIREACTORVIEWWIDGET_H

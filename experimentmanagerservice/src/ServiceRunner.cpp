@@ -46,16 +46,23 @@ void ServiceRunner::startServiceLoop()
         //Getting board cells with all BOARD RELATED data----------------------------------------
         std::vector<Cell> cellsFromBoard = m_busboard->getCellArray();
         std::vector<std::string> cellIDList = m_busboard->getCellIdList();
+        std::vector<std::string> activeCellIDs;
+        activeCellIDs.reserve(cellIDList.size());
+        for (const auto& id : cellIDList) {
+            if (!id.empty()) {
+                activeCellIDs.push_back(id);
+            }
+        }
         //qDebug() << "-----2-----";
 
         if(cellsFromBoard.size() != cellIDList.size()){
             qDebug() << "cellsFromBoard size mismatch";
             continue;
         }
-        std::vector<Cell> cellsFromDB = RedisDBManager::getInstance()->getCellList(cellIDList);
+        std::vector<Cell> cellsFromDB = RedisDBManager::getInstance()->getCellList(activeCellIDs);
         //qDebug() << "-----3-----";
 
-        std::vector<CellTarget> celltargets = RedisDBManager::getInstance()->getCellTargets(cellIDList);
+        std::vector<CellTarget> celltargets = RedisDBManager::getInstance()->getCellTargets(activeCellIDs);
 
        // qDebug() << "-----4----- celltargets size: " << celltargets.size();
 
@@ -95,8 +102,8 @@ void ServiceRunner::startServiceLoop()
 
         //qDebug() << "-----7-----";
 
-        for(int i = 0; i < cellIDList.size(); i++){
-            std::string cellID = cellIDList.at(i);
+        for(int i = 0; i < activeCellIDs.size(); i++){
+            std::string cellID = activeCellIDs.at(i);
             if(cellID.empty()){
                 continue;
             }
@@ -106,11 +113,11 @@ void ServiceRunner::startServiceLoop()
         //qDebug() << "-----8-----";
 
 
-        for(int i = 0; i < cellIDList.size(); i++){
+        for(int i = 0; i < activeCellIDs.size(); i++){
             if(cellTargetsMap.size() < 1){
                 continue;
             }
-            std::string cellID = cellIDList.at(i);
+            std::string cellID = activeCellIDs.at(i);
 
             if(cellID.empty()){
                 continue;
@@ -158,10 +165,10 @@ void ServiceRunner::startServiceLoop()
         RedisDBManager::getInstance()->pushCellList(cellsToDB);
         QCoreApplication::processEvents();
 
-        RedisDBManager::getInstance()->pushFlowStatus(m_busboard->flowStatus());
+        RedisDBManager::getInstance()->pushFlowStatus(m_busboard->busboardID(), m_busboard->flowStatus());
         QCoreApplication::processEvents();
 
-        RedisDBManager::getInstance()->pushBusboardCellIds(m_busboard->busboardID(), cellIDList);
+        RedisDBManager::getInstance()->pushBusboardCellIds(m_busboard->busboardID(), activeCellIDs);
         QCoreApplication::processEvents();
 
 

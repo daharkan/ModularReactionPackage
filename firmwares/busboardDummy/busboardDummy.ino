@@ -5,7 +5,7 @@
 #endif
 
 #define BAUDRATE 115200
-#define SLOT_COUNT 5
+#define SLOT_COUNT 3
 
 static const uint16_t STATUS_PERIOD_MS = 500;
 static const uint16_t GO_INTERVAL_MS = 200;
@@ -25,9 +25,7 @@ static CellState cells[SLOT_COUNT];
 static const char* CELL_IDS[SLOT_COUNT] = {
   "s25_111",
   "s25_222",
-  "s25_333",
-  "s25_444",
-  "s25_555"
+  "s25_333"
 };
 
 static uint32_t lastStatusMs = 0;
@@ -177,6 +175,15 @@ static void sendStatus() {
   }
 }
 
+static void sendPresenceStatus() {
+  for (int i = 0; i < SLOT_COUNT; i++) {
+    Serial.print(F("presence#"));
+    Serial.print(i + 1);
+    Serial.print(F("#"));
+    Serial.println(F("1"));
+  }
+}
+
 void setup() {
   Serial.begin(BAUDRATE);
   randomSeed(analogRead(A0));
@@ -193,6 +200,7 @@ void setup() {
   flowTempMv = 250.0f;
 
   Serial.println(F("bb_000#HELLO"));
+  sendPresenceStatus();
   lastStatusMs = millis();
   lastGoMs = millis();
 }
