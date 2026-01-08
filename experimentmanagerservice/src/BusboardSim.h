@@ -14,6 +14,7 @@ public:
     std::vector<Cell>& getCellArray() override = 0;
     bool sendUpdateString(QString str) override = 0;
     std::vector<std::string> getCellIdList() override = 0;
+    FlowStatus flowStatus() const override = 0;
 
 };
 
