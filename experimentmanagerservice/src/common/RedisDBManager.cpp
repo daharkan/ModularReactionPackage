@@ -311,11 +311,6 @@ bool RedisDBManager::pushCellTarget(CellTarget celltarget)
 
     // Add the cellJSON object to the main JSON document
     document.AddMember(DB_TARGETJSON_KEY, cellJSONWrapper, allocator);
-    for (auto itr = cellJSON.MemberBegin(); itr != cellJSON.MemberEnd(); ++itr) {
-        Value key(itr->name, allocator);
-        Value value(itr->value, allocator);
-        document.AddMember(key, value, allocator);
-    }
 
     // Prepare writer and string buffer to convert JSON to string
     StringBuffer buffer;
@@ -349,11 +344,6 @@ bool RedisDBManager::pushCellTargets(std::vector<CellTarget> celltargets)
 
         // Add the cellJSON object to the main JSON document
         document.AddMember(DB_TARGETJSON_KEY, cellJSONWrapper, allocator);
-        for (auto itr = cellJSON.MemberBegin(); itr != cellJSON.MemberEnd(); ++itr) {
-            Value key(itr->name, allocator);
-            Value value(itr->value, allocator);
-            document.AddMember(key, value, allocator);
-        }
 
         // Prepare writer and string buffer to convert JSON to string
         StringBuffer buffer;
@@ -393,6 +383,11 @@ bool RedisDBManager::pushFlowStatus(const std::string& busboardID, const FlowSta
     }
 
     Document::AllocatorType& allocator = document.GetAllocator();
+    document.RemoveMember("flowRateLpm");
+    document.RemoveMember("flowTemp");
+    document.RemoveMember("timestamp");
+    document.RemoveMember("flowstatus");
+
     Value flowJSON = flowStatus.toJSON(allocator);
     if (document.HasMember(DB_BUSBOARD_FLOW_KEY)) {
         document[DB_BUSBOARD_FLOW_KEY].CopyFrom(flowJSON, allocator);
@@ -528,11 +523,6 @@ bool RedisDBManager::pushCellList(std::vector<Cell> cells)
 
         // Add the cellJSON object to the main JSON document
         document.AddMember(DB_CELLJSON_KEY, cellJSONWrapper, allocator);
-        for (auto itr = cellJSON.MemberBegin(); itr != cellJSON.MemberEnd(); ++itr) {
-            Value key(itr->name, allocator);
-            Value value(itr->value, allocator);
-            document.AddMember(key, value, allocator);
-        }
 
         // Prepare writer and string buffer to convert JSON to string
         StringBuffer buffer;
