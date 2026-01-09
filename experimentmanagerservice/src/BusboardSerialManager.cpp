@@ -109,7 +109,7 @@ bool BusboardSerialManager::writeCellUpdateString(QString str)
         return false;
     }
 
-    writeString2Queue(str);
+    writeString2Queue(str.trimmed());
 
    // qDebug() << "-BusboardSerialManager::writeCellUpdateString-----";
 
