@@ -192,59 +192,60 @@ std::vector<CellTarget> RedisDBManager::getCellTargets(std::vector<std::string> 
 {
 
     std::vector<CellTarget> celltargets;
-    for(int i = 0; i < cellIDList.size(); i++){
-        //std::cout << "fetching: " << busboardID << "  i: " << i << std::endl;
+    std::vector<std::string> requestedIds;
+    requestedIds.reserve(cellIDList.size());
+    for (const auto& cellId : cellIDList) {
+        if (!cellId.empty()) {
+            requestedIds.push_back(cellId);
+        }
+    }
 
-        if(cellIDList.at(i).empty()){
+    if (requestedIds.empty()) {
+        return celltargets;
+    }
+
+    std::future<cpp_redis::reply> future_reply = m_client.hmget(DB_TARGETTABLE_KEY, requestedIds);
+    m_client.sync_commit();
+
+    if (replyTimedOut(future_reply)) {
+        return celltargets;
+    }
+
+    cpp_redis::reply reply = future_reply.get();
+    if (!reply.is_array()) {
+        return celltargets;
+    }
+
+    const auto& values = reply.as_array();
+    for (size_t i = 0; i < values.size() && i < requestedIds.size(); ++i) {
+        const auto& valueReply = values.at(i);
+        if (!valueReply.is_string()) {
             continue;
         }
 
-        std::string jsonString;
-        std::future<cpp_redis::reply> future_reply = m_client.hget(DB_TARGETTABLE_KEY, cellIDList.at(i));
-        m_client.sync_commit();
-
-
-        // Wait for the reply with a timeout of 1 second
-        if (replyTimedOut(future_reply)) {
-            // Handle timeout error
-        } else {
-            // Get the reply
-            cpp_redis::reply reply = future_reply.get();
-
-            // Check if the reply is a string
-            if (reply.is_string()) {
-                jsonString = reply.as_string();
-
-                if(jsonString.empty()){
-                    continue;
-                }
-                CellTarget celltarget;
-
-                // Parse the JSON string into a RapidJSON Value object
-                Document jsonDocument;
-                jsonDocument.Parse(jsonString.c_str());
-
-                const Value* targetValue = nullptr;
-                if (jsonDocument.IsObject() && jsonDocument.HasMember(DB_TARGETJSON_KEY) && jsonDocument[DB_TARGETJSON_KEY].IsObject()) {
-                    targetValue = &jsonDocument[DB_TARGETJSON_KEY];
-                } else if (jsonDocument.IsObject()) {
-                    targetValue = &jsonDocument;
-                }
-
-                if (!targetValue) {
-                    continue;
-                }
-
-                // Pass the Value object from the parsed JSON to fromJSON method
-                celltarget.fromJSON(*targetValue);
-                celltargets.push_back(celltarget);
-            } else {
-                //std::cerr << "Error: Failed to retrieve value: getCellTargets" << std::endl;
-                return celltargets;
-                // Handle other types of errors
-            }
+        std::string jsonString = valueReply.as_string();
+        if (jsonString.empty()) {
+            continue;
         }
 
+        CellTarget celltarget;
+
+        Document jsonDocument;
+        jsonDocument.Parse(jsonString.c_str());
+
+        const Value* targetValue = nullptr;
+        if (jsonDocument.IsObject() && jsonDocument.HasMember(DB_TARGETJSON_KEY) && jsonDocument[DB_TARGETJSON_KEY].IsObject()) {
+            targetValue = &jsonDocument[DB_TARGETJSON_KEY];
+        } else if (jsonDocument.IsObject()) {
+            targetValue = &jsonDocument;
+        }
+
+        if (!targetValue) {
+            continue;
+        }
+
+        celltarget.fromJSON(*targetValue);
+        celltargets.push_back(celltarget);
     }
     return celltargets;
 }
