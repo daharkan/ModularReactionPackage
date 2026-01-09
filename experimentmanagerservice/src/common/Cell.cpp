@@ -326,9 +326,8 @@ int Cell::calculateTargetRPMDummy()
 
 bool Cell::updateBoardRelatedAttributes(Cell other)
 {
-    if(m_cellID != other.m_cellID){
-        std::cout << "Cell updateBoardRelatedAttributes failed. id mismatch: " << m_cellID << " and " << other.m_cellID << std::endl;;
-        return false;
+    if(m_cellID.empty() && !other.m_cellID.empty()){
+        m_cellID = other.m_cellID;
     }
     m_positionIdx = other.m_positionIdx;
     m_isExtTempPlugged = other.m_isExtTempPlugged;

@@ -5,14 +5,13 @@
 #include <thread>
 #include <sstream>
 
-#define BAUDRATE 115200
+#define BAUDRATE 9600
 #define BUSBOARD_HANDSHAKE "bb"
 
 BusboardSerialManager* BusboardSerialManager::m_instance = nullptr;
 
 
 BusboardSerialManager::BusboardSerialManager() : QObject() {
-    m_messageQueue = "";
 }
 
 
@@ -110,8 +109,7 @@ bool BusboardSerialManager::writeCellUpdateString(QString str)
         return false;
     }
 
-    writeString2Queue(str);
-
+    writeString2Queue(str.trimmed());
    // qDebug() << "-BusboardSerialManager::writeCellUpdateString-----";
 
     return true;
@@ -151,7 +149,7 @@ void BusboardSerialManager::serialRecieved()
                     }
 
                     if(dataString.contains("GO") && m_messageQueue.size() > 0){
-                        writeString(m_messageQueue, m_serialPort);
+                        writeString(m_messageQueue.dequeue(), m_serialPort);
                         clearMessageQueue();
                         return;
 
@@ -189,6 +187,7 @@ void BusboardSerialManager::serialRecieved()
 
 
 
+
 void BusboardSerialManager::writeString(QString str, QSerialPort *port)
 {
     QCoreApplication::processEvents();
@@ -200,8 +199,7 @@ void BusboardSerialManager::writeString(QString str, QSerialPort *port)
         return;
     }
     m_writing = true;
-    str.append( "\n");
-    str.append( "\0");
+    str.append("\n");
     QByteArray ba = str.toUtf8();
     port->write(ba);
     qDebug() << "outgoing: " << str;
@@ -216,15 +214,39 @@ void BusboardSerialManager::writeString(QString str, QSerialPort *port)
 
 void BusboardSerialManager::writeString2Queue(QString str)
 {
-    //if(!m_messageQueue.contains(str)){
-        m_messageQueue = m_messageQueue + str;
-    //}
+    if (str.isEmpty()) {
+        return;
+    }
+
+    int start = 0;
+    bool queuedAny = false;
+    while (true) {
+        int open = str.indexOf('>', start);
+        if (open == -1) {
+            break;
+        }
+        int close = str.indexOf('<', open);
+        if (close == -1) {
+            break;
+        }
+        QString cmd = str.mid(open, close - open + 1).trimmed();
+        if (!cmd.isEmpty()) {
+            m_messageQueue.enqueue(cmd);
+            queuedAny = true;
+        }
+        start = close + 1;
+    }
+
+    if (!queuedAny) {
+        m_messageQueue.enqueue(str);
+    }
 }
 
 void BusboardSerialManager::clearMessageQueue()
 {
-    m_messageQueue = "";
+    m_messageQueue.clear();
 }
+
 
 
 void BusboardSerialManager::delay(int msec)

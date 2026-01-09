@@ -61,6 +61,7 @@ SOURCES       = ../../src/BusboardSerialManager.cpp \
 		../../src/common/CellTarget.cpp \
 		../../src/common/CellVisuals.cpp \
 		../../src/common/CellVisualsHistory.cpp \
+		../../src/common/FlowStatus.cpp \
 		../../src/common/RedisDBManager.cpp \
 		../../src/ServiceRunner.cpp \
 		../../src/common/User.cpp \
@@ -80,6 +81,7 @@ OBJECTS       = BusboardSerialManager.o \
 		CellTarget.o \
 		CellVisuals.o \
 		CellVisualsHistory.o \
+		FlowStatus.o \
 		RedisDBManager.o \
 		ServiceRunner.o \
 		User.o \
@@ -461,6 +463,7 @@ DIST          = /home/dev/Qt/6.9.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../src/common/CellTarget.h \
 		../../src/common/CellVisuals.h \
 		../../src/common/CellVisualsHistory.h \
+		../../src/common/FlowStatus.h \
 		../../src/common/RedisDBManager.h \
 		../../src/ServiceRunner.h \
 		../../src/common/User.h \
@@ -514,6 +517,7 @@ DIST          = /home/dev/Qt/6.9.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../src/common/CellTarget.cpp \
 		../../src/common/CellVisuals.cpp \
 		../../src/common/CellVisualsHistory.cpp \
+		../../src/common/FlowStatus.cpp \
 		../../src/common/RedisDBManager.cpp \
 		../../src/ServiceRunner.cpp \
 		../../src/common/User.cpp \
@@ -1279,8 +1283,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /home/dev/Qt/6.9.1/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../src/BusboardSerialManager.h ../../src/common/Arc.h ../../src/BusboardSim.h ../../src/BusboardV1.h ../../src/common/Cell.h ../../src/IBusboard.h ../../src/common/CellTarget.h ../../src/common/CellVisuals.h ../../src/common/CellVisualsHistory.h ../../src/common/RedisDBManager.h ../../src/ServiceRunner.h ../../src/common/User.h ../../src/common/Experiment.h ../../src/common/Profile.h ../../src/common/RPMArc.h ../../src/common/TempArc.h ../../src/common/rapidjson/allocators.h ../../src/common/rapidjson/cursorstreamwrapper.h ../../src/common/rapidjson/document.h ../../src/common/rapidjson/encodedstream.h ../../src/common/rapidjson/encodings.h ../../src/common/rapidjson/error/en.h ../../src/common/rapidjson/error/error.h ../../src/common/rapidjson/filereadstream.h ../../src/common/rapidjson/filewritestream.h ../../src/common/rapidjson/fwd.h ../../src/common/rapidjson/internal/biginteger.h ../../src/common/rapidjson/internal/clzll.h ../../src/common/rapidjson/internal/diyfp.h ../../src/common/rapidjson/internal/dtoa.h ../../src/common/rapidjson/internal/ieee754.h ../../src/common/rapidjson/internal/itoa.h ../../src/common/rapidjson/internal/meta.h ../../src/common/rapidjson/internal/pow10.h ../../src/common/rapidjson/internal/regex.h ../../src/common/rapidjson/internal/stack.h ../../src/common/rapidjson/internal/strfunc.h ../../src/common/rapidjson/internal/strtod.h ../../src/common/rapidjson/internal/swap.h ../../src/common/rapidjson/istreamwrapper.h ../../src/common/rapidjson/memorybuffer.h ../../src/common/rapidjson/memorystream.h ../../src/common/rapidjson/msinttypes/inttypes.h ../../src/common/rapidjson/msinttypes/stdint.h ../../src/common/rapidjson/ostreamwrapper.h ../../src/common/rapidjson/pointer.h ../../src/common/rapidjson/prettywriter.h ../../src/common/rapidjson/rapidjson.h ../../src/common/rapidjson/reader.h ../../src/common/rapidjson/schema.h ../../src/common/rapidjson/stream.h ../../src/common/rapidjson/stringbuffer.h ../../src/common/rapidjson/uri.h ../../src/common/rapidjson/writer.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../src/BusboardSerialManager.cpp ../../src/common/Arc.cpp ../../src/BusboardSim.cpp ../../src/BusboardV1.cpp ../../src/common/Cell.cpp ../../src/IBusboard.cpp ../../src/common/CellTarget.cpp ../../src/common/CellVisuals.cpp ../../src/common/CellVisualsHistory.cpp ../../src/common/RedisDBManager.cpp ../../src/ServiceRunner.cpp ../../src/common/User.cpp ../../src/common/Experiment.cpp ../../src/common/Profile.cpp ../../src/common/RPMArc.cpp ../../src/common/TempArc.cpp ../../src/main.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../src/BusboardSerialManager.h ../../src/common/Arc.h ../../src/BusboardSim.h ../../src/BusboardV1.h ../../src/common/Cell.h ../../src/IBusboard.h ../../src/common/CellTarget.h ../../src/common/CellVisuals.h ../../src/common/CellVisualsHistory.h ../../src/common/FlowStatus.h ../../src/common/RedisDBManager.h ../../src/ServiceRunner.h ../../src/common/User.h ../../src/common/Experiment.h ../../src/common/Profile.h ../../src/common/RPMArc.h ../../src/common/TempArc.h ../../src/common/rapidjson/allocators.h ../../src/common/rapidjson/cursorstreamwrapper.h ../../src/common/rapidjson/document.h ../../src/common/rapidjson/encodedstream.h ../../src/common/rapidjson/encodings.h ../../src/common/rapidjson/error/en.h ../../src/common/rapidjson/error/error.h ../../src/common/rapidjson/filereadstream.h ../../src/common/rapidjson/filewritestream.h ../../src/common/rapidjson/fwd.h ../../src/common/rapidjson/internal/biginteger.h ../../src/common/rapidjson/internal/clzll.h ../../src/common/rapidjson/internal/diyfp.h ../../src/common/rapidjson/internal/dtoa.h ../../src/common/rapidjson/internal/ieee754.h ../../src/common/rapidjson/internal/itoa.h ../../src/common/rapidjson/internal/meta.h ../../src/common/rapidjson/internal/pow10.h ../../src/common/rapidjson/internal/regex.h ../../src/common/rapidjson/internal/stack.h ../../src/common/rapidjson/internal/strfunc.h ../../src/common/rapidjson/internal/strtod.h ../../src/common/rapidjson/internal/swap.h ../../src/common/rapidjson/istreamwrapper.h ../../src/common/rapidjson/memorybuffer.h ../../src/common/rapidjson/memorystream.h ../../src/common/rapidjson/msinttypes/inttypes.h ../../src/common/rapidjson/msinttypes/stdint.h ../../src/common/rapidjson/ostreamwrapper.h ../../src/common/rapidjson/pointer.h ../../src/common/rapidjson/prettywriter.h ../../src/common/rapidjson/rapidjson.h ../../src/common/rapidjson/reader.h ../../src/common/rapidjson/schema.h ../../src/common/rapidjson/stream.h ../../src/common/rapidjson/stringbuffer.h ../../src/common/rapidjson/uri.h ../../src/common/rapidjson/writer.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../src/BusboardSerialManager.cpp ../../src/common/Arc.cpp ../../src/BusboardSim.cpp ../../src/BusboardV1.cpp ../../src/common/Cell.cpp ../../src/IBusboard.cpp ../../src/common/CellTarget.cpp ../../src/common/CellVisuals.cpp ../../src/common/CellVisualsHistory.cpp ../../src/common/FlowStatus.cpp ../../src/common/RedisDBManager.cpp ../../src/ServiceRunner.cpp ../../src/common/User.cpp ../../src/common/Experiment.cpp ../../src/common/Profile.cpp ../../src/common/RPMArc.cpp ../../src/common/TempArc.cpp ../../src/main.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -1630,6 +1634,7 @@ moc_IBusboard.cpp: ../../src/IBusboard.h \
 		../../src/common/Arc.h \
 		../../src/common/RPMArc.h \
 		../../src/common/CellVisuals.h \
+		../../src/common/FlowStatus.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
 	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../src/IBusboard.h -o moc_IBusboard.cpp
@@ -1781,6 +1786,7 @@ moc_RedisDBManager.cpp: ../../src/common/RedisDBManager.h \
 		../../src/common/CellVisuals.h \
 		../../src/common/CellTarget.h \
 		../../src/common/CellVisualsHistory.h \
+		../../src/common/FlowStatus.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
 	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../src/common/RedisDBManager.h -o moc_RedisDBManager.cpp
@@ -2134,7 +2140,8 @@ BusboardSim.o: ../../src/BusboardSim.cpp ../../src/BusboardSim.h \
 		../../src/common/TempArc.h \
 		../../src/common/Arc.h \
 		../../src/common/RPMArc.h \
-		../../src/common/CellVisuals.h
+		../../src/common/CellVisuals.h \
+		../../src/common/FlowStatus.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o BusboardSim.o ../../src/BusboardSim.cpp
 
 BusboardV1.o: ../../src/BusboardV1.cpp ../../src/BusboardV1.h \
@@ -2282,6 +2289,7 @@ BusboardV1.o: ../../src/BusboardV1.cpp ../../src/BusboardV1.h \
 		../../src/common/Arc.h \
 		../../src/common/RPMArc.h \
 		../../src/common/CellVisuals.h \
+		../../src/common/FlowStatus.h \
 		../../src/BusboardSerialManager.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QObject \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort/QSerialPort \
@@ -2491,7 +2499,8 @@ IBusboard.o: ../../src/IBusboard.cpp ../../src/IBusboard.h \
 		../../src/common/TempArc.h \
 		../../src/common/Arc.h \
 		../../src/common/RPMArc.h \
-		../../src/common/CellVisuals.h
+		../../src/common/CellVisuals.h \
+		../../src/common/FlowStatus.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o IBusboard.o ../../src/IBusboard.cpp
 
 CellTarget.o: ../../src/common/CellTarget.cpp ../../src/common/CellTarget.h \
@@ -2566,6 +2575,30 @@ CellVisualsHistory.o: ../../src/common/CellVisualsHistory.cpp ../../src/common/C
 		../../src/common/rapidjson/error/error.h \
 		../../src/common/rapidjson/internal/strfunc.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CellVisualsHistory.o ../../src/common/CellVisualsHistory.cpp
+
+FlowStatus.o: ../../src/common/FlowStatus.cpp ../../src/common/FlowStatus.h \
+		../../src/common/rapidjson/document.h \
+		../../src/common/rapidjson/reader.h \
+		../../src/common/rapidjson/allocators.h \
+		../../src/common/rapidjson/rapidjson.h \
+		../../src/common/rapidjson/msinttypes/stdint.h \
+		../../src/common/rapidjson/msinttypes/inttypes.h \
+		../../src/common/rapidjson/internal/meta.h \
+		../../src/common/rapidjson/stream.h \
+		../../src/common/rapidjson/encodings.h \
+		../../src/common/rapidjson/encodedstream.h \
+		../../src/common/rapidjson/memorystream.h \
+		../../src/common/rapidjson/internal/clzll.h \
+		../../src/common/rapidjson/internal/stack.h \
+		../../src/common/rapidjson/internal/swap.h \
+		../../src/common/rapidjson/internal/strtod.h \
+		../../src/common/rapidjson/internal/ieee754.h \
+		../../src/common/rapidjson/internal/biginteger.h \
+		../../src/common/rapidjson/internal/diyfp.h \
+		../../src/common/rapidjson/internal/pow10.h \
+		../../src/common/rapidjson/error/error.h \
+		../../src/common/rapidjson/internal/strfunc.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o FlowStatus.o ../../src/common/FlowStatus.cpp
 
 RedisDBManager.o: ../../src/common/RedisDBManager.cpp ../../src/common/RedisDBManager.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QObject \
@@ -2713,7 +2746,8 @@ RedisDBManager.o: ../../src/common/RedisDBManager.cpp ../../src/common/RedisDBMa
 		../../src/common/RPMArc.h \
 		../../src/common/CellVisuals.h \
 		../../src/common/CellTarget.h \
-		../../src/common/CellVisualsHistory.h
+		../../src/common/CellVisualsHistory.h \
+		../../src/common/FlowStatus.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o RedisDBManager.o ../../src/common/RedisDBManager.cpp
 
 ServiceRunner.o: ../../src/ServiceRunner.cpp ../../src/ServiceRunner.h \
@@ -2861,6 +2895,7 @@ ServiceRunner.o: ../../src/ServiceRunner.cpp ../../src/ServiceRunner.h \
 		../../src/common/Arc.h \
 		../../src/common/RPMArc.h \
 		../../src/common/CellVisuals.h \
+		../../src/common/FlowStatus.h \
 		../../src/common/RedisDBManager.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QObject \
 		../../src/common/CellTarget.h \
@@ -3368,6 +3403,7 @@ main.o: ../../src/main.cpp ../../src/ServiceRunner.h \
 		../../src/common/Arc.h \
 		../../src/common/RPMArc.h \
 		../../src/common/CellVisuals.h \
+		../../src/common/FlowStatus.h \
 		../../src/common/RedisDBManager.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QObject \
 		../../src/common/CellTarget.h \
@@ -3400,7 +3436,13 @@ main.o: ../../src/main.cpp ../../src/ServiceRunner.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q23utility.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20utility.h
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QProcess \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qprocess.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qspan.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20iterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QThread
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../../src/main.cpp
 
 moc_BusboardSerialManager.o: moc_BusboardSerialManager.cpp 

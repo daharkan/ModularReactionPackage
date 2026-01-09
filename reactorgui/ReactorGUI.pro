@@ -112,9 +112,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 INCLUDEPATH += ../experimentmanagerservice/src/common/
-INCLUDEPATH += ../../../Externals/qwt-6.2.0/src
-DEPENDPATH +=  ../../../Externals/qwt-6.2.0/lib/
-LIBS += -L../../../../../Externals/qwt-6.2.0/lib/
+INCLUDEPATH += $$(DEV_EXTERNALS_PATH)/qwt-6.2.0/src
+DEPENDPATH +=  $$(DEV_EXTERNALS_PATH)/qwt-6.2.0/lib/
+LIBS += -L$$(DEV_EXTERNALS_PATH)/qwt-6.2.0/lib/
 LIBS += -ltacopie -lcpp_redis -lqwt -L/usr/local/lib
 
 RESOURCES += \

@@ -1,13 +1,14 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
+#include <ctype.h>
 
 #ifndef IRAM_ATTR
   #define IRAM_ATTR
 #endif
 
 // ---------- Config ----------
-static const uint32_t PC_BAUD = 115200;
-static const uint32_t SLAVE_BAUD = 115200;
+static const uint32_t PC_BAUD = 9600;
+static const uint32_t SLAVE_BAUD = 9600;
 
 static const uint16_t RR_LISTEN_US = 1500;
 static const uint16_t GO_INTERVAL_MS = 200;
@@ -232,8 +233,23 @@ static bool readLineFromPC(char* out, size_t outSize) {
   return len > 0;
 }
 
-static bool parseUpdateCommand(const char* line, int* positionIdx) {
+static char* trimLine(char* line) {
+  if (!line) return line;
+  while (*line && isspace(static_cast<unsigned char>(*line))) {
+    line++;
+  }
+  size_t len = strlen(line);
+  while (len > 0 && isspace(static_cast<unsigned char>(line[len - 1]))) {
+    line[len - 1] = '\0';
+    len--;
+  }
+  return line;
+}
+
+static bool parseUpdateCommand(char* line, int* positionIdx) {
   if (!line || line[0] == '\0') return false;
+  line = trimLine(line);
+  if (line[0] == '\0') return false;
   if (line[0] != '>' || line[strlen(line) - 1] != '<') return false;
 
   char payload[128];
@@ -269,7 +285,8 @@ static bool parseUpdateCommand(const char* line, int* positionIdx) {
 static void sendUpdateToSlot(uint8_t slotIdx, const char* line) {
   if (slotIdx >= SLOT_COUNT) return;
   SSS[slotIdx]->listen();
-  SSS[slotIdx]->println(line);
+  SSS[slotIdx]->print(line);
+  SSS[slotIdx]->write('\n');
   SSS[slotIdx]->flush();
 }
 

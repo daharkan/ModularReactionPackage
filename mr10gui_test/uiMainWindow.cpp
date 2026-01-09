@@ -23,7 +23,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->startUpdateButton, &QPushButton::clicked, this, &MainWindow::updateTable);
     connect(ui->senPushButton, &QPushButton::clicked, this, &MainWindow::sendTargetsClicked);
 
-    RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+    bool succ = RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+    qDebug() << "succ: " << succ;
 
 }
 

@@ -15,6 +15,7 @@ SOURCES += \
     ../experimentmanagerservice/src/common/CellVisuals.cpp \
     ../experimentmanagerservice/src/common/CellVisualsHistory.cpp \
     ../experimentmanagerservice/src/common/Experiment.cpp \
+    ../experimentmanagerservice/src/common/FlowStatus.cpp \
     ../experimentmanagerservice/src/common/Profile.cpp \
     ../experimentmanagerservice/src/common/RPMArc.cpp \
     ../experimentmanagerservice/src/common/RedisDBManager.cpp \
@@ -44,6 +45,7 @@ HEADERS += \
     ../experimentmanagerservice/src/common/rapidjson/error/error.h \
     ../experimentmanagerservice/src/common/rapidjson/filereadstream.h \
     ../experimentmanagerservice/src/common/rapidjson/filewritestream.h \
+    ../experimentmanagerservice/src/common/FlowStatus.h \
     ../experimentmanagerservice/src/common/rapidjson/fwd.h \
     ../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
     ../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \

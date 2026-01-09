@@ -11,6 +11,10 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -18,6 +22,14 @@ QT_BEGIN_NAMESPACE
 class Ui_ReactorViewWidget
 {
 public:
+    QGridLayout *gridLayout;
+    QVBoxLayout *flowLayout;
+    QHBoxLayout *flowRateLayout;
+    QLabel *flowRateLabel;
+    QLabel *flowRateValueLabel;
+    QHBoxLayout *flowTempLayout;
+    QLabel *flowTempLabel;
+    QLabel *flowTempValueLabel;
 
     void setupUi(QWidget *ReactorViewWidget)
     {
@@ -29,6 +41,44 @@ public:
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(ReactorViewWidget->sizePolicy().hasHeightForWidth());
         ReactorViewWidget->setSizePolicy(sizePolicy);
+        gridLayout = new QGridLayout(ReactorViewWidget);
+        gridLayout->setObjectName("gridLayout");
+        flowLayout = new QVBoxLayout();
+        flowLayout->setObjectName("flowLayout");
+        flowLayout->setAlignment(Qt::AlignRight|Qt::AlignTop);
+        flowRateLayout = new QHBoxLayout();
+        flowRateLayout->setObjectName("flowRateLayout");
+        flowRateLabel = new QLabel(ReactorViewWidget);
+        flowRateLabel->setObjectName("flowRateLabel");
+
+        flowRateLayout->addWidget(flowRateLabel);
+
+        flowRateValueLabel = new QLabel(ReactorViewWidget);
+        flowRateValueLabel->setObjectName("flowRateValueLabel");
+
+        flowRateLayout->addWidget(flowRateValueLabel);
+
+
+        flowLayout->addLayout(flowRateLayout);
+
+        flowTempLayout = new QHBoxLayout();
+        flowTempLayout->setObjectName("flowTempLayout");
+        flowTempLabel = new QLabel(ReactorViewWidget);
+        flowTempLabel->setObjectName("flowTempLabel");
+
+        flowTempLayout->addWidget(flowTempLabel);
+
+        flowTempValueLabel = new QLabel(ReactorViewWidget);
+        flowTempValueLabel->setObjectName("flowTempValueLabel");
+
+        flowTempLayout->addWidget(flowTempValueLabel);
+
+
+        flowLayout->addLayout(flowTempLayout);
+
+
+        gridLayout->addLayout(flowLayout, 0, 0, 1, 1);
+
 
         retranslateUi(ReactorViewWidget);
 
@@ -38,6 +88,10 @@ public:
     void retranslateUi(QWidget *ReactorViewWidget)
     {
         ReactorViewWidget->setWindowTitle(QCoreApplication::translate("ReactorViewWidget", "Form", nullptr));
+        flowRateLabel->setText(QCoreApplication::translate("ReactorViewWidget", "Flow (L/min):", nullptr));
+        flowRateValueLabel->setText(QCoreApplication::translate("ReactorViewWidget", "--", nullptr));
+        flowTempLabel->setText(QCoreApplication::translate("ReactorViewWidget", "Flow Temp (mV):", nullptr));
+        flowTempValueLabel->setText(QCoreApplication::translate("ReactorViewWidget", "--", nullptr));
     } // retranslateUi
 
 };

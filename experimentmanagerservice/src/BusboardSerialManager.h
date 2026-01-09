@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QSerialPort>
 #include <QSerialPortInfo>
+#include <QQueue>
 #include <QDebug>
 
 class BusboardSerialManager : public QObject
@@ -24,7 +25,7 @@ private:
     QSerialPort* m_serialPort = nullptr;
     static BusboardSerialManager *m_instance;
     bool m_sleeping = false;
-    QString m_messageQueue = "";
+    QQueue<QString> m_messageQueue;
     bool m_writing = false;
 
     void writeString(QString str, QSerialPort *port);
