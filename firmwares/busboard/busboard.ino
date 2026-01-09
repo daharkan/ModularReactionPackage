@@ -165,8 +165,26 @@ static void flushLine(uint8_t slotIdx) {
     return;
   }
 
+  const char* delimiter = strchr(msg, '#');
+  if (!delimiter) {
+    lineLen[slotIdx] = 0;
+    return;
+  }
+
+  char forwardedMsg[128];
+  size_t prefixLen = (size_t)(delimiter - msg);
+  int wrote = snprintf(forwardedMsg, sizeof(forwardedMsg), "%.*s#%u%s",
+                       (int)prefixLen,
+                       msg,
+                       (unsigned)(slotIdx + 1),
+                       delimiter);
+  if (wrote < 0 || (size_t)wrote >= sizeof(forwardedMsg)) {
+    lineLen[slotIdx] = 0;
+    return;
+  }
+
   Serial.print(BUSBOARD_PREFIX);
-  Serial.print(msg);
+  Serial.print(forwardedMsg);
   Serial.print('#');
   Serial.print(flow_lpm, 3);
   Serial.print('#');

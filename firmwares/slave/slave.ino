@@ -5,7 +5,6 @@
 
 // ===================== ID / POSITION =====================
 #define CELL_ID "s25_555"
-#define POSITION_IDX 1
 
 // ===================== RTD =====================
 #define RREF 430.0
@@ -323,9 +322,8 @@ void sendStatus() {
   dtostrf((float)motorDutyPercent, 3, 0, ampStr);
   dtostrf(targetTemp, 4, 1, targetTempStr);
 
-  snprintf(message, sizeof(message), "%s#%d#%s#%s#%d#%s#%s#%d",
+  snprintf(message, sizeof(message), "%s#%s#%s#%d#%s#%s#%d",
            CELL_ID,
-           POSITION_IDX,
            innerStr,
            extStr,
            (int)currentRpm,
@@ -367,8 +365,6 @@ bool handleUpdateCommand(const char* line) {
 
   int checksumCalc = positionIdx + (int)tTemp + tRpm;
   if (checksumRec != checksumCalc) return false;
-
-  if (positionIdx != POSITION_IDX) return false;
 
   targetTemp = tTemp;
   targetRpm = tRpm;
