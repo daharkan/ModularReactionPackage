@@ -127,6 +127,12 @@ void ServiceRunner::startServiceLoop()
 
             if (it != cellTargetsMap.end()) {
                 CellTarget celltarget = cellTargetsMap[cellID];
+                Cell &dbCell = dbCellMap[cellID];
+                if (dbCell.cellID().empty()) {
+                    dbCell.setCellID(cellID);
+                }
+                dbCell.setAssignedRPM(celltarget.targetRPM());
+                dbCell.setAssignedTemp(celltarget.targetTemp());
 
                 if(celltarget.targetRPM() != boardCellMap[cellID].assignedRPM()
                     || abs( celltarget.targetTemp() - boardCellMap[cellID].assignedTemp() ) > TEMP_EPSILON){
