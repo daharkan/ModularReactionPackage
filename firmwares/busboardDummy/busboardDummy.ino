@@ -5,11 +5,11 @@
 #define IRAM_ATTR
 #endif
 
-#define BAUDRATE 9600
+#define BAUDRATE 115200
 #define SLOT_COUNT 5
 
 static const uint16_t STATUS_PERIOD_MS = 500;
-static const uint16_t GO_INTERVAL_MS = 200;
+static const uint16_t GO_INTERVAL_MS = 100;
 
 static const float TEMP_APPROACH_FACTOR = 0.15f;
 static const float TEMP_NOISE_RANGE = 0.6f;
@@ -88,45 +88,37 @@ static bool parseUpdateCommand(char* line, int* positionIdx, float* targetTemp, 
   return true;
 }
 
+static bool feedParser(char c, char* out, size_t outSize) {
+  static bool inFrame = false;
+  static size_t n = 0;
+
+  if (c == '>') { inFrame = true; n = 0; out[n++] = '>'; return false; }
+  if (!inFrame) return false;
+
+  if (n < outSize - 1) out[n++] = c;
+  else { inFrame = false; n = 0; return false; } // overflow -> drop frame
+
+  if (c == '<') { out[n] = '\0'; inFrame = false; return true; }
+  return false;
+}
+
 static void handleSerialUpdates() {
-  if (!Serial.available()) return;
-
-  static char lineBuf[128];
-  size_t len = Serial.readBytesUntil('\n', lineBuf, sizeof(lineBuf) - 1);
-  lineBuf[len] = '\0';
-  if (len == 0) return;
-
-  char* trimmed = trimLine(lineBuf);
-  char* start = strchr(trimmed, '>');
-  while (start) {
-    char* end = strchr(start, '<');
-    if (!end) break;
-
-    char payload[96];
-    size_t n = (size_t)(end - start + 1);
-    if (n >= sizeof(payload)) {
-      start = strchr(end + 1, '>');
-      continue;
-    }
-
-    strncpy(payload, start, n);
-    payload[n] = '\0';
-
-    int positionIdx = -1;
-    float targetTemp = 0.0f;
-    int targetRpm = 0;
-
-    if (parseUpdateCommand(payload, &positionIdx, &targetTemp, &targetRpm)) {
-      if (positionIdx >= 1 && positionIdx <= SLOT_COUNT) {
-        int idx = positionIdx - 1;
-        cells[idx].targetTemp = targetTemp;
-        cells[idx].targetRpm = targetRpm;
+  static char frame[96];
+  while (Serial.available()) {
+    char c = (char)Serial.read();
+    if (feedParser(c, frame, sizeof(frame))) {
+      int positionIdx; float targetTemp; int targetRpm;
+      if (parseUpdateCommand(frame, &positionIdx, &targetTemp, &targetRpm)) {
+        if (positionIdx >= 1 && positionIdx <= SLOT_COUNT) {
+          int idx = positionIdx - 1;
+          cells[idx].targetTemp = targetTemp;
+          cells[idx].targetRpm  = targetRpm;
+        }
       }
     }
-
-    start = strchr(end + 1, '>');
   }
 }
+
 
 static float randomNoise(float amplitude) {
   long raw = random(-1000, 1001);
@@ -232,11 +224,14 @@ void loop() {
     updateCellTemps();
     updateFlow();
     sendStatus();
+    Serial.println(F("GO"));
     lastStatusMs = now;
   }
+
 
   if ((uint32_t)(now - lastGoMs) >= GO_INTERVAL_MS) {
     Serial.println(F("GO"));
     lastGoMs = now;
   }
+
 }

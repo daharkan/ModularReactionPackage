@@ -5,7 +5,7 @@
 #include <thread>
 #include <sstream>
 
-#define BAUDRATE 9600
+#define BAUDRATE 115200
 #define BUSBOARD_HANDSHAKE "bb"
 
 BusboardSerialManager* BusboardSerialManager::m_instance = nullptr;
@@ -163,6 +163,8 @@ void BusboardSerialManager::flushPendingUpdates()
     }
 }
 
+
+
 void BusboardSerialManager::serialRecieved()
 {
 
@@ -253,8 +255,7 @@ void BusboardSerialManager::writeString(QString str, QSerialPort *port)
 
 
     port->flush();
-    port->clear();
-
+    port->clear(QSerialPort::Output);
     m_writing = false;
 
 }
