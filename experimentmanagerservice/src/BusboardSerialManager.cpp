@@ -115,6 +115,54 @@ bool BusboardSerialManager::writeCellUpdateString(QString str)
     return true;
 }
 
+bool BusboardSerialManager::queueUpdateCommand(const QString &command)
+{
+    int open = command.indexOf('>');
+    if (open == -1) {
+        return false;
+    }
+    int close = command.indexOf('<', open + 1);
+    if (close == -1) {
+        return false;
+    }
+
+    QString payload = command.mid(open + 1, close - open - 1);
+    QStringList parts = payload.split('#');
+    if (parts.size() < 4) {
+        return false;
+    }
+
+    bool ok = false;
+    int positionIdx = parts.at(0).toInt(&ok);
+    if (!ok) {
+        return false;
+    }
+
+    QString framed = command.mid(open, close - open + 1).trimmed();
+    if (framed.isEmpty()) {
+        return false;
+    }
+
+    m_pendingUpdates[positionIdx] = framed;
+    return true;
+}
+
+void BusboardSerialManager::flushPendingUpdates()
+{
+    if (!m_serialPort) {
+        return;
+    }
+
+    for (auto it = m_pendingUpdates.cbegin(); it != m_pendingUpdates.cend(); ++it) {
+        writeString(it.value(), m_serialPort);
+    }
+    m_pendingUpdates.clear();
+
+    while (!m_messageQueue.isEmpty()) {
+        writeString(m_messageQueue.dequeue(), m_serialPort);
+    }
+}
+
 void BusboardSerialManager::serialRecieved()
 {
 
@@ -148,11 +196,10 @@ void BusboardSerialManager::serialRecieved()
                         return;
                     }
 
-                    if(dataString.contains("GO") && m_messageQueue.size() > 0){
-                        writeString(m_messageQueue.dequeue(), m_serialPort);
+                    if(dataString.contains("GO")){
+                        flushPendingUpdates();
                         clearMessageQueue();
                         return;
-
                     }
 
                     if(dataString.count("#") < 8){
@@ -230,8 +277,7 @@ void BusboardSerialManager::writeString2Queue(QString str)
             break;
         }
         QString cmd = str.mid(open, close - open + 1).trimmed();
-        if (!cmd.isEmpty()) {
-            m_messageQueue.enqueue(cmd);
+        if (queueUpdateCommand(cmd)) {
             queuedAny = true;
         }
         start = close + 1;
