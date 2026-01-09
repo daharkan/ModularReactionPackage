@@ -1,11 +1,12 @@
 #include <Arduino.h>
+#include <ctype.h>
 
 #ifndef IRAM_ATTR
 #define IRAM_ATTR
 #endif
 
 #define BAUDRATE 115200
-#define SLOT_COUNT 3
+#define SLOT_COUNT 5
 
 static const uint16_t STATUS_PERIOD_MS = 500;
 static const uint16_t GO_INTERVAL_MS = 200;
@@ -25,7 +26,9 @@ static CellState cells[SLOT_COUNT];
 static const char* CELL_IDS[SLOT_COUNT] = {
   "s25_111",
   "s25_222",
-  "s25_333"
+  "s25_333",
+  "s25_444",
+  "s25_555"
 };
 
 static uint32_t lastStatusMs = 0;
@@ -34,8 +37,23 @@ static uint32_t lastGoMs = 0;
 static float flowLpm = 0.0f;
 static float flowTempMv = 0.0f;
 
-static bool parseUpdateCommand(const char* line, int* positionIdx, float* targetTemp, int* targetRpm) {
+static char* trimLine(char* line) {
+  if (!line) return line;
+  while (*line && isspace(static_cast<unsigned char>(*line))) {
+    line++;
+  }
+  size_t len = strlen(line);
+  while (len > 0 && isspace(static_cast<unsigned char>(line[len - 1]))) {
+    line[len - 1] = '\0';
+    len--;
+  }
+  return line;
+}
+
+static bool parseUpdateCommand(char* line, int* positionIdx, float* targetTemp, int* targetRpm) {
   if (!line || line[0] == '\0') return false;
+  line = trimLine(line);
+  if (line[0] == '\0') return false;
   if (line[0] != '>' || line[strlen(line) - 1] != '<') return false;
 
   char payload[96];
@@ -78,7 +96,8 @@ static void handleSerialUpdates() {
   lineBuf[len] = '\0';
   if (len == 0) return;
 
-  char* start = strchr(lineBuf, '>');
+  char* trimmed = trimLine(lineBuf);
+  char* start = strchr(trimmed, '>');
   while (start) {
     char* end = strchr(start, '<');
     if (!end) break;
