@@ -213,32 +213,7 @@ void BusboardSerialManager::writeString(QString str, QSerialPort *port)
 
 void BusboardSerialManager::writeString2Queue(QString str)
 {
-    if (str.isEmpty()) {
-        return;
-    }
-
-    int start = 0;
-    bool queuedAny = false;
-    while (true) {
-        int open = str.indexOf('>', start);
-        if (open == -1) {
-            break;
-        }
-        int close = str.indexOf('<', open);
-        if (close == -1) {
-            break;
-        }
-        QString cmd = str.mid(open, close - open + 1).trimmed();
-        if (!cmd.isEmpty()) {
-            m_messageQueue.enqueue(cmd);
-            queuedAny = true;
-        }
-        start = close + 1;
-    }
-
-    if (!queuedAny) {
-        m_messageQueue.enqueue(str);
-    }
+    m_messageQueue.enqueue(str);
 }
 
 void BusboardSerialManager::clearMessageQueue()
