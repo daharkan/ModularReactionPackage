@@ -20,6 +20,7 @@ struct CellState {
   int targetRpm;
   int currentRpm;
   float stirrerAmp;
+  uint8_t motorSelect;
 };
 
 static CellState cells[SLOT_COUNT];
@@ -50,7 +51,7 @@ static char* trimLine(char* line) {
   return line;
 }
 
-static bool parseUpdateCommand(char* line, int* positionIdx, float* targetTemp, int* targetRpm) {
+static bool parseUpdateCommand(char* line, int* positionIdx, float* targetTemp, int* targetRpm, uint8_t* motorSelect) {
   if (!line || line[0] == '\0') return false;
   line = trimLine(line);
   if (line[0] == '\0') return false;
@@ -77,14 +78,19 @@ static bool parseUpdateCommand(char* line, int* positionIdx, float* targetTemp, 
 
   token = strtok(nullptr, "#");
   if (!token) return false;
+  int tMotorSelect = atoi(token);
+
+  token = strtok(nullptr, "#");
+  if (!token) return false;
   int checksumRec = atoi(token);
 
-  int checksumCalc = pos + (int)tTemp + tRpm;
+  int checksumCalc = pos + (int)tTemp + tRpm + tMotorSelect;
   if (checksumRec != checksumCalc) return false;
 
   *positionIdx = pos;
   *targetTemp = tTemp;
   *targetRpm = tRpm;
+  *motorSelect = (uint8_t)tMotorSelect;
   return true;
 }
 
@@ -107,12 +113,13 @@ static void handleSerialUpdates() {
   while (Serial.available()) {
     char c = (char)Serial.read();
     if (feedParser(c, frame, sizeof(frame))) {
-      int positionIdx; float targetTemp; int targetRpm;
-      if (parseUpdateCommand(frame, &positionIdx, &targetTemp, &targetRpm)) {
+      int positionIdx; float targetTemp; int targetRpm; uint8_t motorSelect;
+      if (parseUpdateCommand(frame, &positionIdx, &targetTemp, &targetRpm, &motorSelect)) {
         if (positionIdx >= 1 && positionIdx <= SLOT_COUNT) {
           int idx = positionIdx - 1;
           cells[idx].targetTemp = targetTemp;
           cells[idx].targetRpm  = targetRpm;
+          cells[idx].motorSelect = motorSelect;
         }
       }
     }
@@ -205,6 +212,7 @@ void setup() {
     cells[i].targetRpm = 200 + (i * 10);
     cells[i].currentRpm = cells[i].targetRpm;
     cells[i].stirrerAmp = 18.0f;
+    cells[i].motorSelect = 0;
   }
 
   flowLpm = 1.2f;

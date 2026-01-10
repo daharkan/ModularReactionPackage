@@ -75,6 +75,7 @@ bool externalPresent = false;
 
 float targetTemp = 25.0f;
 int targetRpm = 0;
+uint8_t targetMotorSelect = 0;
 
 volatile unsigned long rpmPulseCount = 0;
 unsigned long lastRpmMs = 0;
@@ -278,10 +279,9 @@ void applyThermalControl() {
 
 void applyMotorControl() {
   int rpmCommand = targetRpm;
-  uint8_t motorSelect = (rpmCommand < 0) ? 2 : 1;
   int rpmAbs = abs(rpmCommand);
 
-  digitalWrite(MOTOR_SELECT_PIN, motorSelect == 1 ? LOW : HIGH);
+  digitalWrite(MOTOR_SELECT_PIN, targetMotorSelect == 0 ? LOW : HIGH);
   digitalWrite(MOTOR_DIR_PIN, HIGH);
 
   if (rpmAbs <= 0) {
@@ -361,13 +361,18 @@ bool handleUpdateCommand(const char* line) {
 
   token = strtok(nullptr, "#");
   if (!token) return false;
+  int tMotorSelect = atoi(token);
+
+  token = strtok(nullptr, "#");
+  if (!token) return false;
   int checksumRec = atoi(token);
 
-  int checksumCalc = positionIdx + (int)tTemp + tRpm;
+  int checksumCalc = positionIdx + (int)tTemp + tRpm + tMotorSelect;
   if (checksumRec != checksumCalc) return false;
 
   targetTemp = tTemp;
   targetRpm = tRpm;
+  targetMotorSelect = (uint8_t)tMotorSelect;
   return true;
 }
 

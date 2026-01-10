@@ -291,9 +291,13 @@ static bool parseUpdateCommand(char* line, int* positionIdx) {
 
   token = strtok(nullptr, "#");
   if (!token) return false;
+  int motorSelect = atoi(token);
+
+  token = strtok(nullptr, "#");
+  if (!token) return false;
   int checksumRec = atoi(token);
 
-  int checksumCalc = pos + (int)targetTemp + targetRpm;
+  int checksumCalc = pos + (int)targetTemp + targetRpm + motorSelect;
   if (checksumRec != checksumCalc) return false;
 
   *positionIdx = pos;

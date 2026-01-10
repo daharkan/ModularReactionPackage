@@ -33,7 +33,7 @@ public:
     void fromJSON(const Value& json);
 
     void updateStatusFromBoard(std::string statusDataStringFromBoard);
-    std::string generateUpdateDataStringToBoard(float targetTemp, unsigned int targetRPM);
+    std::string generateUpdateDataStringToBoard(float targetTemp, unsigned int targetRPM, unsigned int motorSelect);
 
     float currentTempInner() const;
     void setCurrentTempInner(float newCurrentTempInner);

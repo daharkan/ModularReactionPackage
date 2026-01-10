@@ -195,11 +195,16 @@ void Cell::updateStatusFromBoard(std::string statusDataStringFromBoard)
 
 }
 
-std::string Cell::generateUpdateDataStringToBoard(float targetTemp, unsigned int targetRPM)
+std::string Cell::generateUpdateDataStringToBoard(float targetTemp, unsigned int targetRPM, unsigned int motorSelect)
 {
-    ///  string:   cellID#positionIdx#targetTemp#targetRPM
+    ///  string:   cellID#positionIdx#targetTemp#targetRPM#motorSelect
     std::stringstream ss;
-    ss << ">" << m_positionIdx << "#" << targetTemp << "#" << targetRPM << "#" << (int)(m_positionIdx+targetTemp+targetRPM) << "<" ;
+    ss << ">" << m_positionIdx
+       << "#" << targetTemp
+       << "#" << targetRPM
+       << "#" << motorSelect
+       << "#" << (int)(m_positionIdx + targetTemp + targetRPM + motorSelect)
+       << "<";
     return ss.str();
 }
 

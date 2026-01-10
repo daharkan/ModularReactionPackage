@@ -164,7 +164,28 @@
       </item>
      </widget>
     </item>
+    <item row="5" column="1">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>Motor:</string>
+      </property>
+     </widget>
+    </item>
     <item row="5" column="2">
+     <widget class="QComboBox" name="motorSelectComboBox">
+      <item>
+       <property name="text">
+        <string>Motor 1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Motor 2</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="6" column="2">
      <widget class="QPushButton" name="senPushButton">
       <property name="text">
        <string>Send</string>
