@@ -84,12 +84,14 @@ void MainWindow::sendTargetsClicked()
     float targetTemp = ui->targetTempLineEdit->text().toFloat();
     int targetRPM = ui->targetRPMLineEdit->text().toInt();
     int cellIdx = ui->cellNoComboBox->currentText().toInt()-1;
+    int motorSelect = ui->motorSelectComboBox->currentIndex();
 
 
     CellTarget celltarget;
     celltarget.setCellID(m_cells.at(cellIdx).cellID());
     celltarget.setTargetRPM(targetRPM);
     celltarget.setTargetTemp(targetTemp);
+    celltarget.setMotorSelect(motorSelect);
     celltarget.setTimestamp(Cell::getCurrentTimeMillis());
     RedisDBManager::getInstance()->pushCellTarget(celltarget);
 

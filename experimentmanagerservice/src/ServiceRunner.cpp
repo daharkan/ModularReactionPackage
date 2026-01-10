@@ -134,15 +134,24 @@ void ServiceRunner::startServiceLoop()
                 dbCell.setAssignedRPM(celltarget.targetRPM());
                 dbCell.setAssignedTemp(celltarget.targetTemp());
 
+                unsigned int motorSelect = celltarget.motorSelect();
+                bool motorSelectChanged = false;
+                auto motorSelectIt = m_lastMotorSelect.find(cellID);
+                if (motorSelectIt == m_lastMotorSelect.end() || motorSelectIt->second != motorSelect) {
+                    motorSelectChanged = true;
+                }
+
                 if(celltarget.targetRPM() != boardCellMap[cellID].assignedRPM()
-                    || abs( celltarget.targetTemp() - boardCellMap[cellID].assignedTemp() ) > TEMP_EPSILON){
+                    || abs( celltarget.targetTemp() - boardCellMap[cellID].assignedTemp() ) > TEMP_EPSILON
+                    || motorSelectChanged){
                     int targetRPM = celltarget.targetRPM();
                     double targetTemp = celltarget.targetTemp();
-                    std::string updateString = boardCellMap[cellID].generateUpdateDataStringToBoard(targetTemp, targetRPM);
+                    std::string updateString = boardCellMap[cellID].generateUpdateDataStringToBoard(targetTemp, targetRPM, motorSelect);
                     QCoreApplication::processEvents();
 
                     QString str = QString::fromStdString(updateString);
                     m_busboard->sendUpdateString(str);
+                    m_lastMotorSelect[cellID] = motorSelect;
                     /*QtConcurrent::run([str, this]() {
                         m_busboard->sendUpdateString(str);
                     });*/
