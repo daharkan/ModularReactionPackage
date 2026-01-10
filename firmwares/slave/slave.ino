@@ -31,7 +31,7 @@
 #define USB_EN_PIN 24
 
 // ===================== TIMER =====================
-#define T1_PERIOD_TICKS 266 // ~30kHz @16MHz, prescaler yok
+#define T1_PERIOD_TICKS 532 // ~15kHz @8MHz, prescaler yok
 
 constexpr uint32_t BAUD = 115200;
 constexpr uint16_t STATUS_PERIOD_MS = 250;
@@ -49,6 +49,16 @@ Adafruit_MAX31865 rtdInner = Adafruit_MAX31865(RTD_CS_INNER);
 Adafruit_MAX31865 rtdExternal = Adafruit_MAX31865(RTD_CS_EXTERNAL);
 
 // ===================== PWM STATE =====================
+constexpr uint8_t PWM_DUTY_STEPS = 50;
+
+struct FastPin {
+  volatile uint8_t* out;
+  uint8_t mask;
+};
+
+FastPin peltierPwmPin;
+FastPin heaterPwmPin;
+FastPin motorPwmPin;
 volatile bool peltierEnabled = false;
 volatile bool heaterEnabled = false;
 volatile bool motorEnabled = false;
@@ -87,7 +97,8 @@ unsigned long lastStatusMs = 0;
 
 static inline uint16_t dutyToTicks(uint8_t percent) {
   if (percent > 100) percent = 100;
-  return (uint32_t)percent * T1_PERIOD_TICKS / 100u;
+  uint8_t steps = (uint32_t)percent * PWM_DUTY_STEPS / 100u;
+  return (uint32_t)steps * T1_PERIOD_TICKS / PWM_DUTY_STEPS;
 }
 
 static uint8_t clampDuty(uint8_t duty) {
@@ -107,6 +118,45 @@ void setupTimer1CTC() {
   TCCR1B = (1 << WGM12) | (1 << CS10);
   OCR1A  = T1_PERIOD_TICKS;
   TIMSK1 |= (1 << OCIE1A);
+}
+
+static inline FastPin makeFastPin(uint8_t pin) {
+  FastPin fastPin;
+  fastPin.out = portOutputRegister(digitalPinToPort(pin));
+  fastPin.mask = digitalPinToBitMask(pin);
+  return fastPin;
+}
+
+static inline void fastWrite(const FastPin &pin, bool high) {
+  if (high) {
+    *pin.out |= pin.mask;
+  } else {
+    *pin.out &= ~pin.mask;
+  }
+}
+
+static inline void updatePwm(volatile bool &enabled,
+                             volatile bool &pinHigh,
+                             volatile uint16_t &ctr,
+                             volatile uint16_t &onTicks,
+                             volatile uint16_t &offTicks,
+                             const FastPin &pin) {
+  if (!enabled || !onTicks) return;
+
+  uint16_t next = ++ctr;
+  if (pinHigh) {
+    if (next >= onTicks) {
+      fastWrite(pin, LOW);
+      pinHigh = false;
+      ctr = 0;
+    }
+  } else {
+    if (next >= offTicks) {
+      fastWrite(pin, HIGH);
+      pinHigh = true;
+      ctr = 0;
+    }
+  }
 }
 
 void setPeltierCooling() {
@@ -395,6 +445,10 @@ void setup() {
   pinMode(MOTOR_PWM_PIN, OUTPUT);
   pinMode(MOTOR_FB_PIN, INPUT_PULLUP);
 
+  peltierPwmPin = makeFastPin(PELTIER_PWM_PIN);
+  heaterPwmPin = makeFastPin(HEATER_PWM_PIN);
+  motorPwmPin = makeFastPin(MOTOR_PWM_PIN);
+
   disablePeltier();
   disableHeater();
   disableMotor();
@@ -444,51 +498,7 @@ void loop() {
 }
 
 ISR(TIMER1_COMPA_vect) {
-  if (peltierEnabled && peltierOnTicks) {
-    if (peltierPinHigh) {
-      if (++peltierCtr >= peltierOnTicks) {
-        digitalWrite(PELTIER_PWM_PIN, LOW);
-        peltierPinHigh = false;
-        peltierCtr = 0;
-      }
-    } else {
-      if (++peltierCtr >= peltierOffTicks) {
-        digitalWrite(PELTIER_PWM_PIN, HIGH);
-        peltierPinHigh = true;
-        peltierCtr = 0;
-      }
-    }
-  }
-
-  if (heaterEnabled && heaterOnTicks) {
-    if (heaterPinHigh) {
-      if (++heaterCtr >= heaterOnTicks) {
-        digitalWrite(HEATER_PWM_PIN, LOW);
-        heaterPinHigh = false;
-        heaterCtr = 0;
-      }
-    } else {
-      if (++heaterCtr >= heaterOffTicks) {
-        digitalWrite(HEATER_PWM_PIN, HIGH);
-        heaterPinHigh = true;
-        heaterCtr = 0;
-      }
-    }
-  }
-
-  if (motorEnabled && motorOnTicks) {
-    if (motorPinHigh) {
-      if (++motorCtr >= motorOnTicks) {
-        digitalWrite(MOTOR_PWM_PIN, LOW);
-        motorPinHigh = false;
-        motorCtr = 0;
-      }
-    } else {
-      if (++motorCtr >= motorOffTicks) {
-        digitalWrite(MOTOR_PWM_PIN, HIGH);
-        motorPinHigh = true;
-        motorCtr = 0;
-      }
-    }
-  }
+  updatePwm(peltierEnabled, peltierPinHigh, peltierCtr, peltierOnTicks, peltierOffTicks, peltierPwmPin);
+  updatePwm(heaterEnabled, heaterPinHigh, heaterCtr, heaterOnTicks, heaterOffTicks, heaterPwmPin);
+  updatePwm(motorEnabled, motorPinHigh, motorCtr, motorOnTicks, motorOffTicks, motorPwmPin);
 }
