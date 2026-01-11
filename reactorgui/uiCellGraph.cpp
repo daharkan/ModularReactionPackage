@@ -155,6 +155,21 @@ void CellGraph::pushTemperatureAndRPMData(double temp, double rpm, unsigned long
     m_plot->replot();
 }
 
+
+void CellGraph::applyTempAxisRange()
+{
+    if (!m_hasTempRange) {
+        return;
+    }
+    double minTemp = m_minTempRange;
+    double maxTemp = m_maxTempRange;
+    if (minTemp == maxTemp) {
+        maxTemp += 1.0;
+    }
+    m_plot->setAxisAutoScale(QwtPlot::yLeft, false);
+    m_plot->setAxisScale(QwtPlot::yLeft, minTemp, maxTemp);
+}
+
 void CellGraph::initilizeExperimentGraph()
 {
     m_dataPushStartTimestamp = Cell::getCurrentTimeMillis();

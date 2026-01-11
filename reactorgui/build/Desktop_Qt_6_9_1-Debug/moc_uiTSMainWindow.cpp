@@ -48,6 +48,9 @@ template <> constexpr inline auto TSMainWindow::qt_create_metaobjectdata<qt_meta
         "showExpManagerWidget",
         "showUserManagementWidget",
         "showOptionsWidget",
+        "showCellViewWidget",
+        "std::string",
+        "cellId",
         "closeApp",
         "showPreviousPage",
         "mainPageChanged",
@@ -69,13 +72,17 @@ template <> constexpr inline auto TSMainWindow::qt_create_metaobjectdata<qt_meta
         QtMocHelpers::SlotData<void()>(7, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'showOptionsWidget'
         QtMocHelpers::SlotData<void()>(8, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'showCellViewWidget'
+        QtMocHelpers::SlotData<void(const std::string &)>(9, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 10, 11 },
+        }}),
         // Slot 'closeApp'
-        QtMocHelpers::SlotData<void()>(9, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(12, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'showPreviousPage'
-        QtMocHelpers::SlotData<void()>(10, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(13, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'mainPageChanged'
-        QtMocHelpers::SlotData<void(int)>(11, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Int, 12 },
+        QtMocHelpers::SlotData<void(int)>(14, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 15 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -107,9 +114,10 @@ void TSMainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         case 4: _t->showExpManagerWidget(); break;
         case 5: _t->showUserManagementWidget(); break;
         case 6: _t->showOptionsWidget(); break;
-        case 7: _t->closeApp(); break;
-        case 8: _t->showPreviousPage(); break;
-        case 9: _t->mainPageChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 7: _t->showCellViewWidget((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1]))); break;
+        case 8: _t->closeApp(); break;
+        case 9: _t->showPreviousPage(); break;
+        case 10: _t->mainPageChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
         default: ;
         }
     }
@@ -134,14 +142,14 @@ int TSMainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 10)
+        if (_id < 11)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 10;
+        _id -= 11;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 10)
+        if (_id < 11)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 10;
+        _id -= 11;
     }
     return _id;
 }

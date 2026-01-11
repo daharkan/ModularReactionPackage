@@ -48,6 +48,10 @@ public:
     QLabel *experimentNameValueLabel;
     QLabel *experimentProgressLabel;
     QLabel *experimentProgressValueLabel;
+    QLabel *assignedByLabel;
+    QLabel *assignedByValueLabel;
+    QLabel *assignedAtLabel;
+    QLabel *assignedAtValueLabel;
 
     void setupUi(QWidget *CellWidget)
     {
@@ -222,6 +226,27 @@ public:
 
         gridLayout->addWidget(experimentProgressValueLabel, 4, 6, 1, 1);
 
+        assignedByLabel = new QLabel(CellWidget);
+        assignedByLabel->setObjectName("assignedByLabel");
+
+        gridLayout->addWidget(assignedByLabel, 5, 0, 1, 1);
+
+        assignedByValueLabel = new QLabel(CellWidget);
+        assignedByValueLabel->setObjectName("assignedByValueLabel");
+        assignedByValueLabel->setFont(font);
+
+        gridLayout->addWidget(assignedByValueLabel, 5, 2, 1, 2);
+
+        assignedAtLabel = new QLabel(CellWidget);
+        assignedAtLabel->setObjectName("assignedAtLabel");
+
+        gridLayout->addWidget(assignedAtLabel, 5, 5, 1, 1);
+
+        assignedAtValueLabel = new QLabel(CellWidget);
+        assignedAtValueLabel->setObjectName("assignedAtValueLabel");
+
+        gridLayout->addWidget(assignedAtValueLabel, 5, 6, 1, 1);
+
 
         gridLayout_2->addLayout(gridLayout, 1, 1, 1, 2);
 
@@ -253,6 +278,10 @@ public:
         experimentNameValueLabel->setText(QCoreApplication::translate("CellWidget", "--", nullptr));
         experimentProgressLabel->setText(QCoreApplication::translate("CellWidget", "Progress:", nullptr));
         experimentProgressValueLabel->setText(QCoreApplication::translate("CellWidget", "--", nullptr));
+        assignedByLabel->setText(QCoreApplication::translate("CellWidget", "Assigned By:", nullptr));
+        assignedByValueLabel->setText(QCoreApplication::translate("CellWidget", "--", nullptr));
+        assignedAtLabel->setText(QCoreApplication::translate("CellWidget", "Assigned At:", nullptr));
+        assignedAtValueLabel->setText(QCoreApplication::translate("CellWidget", "--", nullptr));
     } // retranslateUi
 
 };

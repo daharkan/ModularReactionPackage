@@ -9,7 +9,7 @@ TempArc::TempArc(float A, float B, float C, unsigned long startTimeMsec, unsigne
     double startTimeSec = startTimeMsec/1000.0;
     m_finishTemp = A * finishTimeSec * finishTimeSec + B * finishTimeSec + C;
     m_startTemp = A * startTimeSec * startTimeSec + B * startTimeSec + C;
-    std::cout << std::endl;
+    /*std::cout << std::endl;
     std::cout << "TempArc::TempArc A: " << A << std::endl;
     std::cout << "TempArc::TempArc B: " << B << std::endl;
     std::cout << "TempArc::TempArc C: " << C << std::endl;
@@ -17,8 +17,7 @@ TempArc::TempArc(float A, float B, float C, unsigned long startTimeMsec, unsigne
     std::cout << "TempArc::TempArc m_finishTemp: " << m_finishTemp << std::endl;
     std::cout << "TempArc::TempArc m_startTimeMsec: " << m_startTimeMsec << std::endl;
     std::cout << "TempArc::TempArc m_finishTimeMsec: " << m_finishTimeMsec << std::endl;
-
-
+*/
 }
 
 float TempArc::startTemp() const
