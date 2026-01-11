@@ -849,47 +849,22 @@ void ExperimentCreateWidget::assignExperimentToCells()
     QDialog dialog(this);
     dialog.setWindowTitle(tr("Assign Experiment"));
     QVBoxLayout *layout = new QVBoxLayout(&dialog);
-    QHBoxLayout *listLayout = new QHBoxLayout();
+    QListWidget *listWidget = new QListWidget(&dialog);
+    listWidget->setSelectionMode(QAbstractItemView::MultiSelection);
+    listWidget->setSpacing(8);
 
-    QListWidget *lhsListWidget = new QListWidget(&dialog);
-    lhsListWidget->setSelectionMode(QAbstractItemView::MultiSelection);
-    lhsListWidget->setSpacing(8);
-
-    QListWidget *rhsListWidget = new QListWidget(&dialog);
-    rhsListWidget->setSelectionMode(QAbstractItemView::MultiSelection);
-    rhsListWidget->setSpacing(8);
-
-    std::vector<Cell> lhsCells;
-    std::vector<Cell> rhsCells;
     std::unordered_map<std::string, Cell> cellById;
     for (const auto &cell : filteredCells) {
         cellById[cell.cellID()] = cell;
-        QString upperId = QString::fromStdString(cell.cellID()).toUpper();
-        if (upperId.contains("RHS")) {
-            rhsCells.push_back(cell);
-        } else {
-            lhsCells.push_back(cell);
-        }
-    }
 
-    auto sortByPositionAsc = [](const Cell &a, const Cell &b) {
-        return a.positionIdx() < b.positionIdx();
-    };
-    auto sortByPositionDesc = [](const Cell &a, const Cell &b) {
-        return a.positionIdx() > b.positionIdx();
-    };
-    std::sort(lhsCells.begin(), lhsCells.end(), sortByPositionAsc);
-    std::sort(rhsCells.begin(), rhsCells.end(), sortByPositionDesc);
-
-    auto addCellItem = [&](QListWidget *targetList, const Cell &cell, int displayIndex) {
-        QListWidgetItem *item = new QListWidgetItem(targetList);
+        QListWidgetItem *item = new QListWidgetItem(listWidget);
         item->setData(Qt::UserRole, QString::fromStdString(cell.cellID()));
 
-        CellOverviewWidget *cellWidget = new CellOverviewWidget(targetList);
-        cellWidget->setSlotInfo(tr("Cell"), displayIndex);
+        CellOverviewWidget *cellWidget = new CellOverviewWidget(listWidget);
+        cellWidget->setSlotInfo(tr("Cell"), cell.positionIdx());
         cellWidget->setCellData(cell);
         item->setSizeHint(cellWidget->sizeHint());
-        targetList->setItemWidget(item, cellWidget);
+        listWidget->setItemWidget(item, cellWidget);
 
         QString owner = QString::fromStdString(cell.asignedExperiment().owner().username());
         bool available = cell.asignedExperiment().name().empty() ||
@@ -910,9 +885,7 @@ void ExperimentCreateWidget::assignExperimentToCells()
         addCellItem(rhsListWidget, cell, displayIndex);
     }
 
-    listLayout->addWidget(lhsListWidget);
-    listLayout->addWidget(rhsListWidget);
-    layout->addLayout(listLayout);
+    layout->addWidget(listWidget);
     QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     layout->addWidget(buttons);
     QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
@@ -922,8 +895,7 @@ void ExperimentCreateWidget::assignExperimentToCells()
         return;
     }
 
-    QList<QListWidgetItem*> selectedItems = lhsListWidget->selectedItems();
-    selectedItems.append(rhsListWidget->selectedItems());
+    QList<QListWidgetItem*> selectedItems = listWidget->selectedItems();
     if (selectedItems.isEmpty()) {
         return;
     }
@@ -933,6 +905,20 @@ void ExperimentCreateWidget::assignExperimentToCells()
         tr("Assign Experiment"),
         tr("Assign this experiment to %1 cell(s)?\nExisting assignments on those cells will be overwritten.")
             .arg(selectedItems.size()),
+        QMessageBox::Yes | QMessageBox::No);
+    if (reply != QMessageBox::Yes) {
+        return;
+    }
+
+    int selectedCount = 0;
+    for (const auto &range : ranges) {
+        selectedCount += (range.bottomRow() - range.topRow() + 1);
+    }
+
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        this,
+        tr("Assign Experiment"),
+        tr("Assign this experiment to %1 cell(s)?\nExisting assignments on those cells will be overwritten.").arg(selectedCount),
         QMessageBox::Yes | QMessageBox::No);
     if (reply != QMessageBox::Yes) {
         return;
