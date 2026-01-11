@@ -10,7 +10,6 @@ CONFIG += c++17
 
 SOURCES += \
     ExperimentRunner.cpp \
-    OnlyCellSerialManager.cpp \
     main.cpp \
     ../experimentmanagerservice/src/common/Arc.cpp \
     ../experimentmanagerservice/src/common/Cell.cpp \
@@ -41,7 +40,6 @@ HEADERS += \
     ../experimentmanagerservice/src/common/User.h \
     ../experimentmanagerservice/src/common/TempArc.h \
     ExperimentRunner.h \
-    OnlyCellSerialManager.h \
     uiCellGraph.h \
     uiCellWidget.h \
     uiMainWindow.h
