@@ -170,7 +170,7 @@ void CellWidget::updateCell(Cell &cell)
     }
 
     pushTempAndRPMToCellGraph(currentTempExt, currentRPM);
-    QString expName = QString::fromStdString(experiment.name());
+        QString expName = QString::fromStdString(experiment.name());
     if (expName.isEmpty()) {
         expName = "--";
     }
@@ -263,7 +263,6 @@ void CellWidget::ensureExperimentGraph(const Experiment &experiment)
         ui->graphLayput->addWidget(m_cellGraph);
     }
 }
-
 void CellWidget::loadVisualHistoryIfNeeded(const Experiment &experiment)
 {
     if (m_cellGraph == nullptr || m_cell.cellID().empty()) {

@@ -106,12 +106,13 @@ void CellGraph::updateTheExperiment(Experiment &experiment)
             rpmData.push_back(rpmArc.calculateY(lastSecs*1000.0 + time));
         }
     }
-
-    //convert msec to secs
-
-
     m_expRpmCurve->setSamples(rpmTimeData.data(), rpmData.data(), rpmTimeData.size());
     m_expTempCurve->setSamples(tempTimeData.data(), temperatureData.data(), tempTimeData.size());
+    m_hasTempRange = hasTempRange;
+    if (hasTempRange) {
+        m_minTempRange = minTemp;
+        m_maxTempRange = maxTemp;
+    }
     if (hasTempRange) {
         if (minTemp == maxTemp) {
             maxTemp += 1.0;
@@ -158,6 +159,7 @@ void CellGraph::loadVisualHistory(const CellVisualsHistory& history)
     applyTempAxisRange();
     m_plot->replot();
 }
+
 
 void CellGraph::pushTemperatureAndRPMData(double temp, double rpm, unsigned long timestamp)
 {
