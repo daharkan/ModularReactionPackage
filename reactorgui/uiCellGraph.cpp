@@ -108,17 +108,7 @@ void CellGraph::updateTheExperiment(Experiment &experiment)
     }
     m_expRpmCurve->setSamples(rpmTimeData.data(), rpmData.data(), rpmTimeData.size());
     m_expTempCurve->setSamples(tempTimeData.data(), temperatureData.data(), tempTimeData.size());
-    m_hasTempRange = hasTempRange;
-    if (hasTempRange) {
-        m_minTempRange = minTemp;
-        m_maxTempRange = maxTemp;
-    }
-    if (hasTempRange) {
-        if (minTemp == maxTemp) {
-            maxTemp += 1.0;
-        }
-        m_plot->setAxisScale(QwtPlot::yLeft, minTemp, maxTemp);
-    }
+
     m_plot->replot();
 
     //qDebug() << "graph updated.";
