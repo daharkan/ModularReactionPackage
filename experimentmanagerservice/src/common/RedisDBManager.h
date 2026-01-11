@@ -13,7 +13,6 @@
 #define DB_SCHEMA_VERSION_KEY "mr10:schema_version"
 #define DB_SCHEMA_VERSION_VALUE "2"
 
-#define DB_BUSBOARD_IDS_KEY "mr10:busboard_ids"
 #define DB_BUSBOARD_TABLE_KEY "mr10:busboards"
 #define DB_CELLTABLE_KEY "mr10:cells"
 #define DB_TARGETTABLE_KEY "mr10:targets"
@@ -41,6 +40,7 @@ public:
     std::vector<CellTarget> getCellTargets(std::vector<std::string> cellIDList);
     std::vector<std::string> getBusboardCellIds(std::string busboardID);
     std::vector<std::string> getBusboardIds();
+    std::vector<std::string> getCellIds();
 
     bool pushCellTarget(CellTarget celltarget);
     bool pushCellTargets(std::vector<CellTarget> celltargets);

@@ -576,7 +576,31 @@ std::vector<std::string> RedisDBManager::getBusboardCellIds(std::string busboard
 std::vector<std::string> RedisDBManager::getBusboardIds()
 {
     std::vector<std::string> ids;
-    std::future<cpp_redis::reply> future_reply = m_client.smembers(DB_BUSBOARD_IDS_KEY);
+    std::future<cpp_redis::reply> future_reply = m_client.hkeys(DB_BUSBOARD_TABLE_KEY);
+    m_client.sync_commit();
+
+    if (replyTimedOut(future_reply)) {
+        return ids;
+    }
+
+    cpp_redis::reply reply = future_reply.get();
+    if (!reply.is_array()) {
+        return ids;
+    }
+
+    for (const auto& item : reply.as_array()) {
+        if (item.is_string()) {
+            ids.push_back(item.as_string());
+        }
+    }
+
+    return ids;
+}
+
+std::vector<std::string> RedisDBManager::getCellIds()
+{
+    std::vector<std::string> ids;
+    std::future<cpp_redis::reply> future_reply = m_client.hkeys(DB_CELLTABLE_KEY);
     m_client.sync_commit();
 
     if (replyTimedOut(future_reply)) {
@@ -707,7 +731,6 @@ bool RedisDBManager::pushFlowStatus(const std::string& busboardID, const FlowSta
 
     std::string jsonString = buffer.GetString();
     m_client.hset(DB_BUSBOARD_TABLE_KEY, busboardID, jsonString);
-    m_client.sadd(DB_BUSBOARD_IDS_KEY, {busboardID});
     m_client.sync_commit();
     return true;
 }
@@ -793,7 +816,6 @@ bool RedisDBManager::pushBusboardCellIds(std::string busboardID, std::vector<std
 
     std::string jsonString = buffer.GetString();
     m_client.hset(DB_BUSBOARD_TABLE_KEY, busboardID, jsonString);
-    m_client.sadd(DB_BUSBOARD_IDS_KEY, {busboardID});
     m_client.sync_commit();
     return true;
 }

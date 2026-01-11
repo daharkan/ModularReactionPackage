@@ -809,13 +809,7 @@ void ExperimentCreateWidget::assignExperimentToCells()
         RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
     }
 
-    std::vector<std::string> busboardIds = RedisDBManager::getInstance()->getBusboardIds();
-    std::vector<std::string> cellIds;
-    for (const auto &busboardId : busboardIds) {
-        std::vector<std::string> ids = RedisDBManager::getInstance()->getBusboardCellIds(busboardId);
-        cellIds.insert(cellIds.end(), ids.begin(), ids.end());
-    }
-
+    std::vector<std::string> cellIds = RedisDBManager::getInstance()->getCellIds();
     std::vector<Cell> cells = RedisDBManager::getInstance()->getCellList(cellIds);
     std::vector<Cell> filteredCells;
     filteredCells.reserve(cells.size());
