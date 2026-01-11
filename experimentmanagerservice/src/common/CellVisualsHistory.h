@@ -7,7 +7,7 @@ class CellVisualsHistory
 {
 public:
     CellVisualsHistory();
-    CellVisualsHistory(const std::vector<CellVisuals>& visuals = {}) : m_visuals(visuals) {}
+    explicit CellVisualsHistory(const std::vector<CellVisuals>& visuals) : m_visuals(visuals) {}
 
     // Copy constructor
     CellVisualsHistory(const CellVisualsHistory& other) : m_visuals(other.m_visuals) {}
