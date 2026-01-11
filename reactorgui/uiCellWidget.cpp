@@ -1,5 +1,6 @@
 #include "uiCellWidget.h"
 #include "ui_uiCellWidget.h"
+#include <QDateTime>
 #include <QtConcurrent>
 
 namespace {
@@ -172,6 +173,19 @@ void CellWidget::updateCell(Cell &cell)
         expName = "--";
     }
     ui->experimentNameValueLabel->setText(expName);
+
+    QString assignedBy = QString::fromStdString(experiment.owner().username());
+    if (assignedBy.isEmpty()) {
+        assignedBy = "--";
+    }
+    ui->assignedByValueLabel->setText(assignedBy);
+
+    QString assignedAt = "--";
+    if (experiment.startSystemTimeMSecs() > 0) {
+        QDateTime assignedDate = QDateTime::fromMSecsSinceEpoch(experiment.startSystemTimeMSecs());
+        assignedAt = assignedDate.toString("yyyy-MM-dd HH:mm");
+    }
+    ui->assignedAtValueLabel->setText(assignedAt);
 
     QString stateText = "--";
     QString progressText = "--";

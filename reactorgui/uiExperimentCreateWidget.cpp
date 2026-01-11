@@ -12,13 +12,16 @@
 #include <QInputDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QListWidget>
 #include <QRadioButton>
-#include <QTableWidget>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QUuid>
 #include <QtConcurrent>
 #include <unordered_set>
+#include <unordered_map>
+
+#include "uiCellOverviewWidget.h"
 
 ExperimentCreateWidget::ExperimentCreateWidget(QWidget *parent)
     : QWidget(parent)
@@ -809,6 +812,16 @@ void ExperimentCreateWidget::assignExperimentToCells()
         RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
     }
 
+    bool isAdmin = m_currentUser.role() == ROLE_ADMIN || m_currentUser.role() == ROLE_ROOT;
+    if (!isAdmin && !m_currentExperiment.owner().username().empty()
+        && m_currentExperiment.owner().username() != m_currentUser.username()) {
+        QMessageBox::warning(
+            this,
+            tr("Assign Experiment"),
+            tr("You can only assign experiments that you own."));
+        return;
+    }
+
     std::vector<std::string> cellIds = RedisDBManager::getInstance()->getCellIds();
     std::vector<Cell> cells = RedisDBManager::getInstance()->getCellList(cellIds);
     std::vector<Cell> filteredCells;
@@ -835,37 +848,34 @@ void ExperimentCreateWidget::assignExperimentToCells()
     QDialog dialog(this);
     dialog.setWindowTitle(tr("Assign Experiment"));
     QVBoxLayout *layout = new QVBoxLayout(&dialog);
-    QTableWidget *table = new QTableWidget(&dialog);
-    table->setColumnCount(2);
-    table->setHorizontalHeaderLabels(QStringList() << tr("Cell ID") << tr("Assigned Experiment"));
-    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    table->setSelectionBehavior(QAbstractItemView::SelectRows);
-    table->setSelectionMode(QAbstractItemView::MultiSelection);
-    table->setRowCount(static_cast<int>(filteredCells.size()));
+    QListWidget *listWidget = new QListWidget(&dialog);
+    listWidget->setSelectionMode(QAbstractItemView::MultiSelection);
+    listWidget->setSpacing(8);
 
-    for (int row = 0; row < static_cast<int>(filteredCells.size()); ++row) {
-        const Cell &cell = filteredCells.at(row);
-        QString cellId = QString::fromStdString(cell.cellID());
-        QTableWidgetItem *idItem = new QTableWidgetItem(cellId);
-        table->setItem(row, 0, idItem);
+    std::unordered_map<std::string, Cell> cellById;
+    for (const auto &cell : filteredCells) {
+        cellById[cell.cellID()] = cell;
 
-        QString expName = QString::fromStdString(cell.asignedExperiment().name());
-        if (expName.isEmpty()) {
-            expName = tr("--");
-        }
-        QTableWidgetItem *expItem = new QTableWidgetItem(expName);
-        table->setItem(row, 1, expItem);
+        QListWidgetItem *item = new QListWidgetItem(listWidget);
+        item->setData(Qt::UserRole, QString::fromStdString(cell.cellID()));
+
+        CellOverviewWidget *cellWidget = new CellOverviewWidget(listWidget);
+        cellWidget->setSlotInfo(tr("Cell"), cell.positionIdx());
+        cellWidget->setCellData(cell);
+        item->setSizeHint(cellWidget->sizeHint());
+        listWidget->setItemWidget(item, cellWidget);
 
         QString owner = QString::fromStdString(cell.asignedExperiment().owner().username());
         bool available = cell.asignedExperiment().name().empty() ||
-                         owner == QString::fromStdString(m_currentUser.username());
+                         owner == QString::fromStdString(m_currentUser.username()) ||
+                         isAdmin;
         if (!available) {
-            idItem->setFlags(idItem->flags() & ~Qt::ItemIsSelectable);
-            expItem->setFlags(expItem->flags() & ~Qt::ItemIsSelectable);
+            item->setFlags(item->flags() & ~Qt::ItemIsSelectable);
+            cellWidget->setEnabled(false);
         }
     }
 
-    layout->addWidget(table);
+    layout->addWidget(listWidget);
     QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     layout->addWidget(buttons);
     QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
@@ -875,8 +885,18 @@ void ExperimentCreateWidget::assignExperimentToCells()
         return;
     }
 
-    QList<QTableWidgetSelectionRange> ranges = table->selectedRanges();
-    if (ranges.isEmpty()) {
+    QList<QListWidgetItem*> selectedItems = listWidget->selectedItems();
+    if (selectedItems.isEmpty()) {
+        return;
+    }
+
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        this,
+        tr("Assign Experiment"),
+        tr("Assign this experiment to %1 cell(s)?\nExisting assignments on those cells will be overwritten.")
+            .arg(selectedItems.size()),
+        QMessageBox::Yes | QMessageBox::No);
+    if (reply != QMessageBox::Yes) {
         return;
     }
 
@@ -896,24 +916,25 @@ void ExperimentCreateWidget::assignExperimentToCells()
 
     unsigned long startTime = Cell::getCurrentTimeMillis();
     std::vector<Cell> updatedCells;
-    for (const auto &range : ranges) {
-        for (int row = range.topRow(); row <= range.bottomRow(); ++row) {
-            if (row < 0 || row >= static_cast<int>(filteredCells.size())) {
-                continue;
-            }
-            Cell cell = filteredCells.at(row);
-            Experiment assignedExperiment = m_currentExperiment;
-            assignedExperiment.setStartSystemTimeMSecs(startTime);
-            cell.setAsignedExperiment(assignedExperiment);
-            updatedCells.push_back(cell);
-
-            ExperimentRunner *runner = new ExperimentRunner(this);
-            runner->assignExperiment(assignedExperiment);
-            runner->setCellId(cell.cellID());
-            QtConcurrent::run([runner]() {
-                runner->run();
-            });
+    for (QListWidgetItem *item : selectedItems) {
+        std::string cellId = item->data(Qt::UserRole).toString().toStdString();
+        auto it = cellById.find(cellId);
+        if (it == cellById.end()) {
+            continue;
         }
+        Cell cell = it->second;
+        Experiment assignedExperiment = m_currentExperiment;
+        assignedExperiment.setOwner(m_currentUser);
+        assignedExperiment.setStartSystemTimeMSecs(startTime);
+        cell.setAsignedExperiment(assignedExperiment);
+        updatedCells.push_back(cell);
+
+        ExperimentRunner *runner = new ExperimentRunner(this);
+        runner->assignExperiment(assignedExperiment);
+        runner->setCellId(cell.cellID());
+        QtConcurrent::run([runner]() {
+            runner->run();
+        });
     }
 
     if (!updatedCells.empty()) {
