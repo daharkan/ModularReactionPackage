@@ -10,6 +10,7 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_ADXL345_U.h>
 #include <PID_v1.h>
+#include <math.h>
 double setpoint = 50.0; // Desired setpoint
 double input, output;
 double Kp = 2.0; // Proportional gain
@@ -18,6 +19,9 @@ double Kd = 1.0; // Derivative gain
 
 int posId = 7;
 char *cellName = "s25_777";
+
+const float TEMP_APPROACH_RATE_PER_SEC = 0.35f;
+const float RPM_APPROACH_RATE_PER_SEC = 750.0f;
 
 // Define PID objects
 PID myPID(&input, &output, &setpoint, Kp, Ki, Kd, DIRECT);
@@ -83,10 +87,32 @@ void countPulse() {
 
 int targetRPM;
 float targetTemp;
+float currentTempInner;
+float currentTempExt;
+float currentRPM;
+unsigned long lastSimUpdateMs;
+
+float stepToward(float currentValue, float targetValue, float ratePerSecond, float deltaSeconds)
+{
+  if (deltaSeconds <= 0.0f) {
+    return currentValue;
+  }
+  float maxStep = ratePerSecond * deltaSeconds;
+  float delta = targetValue - currentValue;
+  if (fabs(delta) <= maxStep) {
+    return targetValue;
+  }
+  return currentValue + (delta > 0.0f ? maxStep : -maxStep);
+}
+
 void setup()
 {
   targetRPM = 0;
   targetTemp = 0;
+  currentTempInner = 0.0f;
+  currentTempExt = 0.0f;
+  currentRPM = 0.0f;
+  lastSimUpdateMs = 0;
   Serial.begin(BAUD);
   mySerial.begin(BAUD); // SoftwareSerial communication with Uno
   mySerial.listen();
@@ -118,6 +144,12 @@ void setup()
 void loop()
 {
   wdt_reset();
+  unsigned long nowMs = millis();
+  float deltaSeconds = 0.0f;
+  if (lastSimUpdateMs > 0) {
+    deltaSeconds = (nowMs - lastSimUpdateMs) / 1000.0f;
+  }
+  lastSimUpdateMs = nowMs;
   //delay(150);
   /*sensors_event_t event1;
   accel1.getEvent(&event1);
@@ -179,10 +211,14 @@ void loop()
       
     }
 
+  currentTempInner = stepToward(currentTempInner, targetTemp, TEMP_APPROACH_RATE_PER_SEC, deltaSeconds);
+  currentTempExt = stepToward(currentTempExt, targetTemp, TEMP_APPROACH_RATE_PER_SEC, deltaSeconds);
+  currentRPM = stepToward(currentRPM, static_cast<float>(targetRPM), RPM_APPROACH_RATE_PER_SEC, deltaSeconds);
+
   float amp = output;
-  rpm = 11 + analogRead(A3);
-  float xAccel1 = 13.0 + (analogRead(A4))%5;
-  float xAccel2 = 15.0 + (analogRead(A5))%4;
+  rpm = static_cast<int>(round(currentRPM));
+  float xAccel1 = currentTempInner;
+  float xAccel2 = currentTempExt;
 
   char innerStr[9];
   char extStr[9];
