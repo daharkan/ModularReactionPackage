@@ -1475,14 +1475,17 @@ moc_BusboardSerialManager.cpp: ../../src/BusboardSerialManager.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort/qtserialportexports.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort/QSerialPortInfo \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort/qserialportinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QQueue \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qqueue.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QMap \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata_impl.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDebug \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdebug.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtextstream.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontiguouscache.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmap.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata_impl.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qset.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
@@ -1962,14 +1965,17 @@ BusboardSerialManager.o: ../../src/BusboardSerialManager.cpp ../../src/BusboardS
 		/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort/qtserialportexports.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort/QSerialPortInfo \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort/qserialportinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QQueue \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qqueue.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QMap \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata_impl.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDebug \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdebug.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtextstream.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontiguouscache.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmap.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata_impl.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qset.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
@@ -1990,7 +1996,8 @@ BusboardSerialManager.o: ../../src/BusboardSerialManager.cpp ../../src/BusboardS
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpromise.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariant.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q23utility.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20utility.h
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSet
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o BusboardSerialManager.o ../../src/BusboardSerialManager.cpp
 
 Arc.o: ../../src/common/Arc.cpp ../../src/common/Arc.h
@@ -2304,14 +2311,17 @@ BusboardV1.o: ../../src/BusboardV1.cpp ../../src/BusboardV1.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort/qtserialportexports.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort/QSerialPortInfo \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort/qserialportinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QQueue \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qqueue.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QMap \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata_impl.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDebug \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdebug.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtextstream.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontiguouscache.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmap.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata_impl.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qset.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
@@ -2914,14 +2924,17 @@ ServiceRunner.o: ../../src/ServiceRunner.cpp ../../src/ServiceRunner.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort/qtserialportexports.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort/QSerialPortInfo \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort/qserialportinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QQueue \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qqueue.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QMap \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata_impl.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDebug \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdebug.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtextstream.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontiguouscache.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmap.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata_impl.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qset.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
@@ -2943,6 +2956,7 @@ ServiceRunner.o: ../../src/ServiceRunner.cpp ../../src/ServiceRunner.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariant.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q23utility.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QString \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/QtConcurrent \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/QtConcurrentDepends \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QtCore \
@@ -3034,7 +3048,6 @@ ServiceRunner.o: ../../src/ServiceRunner.cpp ../../src/ServiceRunner.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qprocess.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpropertyanimation.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariantanimation.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qqueue.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrandom.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qreadwritelock.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrect.h \
@@ -3072,11 +3085,9 @@ ServiceRunner.o: ../../src/ServiceRunner.cpp ../../src/ServiceRunner.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarianthash.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QHash \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QString \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariantlist.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QList \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariantmap.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QMap \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qwaitcondition.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDeadlineTimer \

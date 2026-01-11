@@ -9,6 +9,7 @@
 
 #include "Experiment.h"
 #include "Cell.h"
+#include "CellVisualsHistory.h"
 
 #define GRAPH_RESOLUTION_MSECS 300
 
@@ -26,6 +27,7 @@ public:
     void updateTheExperiment(Experiment& experiment);
     void pushTemperatureAndRPMData(double temp, double rpm, unsigned long timestamp = 0);
     void initilizeExperimentGraph();
+    void loadVisualHistory(const CellVisualsHistory& history);
 
     bool isDataPushStarted()
     {

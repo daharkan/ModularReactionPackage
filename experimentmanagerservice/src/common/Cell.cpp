@@ -221,6 +221,8 @@ CellVisuals Cell::toCellVisuals()
 {
     CellVisuals cellVs;
     cellVs.setRpm(m_currentRPM);
+    cellVs.setStirrerAmp(m_stirrerMotorAmp);
+    cellVs.setTimestamp(getCurrentTimeMillis());
 
     if(m_isExtTempPlugged){
         cellVs.setTemperature(m_currentTempExt);

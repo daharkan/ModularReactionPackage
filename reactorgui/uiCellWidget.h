@@ -45,8 +45,10 @@ private:
     ExperimentRunner *m_expRunner;
 
     bool m_firstStartedRunning = false;
+    std::string m_loadedHistoryExperimentId;
 
     void ensureExperimentGraph(const Experiment &experiment);
+    void loadVisualHistoryIfNeeded(const Experiment &experiment);
     void clearExperimentGraph();
     bool hasExperimentAssigned(const Experiment &experiment) const;
 
