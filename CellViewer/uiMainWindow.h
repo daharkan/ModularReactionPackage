@@ -2,8 +2,9 @@
 #define MAINWINDOWW_H
 
 #include <QMainWindow>
+#include <QTimer>
 #include "uiCellWidget.h"
-#include "OnlyCellSerialManager.h"
+#include "RedisDBManager.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -23,6 +24,9 @@ public:
 private:
     Ui::MainWindow *ui;
     CellWidget *m_cellWidget;
+    QTimer *m_pollTimer = nullptr;
+    std::string m_busboardId;
+    std::string m_firstCellId;
 
     TempArc createLinearTempArc(float startTemp, float endTemp, float rank, unsigned long startTimeMSec);
     TempArc createPlateuTempArc(float startTemp, unsigned long startTimeMSec, unsigned long durationMSec);
@@ -35,6 +39,7 @@ private slots:
 
     void updatePIDParametersView(int heaterPerc, int peltierPerc);
     void updatePIDParametersOnBoardClicked();
+    void pollCellStatus();
 
 
 

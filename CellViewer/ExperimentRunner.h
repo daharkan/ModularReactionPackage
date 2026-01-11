@@ -4,6 +4,7 @@
 #include <QObject>
 #include "Experiment.h"
 #include "Cell.h"
+#include <string>
 
 enum ExperimentRunState
 {
@@ -21,6 +22,7 @@ public:
     explicit ExperimentRunner(QObject *parent = nullptr);
 
     void assignExperiment(Experiment exp);
+    void setCellId(const std::string &cellId);
     void run();
 
     ExperimentRunState state() const;
@@ -29,6 +31,7 @@ private:
     Experiment m_experiment;
     ExperimentRunState m_state = STATE_UNDEFINED;
     Cell m_cell;
+    std::string m_cellId;
     unsigned long m_startingTimestampMsec = 0;
 
     std::vector<double> m_tempTimeData, m_rpmTimeData;

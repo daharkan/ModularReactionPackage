@@ -2,6 +2,7 @@
 #define UICELLWIDGET_H
 
 #include <QWidget>
+#include <string>
 #include "ExperimentRunner.h"
 #include "uiCellGraph.h"
 
@@ -18,6 +19,7 @@ public:
     ~CellWidget();
 
     void setExperimentAndInit(Experiment experiment);
+    void setCellId(const std::string &cellId);
     void pushTempAndRPMToCellGraph(float temp, int rpm);
 
 

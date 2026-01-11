@@ -87,6 +87,11 @@ void CellWidget::setExperimentAndInit(Experiment experiment)
     });
 }
 
+void CellWidget::setCellId(const std::string &cellId)
+{
+    m_expRunner->setCellId(cellId);
+}
+
 
 
 void CellWidget::updateExpState(ExperimentRunState state)
@@ -113,6 +118,7 @@ void CellWidget::updateExpState(ExperimentRunState state)
 void CellWidget::updateCell(Cell &cell)
 {
     m_cell = cell;
+    m_expRunner->setCellId(cell.cellID());
 
     float currentTempExt = cell.currentTempExt();
     float currentTempInner = cell.currentTempInner();
