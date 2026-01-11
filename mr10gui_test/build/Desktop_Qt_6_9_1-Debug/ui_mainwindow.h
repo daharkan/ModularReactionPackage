@@ -39,6 +39,8 @@ public:
     QLineEdit *targetRPMLineEdit;
     QLabel *label;
     QComboBox *cellNoComboBox;
+    QLabel *label_4;
+    QComboBox *motorSelectComboBox;
     QPushButton *senPushButton;
     QStatusBar *statusbar;
 
@@ -122,10 +124,22 @@ public:
 
         gridLayout->addWidget(cellNoComboBox, 2, 2, 1, 1);
 
+        label_4 = new QLabel(centralwidget);
+        label_4->setObjectName("label_4");
+
+        gridLayout->addWidget(label_4, 5, 1, 1, 1);
+
+        motorSelectComboBox = new QComboBox(centralwidget);
+        motorSelectComboBox->addItem(QString());
+        motorSelectComboBox->addItem(QString());
+        motorSelectComboBox->setObjectName("motorSelectComboBox");
+
+        gridLayout->addWidget(motorSelectComboBox, 5, 2, 1, 1);
+
         senPushButton = new QPushButton(centralwidget);
         senPushButton->setObjectName("senPushButton");
 
-        gridLayout->addWidget(senPushButton, 5, 2, 1, 1);
+        gridLayout->addWidget(senPushButton, 6, 2, 1, 1);
 
         MainWindow->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(MainWindow);
@@ -166,6 +180,10 @@ public:
         cellNoComboBox->setItemText(7, QCoreApplication::translate("MainWindow", "8", nullptr));
         cellNoComboBox->setItemText(8, QCoreApplication::translate("MainWindow", "9", nullptr));
         cellNoComboBox->setItemText(9, QCoreApplication::translate("MainWindow", "10", nullptr));
+
+        label_4->setText(QCoreApplication::translate("MainWindow", "Motor:", nullptr));
+        motorSelectComboBox->setItemText(0, QCoreApplication::translate("MainWindow", "Motor 1", nullptr));
+        motorSelectComboBox->setItemText(1, QCoreApplication::translate("MainWindow", "Motor 2", nullptr));
 
         senPushButton->setText(QCoreApplication::translate("MainWindow", "Send", nullptr));
     } // retranslateUi
