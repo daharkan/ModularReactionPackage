@@ -204,7 +204,7 @@ void CellWidget::updateCell(Cell &cell)
 
         unsigned long long startMs = experiment.startSystemTimeMSecs();
         if (startMs == 0 || totalDurationMs == 0) {
-            stateText = "ASSIGNED";
+            stateText = "PREHEAT";
         } else {
             unsigned long long nowMs = Cell::getCurrentTimeMillis();
             unsigned long long elapsedMs = nowMs > startMs ? nowMs - startMs : 0;

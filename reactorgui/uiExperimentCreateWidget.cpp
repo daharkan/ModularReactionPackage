@@ -19,6 +19,7 @@
 #include <QUuid>
 #include <QtConcurrent>
 #include <algorithm>
+#include <cmath>
 #include <unordered_set>
 #include <unordered_map>
 
@@ -205,7 +206,8 @@ void ExperimentCreateWidget::setVisibleAllBasicExperimentItems(bool en)
 
 TempArc ExperimentCreateWidget::createLinearTempArc(float startTemp, float endTemp, float rank, unsigned long startTimeMSec)
 {
-    unsigned long linearDurationMSec = abs((endTemp - startTemp) / rank);
+    double linearDurationSec = std::fabs((endTemp - startTemp) / rank);
+    unsigned long linearDurationMSec = static_cast<unsigned long>(linearDurationSec * 1000.0);
     double startTimeSec = startTimeMSec / 1000.0;
 
     qDebug() << " ExperimentCreateWidget::createLinearTempArc:: endTemp: " << endTemp;
@@ -249,7 +251,8 @@ std::vector<TempArc> ExperimentCreateWidget::createStepTempArc(float startTemp, 
         qDebug() << "createStepTempArc::stepStartTime: " << stepStartTime;
 
 
-        float stepRank = abs(stepEndTemp - stepStartTemp) / stepDuration;
+        double stepDurationSec = stepDuration / 1000.0;
+        float stepRank = std::fabs(stepEndTemp - stepStartTemp) / stepDurationSec;
         TempArc tempArcLin = createLinearTempArc(stepStartTemp, stepEndTemp, stepRank, stepStartTime);
         TempArc tempArcPlt = createPlateuTempArc(tempArcLin.finishTemp(), tempArcLin.finishTimeMsec(), stepDuration);
 
@@ -938,7 +941,6 @@ void ExperimentCreateWidget::assignExperimentToCells()
         return;
     }
 
-    unsigned long startTime = Cell::getCurrentTimeMillis();
     std::vector<Cell> updatedCells;
     for (QListWidgetItem *item : selectedItems) {
         std::string cellId = item->data(Qt::UserRole).toString().toStdString();
@@ -949,7 +951,7 @@ void ExperimentCreateWidget::assignExperimentToCells()
         Cell cell = it->second;
         Experiment assignedExperiment = m_currentExperiment;
         assignedExperiment.setOwner(m_currentUser);
-        assignedExperiment.setStartSystemTimeMSecs(startTime);
+        assignedExperiment.setStartSystemTimeMSecs(0);
         cell.setAsignedExperiment(assignedExperiment);
         updatedCells.push_back(cell);
 
@@ -1240,7 +1242,7 @@ void ExperimentCreateWidget::adv_addArcToExperimentClicked()
     else if(m_currentExpType == EXP_ADVANCED_LIN){
 
         float finalTemp = ui->adv_finalTempLineEdit->text().toFloat();
-        float ramp = abs(ui->adv_arcRampLineEdit->text().toFloat() / (60*1000.0));
+        float ramp = std::fabs(ui->adv_arcRampLineEdit->text().toFloat() / 60.0);
         profile.addTempArcInSequence(createLinearTempArc(initialTemp, finalTemp, ramp, initTimeMsecs));
 
     }
@@ -1315,7 +1317,7 @@ void ExperimentCreateWidget::adv_addArcDurationChanged()
         unsigned long arcDurationMSecs = ui->adv_arcDurationLineEdit->text().toInt() * arcDurationTimeMult * 1000;
         float arcDurationMin = arcDurationMSecs/(1000.0*60.0);
 
-        float rank = abs(finalTemp-initialTemp)/arcDurationMin;
+        float rank = std::fabs(finalTemp-initialTemp)/arcDurationMin;
         ui->adv_arcRampLineEdit->setText(QString::number(rank));
     }
 }
@@ -1331,7 +1333,7 @@ void ExperimentCreateWidget::adv_rampChanged()
 
         float rank = ui->adv_arcRampLineEdit->text().toFloat();   //   C/min.
 
-        float durationMin = abs(finalTemp-initialTemp) / rank;
+        float durationMin = std::fabs(finalTemp-initialTemp) / rank;
         ui->adv_arcDurationLineEdit->setText(QString::number(durationMin));
     }
 }
@@ -1367,8 +1369,8 @@ Profile ExperimentCreateWidget::createBasicStandardProfile()
     }
 
     float targetTemp = ui->targetTempLineEdit->text().toFloat();
-    float stepUpRank = ui->initRampLineEdit->text().toFloat() / (60*1000.0);  //converting to C/msec
-    float stepDownRank = ui->finalRampLineEdit->text().toFloat() / (60*1000.0);  //converting to C/msec
+    float stepUpRank = ui->initRampLineEdit->text().toFloat() / 60.0;  //converting to C/sec
+    float stepDownRank = ui->finalRampLineEdit->text().toFloat() / 60.0;  //converting to C/sec
 
 
     int numOfCycles = ui->numOfCyclesLineEdit->text().toInt();
@@ -1473,7 +1475,7 @@ Profile ExperimentCreateWidget::createLinearUpStepDownProfile()
     }
 
     float targetTemp = ui->targetTempLineEdit->text().toFloat();
-    float stepUpRank = ui->initRampLineEdit->text().toFloat() / (60*1000.0);  //converting to C/msec
+    float stepUpRank = ui->initRampLineEdit->text().toFloat() / 60.0;  //converting to C/sec
 
     int numOfCycles = ui->numOfCyclesLineEdit->text().toInt();
     int stepDownCount = ui->numOfStepsDownLineEdit->text().toInt();
@@ -1583,7 +1585,7 @@ Profile ExperimentCreateWidget::createStepUpLinearDownProfile()
 
 
     float targetTemp = ui->targetTempLineEdit->text().toFloat();
-    float stepDownRank = ui->finalRampLineEdit->text().toFloat() / (60*1000.0);  //converting to C/msec
+    float stepDownRank = ui->finalRampLineEdit->text().toFloat() / 60.0;  //converting to C/sec
 
 
     int numOfCycles = ui->numOfCyclesLineEdit->text().toInt();

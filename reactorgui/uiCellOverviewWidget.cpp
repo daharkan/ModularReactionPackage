@@ -81,7 +81,7 @@ void CellOverviewWidget::setCellData(const Cell &cell)
     unsigned long long totalDurationMs = experimentDurationMs(experiment);
     unsigned long long startMs = experiment.startSystemTimeMSecs();
     if (startMs == 0 || totalDurationMs == 0) {
-        applyStateStyle("assigned");
+        applyStateStyle("preheat");
         return;
     }
 
