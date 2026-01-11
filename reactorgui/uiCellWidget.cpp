@@ -2,6 +2,27 @@
 #include "ui_uiCellWidget.h"
 #include <QtConcurrent>
 
+namespace {
+constexpr unsigned long long kPreheatWindowMs = 2ULL * 60ULL * 1000ULL;
+
+QString formatDurationMs(unsigned long long durationMs)
+{
+    unsigned long long totalSeconds = durationMs / 1000ULL;
+    unsigned long long hours = totalSeconds / 3600ULL;
+    unsigned long long minutes = (totalSeconds % 3600ULL) / 60ULL;
+    unsigned long long seconds = totalSeconds % 60ULL;
+    if (hours > 0) {
+        return QString("%1:%2:%3")
+            .arg(hours, 2, 10, QLatin1Char('0'))
+            .arg(minutes, 2, 10, QLatin1Char('0'))
+            .arg(seconds, 2, 10, QLatin1Char('0'));
+    }
+    return QString("%1:%2")
+        .arg(minutes, 2, 10, QLatin1Char('0'))
+        .arg(seconds, 2, 10, QLatin1Char('0'));
+}
+} // namespace
+
 CellWidget::CellWidget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::CellWidget)
@@ -134,5 +155,63 @@ void CellWidget::updateCell(Cell &cell)
     setCurrentRPMView(currentRPM);
 
     pushTempAndRPMToCellGraph(currentTempExt, currentRPM);
+
+    const Experiment experiment = cell.asignedExperiment();
+    QString expName = QString::fromStdString(experiment.name());
+    if (expName.isEmpty()) {
+        expName = "--";
+    }
+    ui->experimentNameValueLabel->setText(expName);
+
+    QString stateText = "--";
+    QString progressText = "--";
+    if (!cell.isPlugged() || cell.cellID().empty()) {
+        stateText = "UNPLUGGED";
+    } else if (experiment.experimentId().empty() && experiment.name().empty()) {
+        stateText = "IDLE";
+    } else {
+        unsigned long long totalDurationMs = 0;
+        const auto &tempArcs = experiment.profile().tempArcsInSeq();
+        for (const auto &arc : tempArcs) {
+            totalDurationMs += arc.durationMSec();
+        }
+
+        unsigned long long startMs = experiment.startSystemTimeMSecs();
+        if (startMs == 0 || totalDurationMs == 0) {
+            stateText = "ASSIGNED";
+        } else {
+            unsigned long long nowMs = Cell::getCurrentTimeMillis();
+            unsigned long long elapsedMs = nowMs > startMs ? nowMs - startMs : 0;
+            if (elapsedMs < kPreheatWindowMs) {
+                stateText = "PREHEAT";
+            } else if (elapsedMs < totalDurationMs) {
+                stateText = "RUNNING";
+            } else {
+                stateText = "COMPLETED";
+            }
+
+            if (!tempArcs.empty()) {
+                unsigned long long cumulativeMs = 0;
+                int arcIndex = static_cast<int>(tempArcs.size());
+                for (int i = 0; i < static_cast<int>(tempArcs.size()); ++i) {
+                    cumulativeMs += tempArcs.at(i).durationMSec();
+                    if (elapsedMs < cumulativeMs) {
+                        arcIndex = i + 1;
+                        break;
+                    }
+                }
+
+                QString arcLabel = arcIndex > static_cast<int>(tempArcs.size())
+                    ? QString("Arc %1/%2").arg(tempArcs.size()).arg(tempArcs.size())
+                    : QString("Arc %1/%2").arg(arcIndex).arg(tempArcs.size());
+                QString elapsedLabel = formatDurationMs(elapsedMs);
+                QString totalLabel = formatDurationMs(totalDurationMs);
+                progressText = QString("%1 (%2 / %3)").arg(arcLabel, elapsedLabel, totalLabel);
+            }
+        }
+    }
+
+    ui->expStateLabel->setText(stateText);
+    ui->experimentProgressValueLabel->setText(progressText);
 
 }

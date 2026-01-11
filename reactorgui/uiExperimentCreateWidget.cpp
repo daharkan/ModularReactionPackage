@@ -18,6 +18,7 @@
 #include <QVBoxLayout>
 #include <QUuid>
 #include <QtConcurrent>
+#include <unordered_set>
 
 ExperimentCreateWidget::ExperimentCreateWidget(QWidget *parent)
     : QWidget(parent)
@@ -816,7 +817,24 @@ void ExperimentCreateWidget::assignExperimentToCells()
     }
 
     std::vector<Cell> cells = RedisDBManager::getInstance()->getCellList(cellIds);
-    if (cells.empty()) {
+    std::vector<Cell> filteredCells;
+    filteredCells.reserve(cells.size());
+    std::unordered_set<std::string> seenIds;
+    for (const auto &cell : cells) {
+        if (!cell.isPlugged()) {
+            continue;
+        }
+        const std::string &cellId = cell.cellID();
+        if (cellId.empty()) {
+            continue;
+        }
+        if (!seenIds.insert(cellId).second) {
+            continue;
+        }
+        filteredCells.push_back(cell);
+    }
+
+    if (filteredCells.empty()) {
         return;
     }
 
@@ -829,10 +847,10 @@ void ExperimentCreateWidget::assignExperimentToCells()
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
     table->setSelectionMode(QAbstractItemView::MultiSelection);
-    table->setRowCount(static_cast<int>(cells.size()));
+    table->setRowCount(static_cast<int>(filteredCells.size()));
 
-    for (int row = 0; row < static_cast<int>(cells.size()); ++row) {
-        const Cell &cell = cells.at(row);
+    for (int row = 0; row < static_cast<int>(filteredCells.size()); ++row) {
+        const Cell &cell = filteredCells.at(row);
         QString cellId = QString::fromStdString(cell.cellID());
         QTableWidgetItem *idItem = new QTableWidgetItem(cellId);
         table->setItem(row, 0, idItem);
@@ -872,10 +890,10 @@ void ExperimentCreateWidget::assignExperimentToCells()
     std::vector<Cell> updatedCells;
     for (const auto &range : ranges) {
         for (int row = range.topRow(); row <= range.bottomRow(); ++row) {
-            if (row < 0 || row >= static_cast<int>(cells.size())) {
+            if (row < 0 || row >= static_cast<int>(filteredCells.size())) {
                 continue;
             }
-            Cell cell = cells.at(row);
+            Cell cell = filteredCells.at(row);
             Experiment assignedExperiment = m_currentExperiment;
             assignedExperiment.setStartSystemTimeMSecs(startTime);
             cell.setAsignedExperiment(assignedExperiment);

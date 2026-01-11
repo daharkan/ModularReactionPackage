@@ -1,6 +1,7 @@
 #include "uiExperimentManagerWidget.h"
 #include "ui_uiExperimentManagerWidget.h"
 #include "RedisDBManager.h"
+#include <QMessageBox>
 
 
 ExperimentManagerWidget::ExperimentManagerWidget(QWidget *parent)
@@ -16,6 +17,7 @@ ExperimentManagerWidget::ExperimentManagerWidget(QWidget *parent)
     connect(ui->edtExperimentPushButton, &QPushButton::clicked, this, &ExperimentManagerWidget::editClicked);
     connect(ui->delExperimentPushButton, &QPushButton::clicked, this, &ExperimentManagerWidget::deleteClicked);
     connect(m_experimentListWidget, &ExperimentListWidget::sgn_selectionChanged, this, &ExperimentManagerWidget::handleSelectionChanged);
+    connect(m_experimentListWidget, &ExperimentListWidget::sgn_experimentActivated, this, &ExperimentManagerWidget::editClicked);
 
     if (!RedisDBManager::getInstance()->isConnected()) {
         RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
@@ -110,6 +112,15 @@ void ExperimentManagerWidget::deleteClicked()
         return;
     }
 
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        this,
+        tr("Delete Experiment"),
+        tr("Delete the selected experiment?\nThis action cannot be undone."),
+        QMessageBox::Yes | QMessageBox::No);
+    if (reply != QMessageBox::Yes) {
+        return;
+    }
+
     RedisDBManager::getInstance()->deleteExperiment(selected.experimentId());
     m_experimentListWidget->reloadExperiments();
     updateActionButtons();
@@ -122,7 +133,9 @@ void ExperimentManagerWidget::handleSelectionChanged()
 
 void ExperimentManagerWidget::handleExperimentSaved()
 {
-    showListWidget();
+    if (m_experimentListWidget) {
+        m_experimentListWidget->reloadExperiments();
+    }
 }
 
 void ExperimentManagerWidget::updateActionButtons()

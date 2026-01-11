@@ -1,6 +1,7 @@
 #ifndef UIEXPERIMENTLISTWIDGET_H
 #define UIEXPERIMENTLISTWIDGET_H
 
+#include <QTableWidgetItem>
 #include <QWidget>
 #include <vector>
 #include "Experiment.h"
@@ -30,9 +31,11 @@ private slots:
     void filterTable(const QString &filterText);
     void filterTableBySearch(const QString &text);
     void listAllData();
+    void handleItemDoubleClicked(QTableWidgetItem *item);
 
 signals:
     void sgn_selectionChanged();
+    void sgn_experimentActivated();
 
 };
 

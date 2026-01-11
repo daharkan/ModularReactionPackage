@@ -7,12 +7,160 @@
     <x>0</x>
     <y>0</y>
     <width>689</width>
-    <height>331</height>
+    <height>420</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="changePasswordGroupBox">
+     <property name="title">
+      <string>Change Password</string>
+     </property>
+     <layout class="QGridLayout" name="changePasswordLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="currentPasswordLabel">
+        <property name="text">
+         <string>Current Password:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="currentPasswordLineEdit">
+        <property name="echoMode">
+         <enum>QLineEdit::Password</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="newPasswordLabel">
+        <property name="text">
+         <string>New Password:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="newPasswordLineEdit">
+        <property name="echoMode">
+         <enum>QLineEdit::Password</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="confirmPasswordLabel">
+        <property name="text">
+         <string>Confirm Password:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="confirmPasswordLineEdit">
+        <property name="echoMode">
+         <enum>QLineEdit::Password</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" alignment="Qt::AlignRight">
+       <widget class="QPushButton" name="changePasswordPushButton">
+        <property name="text">
+         <string>Change Password</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="adminGroupBox">
+     <property name="title">
+      <string>Admin Tools</string>
+     </property>
+     <layout class="QVBoxLayout" name="adminLayout">
+      <item>
+       <layout class="QGridLayout" name="createUserLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="newUsernameLabel">
+          <property name="text">
+           <string>Username:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="newUsernameLineEdit"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="initialPasswordLabel">
+          <property name="text">
+           <string>Initial Password:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="initialPasswordLineEdit">
+          <property name="echoMode">
+           <enum>QLineEdit::Password</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="roleLabel">
+          <property name="text">
+           <string>Role:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="roleComboBox"/>
+        </item>
+        <item row="3" column="1" alignment="Qt::AlignRight">
+         <widget class="QPushButton" name="createUserPushButton">
+          <property name="text">
+           <string>Create User</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QTableWidget" name="usersTableWidget"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="adminButtonsLayout">
+        <item>
+         <widget class="QPushButton" name="refreshUsersPushButton">
+          <property name="text">
+           <string>Refresh</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="adminButtonsSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="deleteUserPushButton">
+          <property name="text">
+           <string>Delete User</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
