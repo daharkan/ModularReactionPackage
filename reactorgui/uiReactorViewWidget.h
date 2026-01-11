@@ -20,6 +20,9 @@ public:
     explicit ReactorViewWidget(QWidget *parent = nullptr);
     ~ReactorViewWidget();
 
+signals:
+    void sgn_openCellView(const std::string &cellId);
+
 private slots:
     void updateFlowStatus();
     void handleCellClicked(const std::string &cellId);

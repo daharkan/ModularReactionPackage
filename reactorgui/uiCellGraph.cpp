@@ -1,6 +1,9 @@
 #include "uiCellGraph.h"
 #include "ui_uiCellGraph.h"
 
+#include <algorithm>
+#include <limits>
+
 CellGraph::CellGraph(Experiment &experiment, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::CellGraph)
@@ -61,11 +64,20 @@ void CellGraph::updateTheExperiment(Experiment &experiment)
     std::vector<double> rpmData;
 
     Profile profile = experiment.profile();
+    m_hasTempRange = false;
+    m_minTempRange = std::numeric_limits<double>::max();
+    m_maxTempRange = std::numeric_limits<double>::lowest();
     for(int i = 0; i < profile.tempArcsInSeq().size(); i++){
         TempArc tempArc = profile.tempArcsInSeq().at(i);
         unsigned long arcDurationMsecs = tempArc.durationMSec();
 
         qDebug() << "arcDurationMsecs: " << arcDurationMsecs;
+
+        m_minTempRange = std::min<double>(m_minTempRange, tempArc.startTemp());
+        m_minTempRange = std::min<double>(m_minTempRange, tempArc.finishTemp());
+        m_maxTempRange = std::max<double>(m_maxTempRange, tempArc.startTemp());
+        m_maxTempRange = std::max<double>(m_maxTempRange, tempArc.finishTemp());
+        m_hasTempRange = true;
 
         unsigned long lastSecs = 0;
         if(tempTimeData.size() > 0){
@@ -99,6 +111,7 @@ void CellGraph::updateTheExperiment(Experiment &experiment)
 
     m_expRpmCurve->setSamples(rpmTimeData.data(), rpmData.data(), rpmTimeData.size());
     m_expTempCurve->setSamples(tempTimeData.data(), temperatureData.data(), tempTimeData.size());
+    applyTempAxisRange();
     m_plot->replot();
 
     //qDebug() << "graph updated.";
@@ -133,6 +146,7 @@ void CellGraph::pushTemperatureAndRPMData(double temp, double rpm, unsigned long
 
     m_currentRpmCurve->setSamples(timeData.data(), m_currentRPMList.data(), timeData.size());
     m_currentTempCurve->setSamples(timeData.data(), m_currentTempList.data(), timeData.size());
+    applyTempAxisRange();
     m_plot->replot();
 }
 
@@ -143,4 +157,16 @@ void CellGraph::initilizeExperimentGraph()
     updateTheExperiment(m_experiment);
 }
 
-
+void CellGraph::applyTempAxisRange()
+{
+    if (!m_hasTempRange) {
+        return;
+    }
+    double minTemp = m_minTempRange;
+    double maxTemp = m_maxTempRange;
+    if (minTemp == maxTemp) {
+        maxTemp += 1.0;
+    }
+    m_plot->setAxisAutoScale(QwtPlot::yLeft, false);
+    m_plot->setAxisScale(QwtPlot::yLeft, minTemp, maxTemp);
+}

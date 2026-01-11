@@ -127,11 +127,11 @@ void CellOverviewWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
 void CellOverviewWidget::updateHeader()
 {
-    QString header = QString("%1-%2").arg(m_sideLabel).arg(m_slotIndex);
+    QString header = QString("Cell %1").arg(m_slotIndex);
     if (m_isActive && !m_cellId.empty()) {
-        header = QString("%1 (%2)").arg(header, QString::fromStdString(m_cellId));
+        setToolTip(QString::fromStdString(m_cellId));
     } else {
-        header = header + " (empty)";
+        setToolTip(QString());
     }
     ui->slotLabel->setText(header);
 }

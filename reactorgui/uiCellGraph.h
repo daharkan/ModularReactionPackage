@@ -40,12 +40,16 @@ private:
     QwtLegend *m_legend;
     bool m_pushingDataStarted = false;
     unsigned long m_dataPushStartTimestamp = 0;
+    bool m_hasTempRange = false;
+    double m_minTempRange = 0.0;
+    double m_maxTempRange = 0.0;
 
     QList<double> m_currentTempList;
     QList<double> m_currentRPMList;
     QList<unsigned long > m_currentTimestampList;
     Experiment m_experiment;
 
+    void applyTempAxisRange();
 };
 
 #endif // UICellGraph_H
