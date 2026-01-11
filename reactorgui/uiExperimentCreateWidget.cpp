@@ -880,6 +880,20 @@ void ExperimentCreateWidget::assignExperimentToCells()
         return;
     }
 
+    int selectedCount = 0;
+    for (const auto &range : ranges) {
+        selectedCount += (range.bottomRow() - range.topRow() + 1);
+    }
+
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        this,
+        tr("Assign Experiment"),
+        tr("Assign this experiment to %1 cell(s)?\nExisting assignments on those cells will be overwritten.").arg(selectedCount),
+        QMessageBox::Yes | QMessageBox::No);
+    if (reply != QMessageBox::Yes) {
+        return;
+    }
+
     unsigned long startTime = Cell::getCurrentTimeMillis();
     std::vector<Cell> updatedCells;
     for (const auto &range : ranges) {

@@ -46,6 +46,10 @@ private:
 
     bool m_firstStartedRunning = false;
 
+    void ensureExperimentGraph(const Experiment &experiment);
+    void clearExperimentGraph();
+    bool hasExperimentAssigned(const Experiment &experiment) const;
+
 };
 
 #endif // UICELLWIDGET_H

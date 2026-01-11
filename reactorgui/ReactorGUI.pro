@@ -34,6 +34,7 @@ SOURCES += \
     uiLoginWidget.cpp \
     uiOptionsWidget.cpp \
     uiReactorViewWidget.cpp \
+    uiTempCellViewWidget.cpp \
     uiTSMainWindow.cpp \
     uiUserManagementWidget.cpp
 
@@ -99,6 +100,7 @@ HEADERS += \
     uiLoginWidget.h \
     uiOptionsWidget.h \
     uiReactorViewWidget.h \
+    uiTempCellViewWidget.h \
     uiTSMainWindow.h \
     uiUserManagementWidget.h
 
