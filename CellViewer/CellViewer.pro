@@ -18,6 +18,7 @@ SOURCES += \
     ../experimentmanagerservice/src/common/CellVisuals.cpp \
     ../experimentmanagerservice/src/common/CellVisualsHistory.cpp \
     ../experimentmanagerservice/src/common/Experiment.cpp \
+    ../experimentmanagerservice/src/common/FlowStatus.cpp \
     ../experimentmanagerservice/src/common/Profile.cpp \
     ../experimentmanagerservice/src/common/RPMArc.cpp \
     ../experimentmanagerservice/src/common/RedisDBManager.cpp \
@@ -33,6 +34,7 @@ HEADERS += \
     ../experimentmanagerservice/src/common/CellVisuals.h \
     ../experimentmanagerservice/src/common/CellVisualsHistory.h \
     ../experimentmanagerservice/src/common/Experiment.h \
+    ../experimentmanagerservice/src/common/FlowStatus.h \
     ../experimentmanagerservice/src/common/Profile.h \
     ../experimentmanagerservice/src/common/RPMArc.h \
     ../experimentmanagerservice/src/common/RedisDBManager.h \
