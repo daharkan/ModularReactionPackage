@@ -6,6 +6,7 @@
 #include <QSerialPortInfo>
 #include <QString>
 #include <chrono>
+#include <cmath>
 #include <thread>
 #include <QtConcurrent/QtConcurrent>
 
@@ -14,6 +15,23 @@
 
 #define MIN_CELL_UPDATE_INTERVAL_MSECS 100
 #define TEMP_EPSILON 0.5
+
+namespace {
+unsigned long long totalExperimentDurationMs(const Experiment& experiment)
+{
+    unsigned long long totalDurationMs = 0;
+    const auto &tempArcs = experiment.profile().tempArcsInSeq();
+    for (const auto &arc : tempArcs) {
+        totalDurationMs += arc.durationMSec();
+    }
+    return totalDurationMs;
+}
+
+bool hasExperimentAssigned(const Experiment& experiment)
+{
+    return !(experiment.experimentId().empty() && experiment.name().empty());
+}
+} // namespace
 
 
 ServiceRunner::ServiceRunner()
@@ -196,6 +214,72 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
     }
     RedisDBManager::getInstance()->pushCellList(cellsToDB);
     QCoreApplication::processEvents();
+
+    for (const auto& cell : cellsToDB) {
+        const std::string& cellID = cell.cellID();
+        if (cellID.empty()) {
+            continue;
+        }
+
+        Experiment experiment = cell.asignedExperiment();
+        if (!hasExperimentAssigned(experiment)) {
+            m_lastExperimentId.erase(cellID);
+            m_experimentRunning.erase(cellID);
+            m_lastVisualTimestamp.erase(cellID);
+            continue;
+        }
+
+        const std::string& experimentId = experiment.experimentId();
+        auto lastExpIt = m_lastExperimentId.find(cellID);
+        if (lastExpIt == m_lastExperimentId.end() || lastExpIt->second != experimentId) {
+            m_lastExperimentId[cellID] = experimentId;
+            m_experimentRunning[cellID] = false;
+            m_lastVisualTimestamp.erase(cellID);
+            RedisDBManager::getInstance()->pushCellVisuals(cellID, CellVisualsHistory());
+        }
+
+        unsigned long long totalDurationMs = totalExperimentDurationMs(experiment);
+        unsigned long long startMs = experiment.startSystemTimeMSecs();
+        if (startMs == 0 || totalDurationMs == 0) {
+            continue;
+        }
+
+        unsigned long long nowMs = Cell::getCurrentTimeMillis();
+        unsigned long long elapsedMs = nowMs > startMs ? nowMs - startMs : 0;
+        if (elapsedMs >= totalDurationMs) {
+            continue;
+        }
+
+        auto &runningStarted = m_experimentRunning[cellID];
+        if (!runningStarted) {
+            const auto &tempArcs = experiment.profile().tempArcsInSeq();
+            if (tempArcs.empty()) {
+                continue;
+            }
+
+            float startTemp = tempArcs.front().startTemp();
+            float currentTemp = cell.isExtTempPlugged() ? cell.currentTempExt() : cell.currentTempInner();
+            if (std::abs(currentTemp - startTemp) <= TEMP_EPSILON) {
+                runningStarted = true;
+            } else {
+                continue;
+            }
+        }
+
+        unsigned long long lastTimestamp = 0;
+        auto lastTimestampIt = m_lastVisualTimestamp.find(cellID);
+        if (lastTimestampIt != m_lastVisualTimestamp.end()) {
+            lastTimestamp = lastTimestampIt->second;
+        }
+        if (lastTimestamp != 0 && nowMs - lastTimestamp < MIN_CELL_UPDATE_INTERVAL_MSECS) {
+            continue;
+        }
+
+        CellVisualsHistory history;
+        history.addCellVisuals(cell.toCellVisuals());
+        RedisDBManager::getInstance()->pushCellVisuals(cellID, history);
+        m_lastVisualTimestamp[cellID] = nowMs;
+    }
 
     RedisDBManager::getInstance()->pushFlowStatus(busboard->busboardID(), busboard->flowStatus());
     QCoreApplication::processEvents();

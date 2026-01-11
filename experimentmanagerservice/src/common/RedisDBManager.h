@@ -18,11 +18,13 @@
 #define DB_TARGETTABLE_KEY "mr10:targets"
 #define DB_USERS_TABLE_KEY "mr10:users"
 #define DB_EXPERIMENTS_TABLE_KEY "mr10:experiments"
+#define DB_CELLVISUALS_TABLE_KEY "mr10:cell_visuals"
 
 #define DB_CELLJSON_KEY "cell"
 #define DB_TARGETJSON_KEY "celltarget"
 #define DB_BUSBOARDJSON_KEY "busboard"
 #define DB_EXPERIMENTJSON_KEY "experiment"
+#define DB_CELLVISUALS_JSON_KEY "cellVisualsHistory"
 #define DB_BUSBOARD_FLOW_KEY "flowStatus"
 #define DB_BUSBOARD_CELLIDS_KEY "cellIDs"
 #define DB_BUSBOARD_LAST_UPDATED_KEY "lastUpdatedTimestamp"

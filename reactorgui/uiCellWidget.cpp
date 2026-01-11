@@ -1,5 +1,6 @@
 #include "uiCellWidget.h"
 #include "ui_uiCellWidget.h"
+#include "RedisDBManager.h"
 #include <QDateTime>
 #include <QtConcurrent>
 
@@ -160,14 +161,15 @@ void CellWidget::updateCell(Cell &cell)
     setCurrentInnerTempView(currentTempInner);
     setCurrentRPMView(currentRPM);
 
-    pushTempAndRPMToCellGraph(currentTempExt, currentRPM);
-
     Experiment experiment = cell.asignedExperiment();
     if (hasExperimentAssigned(experiment)) {
         ensureExperimentGraph(experiment);
+        loadVisualHistoryIfNeeded(experiment);
     } else {
         clearExperimentGraph();
     }
+
+    pushTempAndRPMToCellGraph(currentTempExt, currentRPM);
     QString expName = QString::fromStdString(experiment.name());
     if (expName.isEmpty()) {
         expName = "--";
@@ -262,6 +264,30 @@ void CellWidget::ensureExperimentGraph(const Experiment &experiment)
     }
 }
 
+void CellWidget::loadVisualHistoryIfNeeded(const Experiment &experiment)
+{
+    if (m_cellGraph == nullptr || m_cell.cellID().empty()) {
+        return;
+    }
+
+    if (experiment.experimentId().empty()) {
+        m_loadedHistoryExperimentId.clear();
+        return;
+    }
+
+    if (m_loadedHistoryExperimentId == experiment.experimentId()) {
+        return;
+    }
+
+    if (!RedisDBManager::getInstance()->isConnected()) {
+        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+    }
+
+    CellVisualsHistory history = RedisDBManager::getInstance()->getCellVisualsHistory(m_cell.cellID());
+    m_cellGraph->loadVisualHistory(history);
+    m_loadedHistoryExperimentId = experiment.experimentId();
+}
+
 void CellWidget::clearExperimentGraph()
 {
     if (m_cellGraph != nullptr) {
@@ -271,6 +297,7 @@ void CellWidget::clearExperimentGraph()
     }
     m_firstStartedRunning = false;
     m_assignedExperiment = Experiment();
+    m_loadedHistoryExperimentId.clear();
 }
 
 bool CellWidget::hasExperimentAssigned(const Experiment &experiment) const

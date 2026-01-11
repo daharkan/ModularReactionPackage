@@ -15,6 +15,10 @@ Value CellVisualsHistory::toJSON(Document::AllocatorType& allocator) const {
 
 // Method to deserialize JSON to object
 void CellVisualsHistory::fromJSON(const Value& json) {
+    m_visuals.clear();
+    if (!json.HasMember("visuals") || !json["visuals"].IsArray()) {
+        return;
+    }
     const Value& visualsArray = json["visuals"];
     for (SizeType i = 0; i < visualsArray.Size(); ++i) {
         CellVisuals visuals;
@@ -26,4 +30,14 @@ void CellVisualsHistory::fromJSON(const Value& json) {
 void CellVisualsHistory::addCellVisuals(CellVisuals cellVisuals)
 {
     m_visuals.push_back(cellVisuals);
+}
+
+void CellVisualsHistory::appendHistory(const CellVisualsHistory& other)
+{
+    m_visuals.insert(m_visuals.end(), other.m_visuals.begin(), other.m_visuals.end());
+}
+
+const std::vector<CellVisuals>& CellVisualsHistory::visuals() const
+{
+    return m_visuals;
 }

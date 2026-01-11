@@ -123,6 +123,41 @@ void CellGraph::updateTheExperiment(Experiment &experiment)
 
 }
 
+void CellGraph::loadVisualHistory(const CellVisualsHistory& history)
+{
+    const auto& visuals = history.visuals();
+    if (visuals.empty()) {
+        return;
+    }
+
+    m_currentTempList.clear();
+    m_currentRPMList.clear();
+    m_currentTimestampList.clear();
+
+    for (const auto& visual : visuals) {
+        m_currentTempList.push_back(visual.temperature());
+        m_currentRPMList.push_back(visual.rpm());
+        m_currentTimestampList.push_back(visual.timestamp());
+    }
+
+    unsigned long firstTimestamp = m_currentTimestampList.front();
+    if (firstTimestamp == 0) {
+        firstTimestamp = Cell::getCurrentTimeMillis();
+    }
+    m_dataPushStartTimestamp = firstTimestamp;
+    m_pushingDataStarted = true;
+
+    QList<double> timeData;
+    for (int i = 0; i < m_currentTimestampList.size(); ++i) {
+        timeData.push_back((m_currentTimestampList.at(i) - m_dataPushStartTimestamp) / 1000.0);
+    }
+
+    m_currentRpmCurve->setSamples(timeData.data(), m_currentRPMList.data(), timeData.size());
+    m_currentTempCurve->setSamples(timeData.data(), m_currentTempList.data(), timeData.size());
+    applyTempAxisRange();
+    m_plot->replot();
+}
+
 void CellGraph::pushTemperatureAndRPMData(double temp, double rpm, unsigned long timestamp)
 {
     if(!m_pushingDataStarted){

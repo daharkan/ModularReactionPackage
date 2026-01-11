@@ -24,6 +24,8 @@ public:
     void fromJSON(const Value& json);
 
     void addCellVisuals(CellVisuals cellVisuals);
+    void appendHistory(const CellVisualsHistory& other);
+    const std::vector<CellVisuals>& visuals() const;
 
 private:
     std::vector<CellVisuals> m_visuals;
