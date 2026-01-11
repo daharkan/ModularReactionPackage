@@ -1,7 +1,6 @@
 #include "uiExperimentManagerWidget.h"
 #include "ui_uiExperimentManagerWidget.h"
 #include "RedisDBManager.h"
-#include <QMessageBox>
 
 
 ExperimentManagerWidget::ExperimentManagerWidget(QWidget *parent)
@@ -17,7 +16,6 @@ ExperimentManagerWidget::ExperimentManagerWidget(QWidget *parent)
     connect(ui->edtExperimentPushButton, &QPushButton::clicked, this, &ExperimentManagerWidget::editClicked);
     connect(ui->delExperimentPushButton, &QPushButton::clicked, this, &ExperimentManagerWidget::deleteClicked);
     connect(m_experimentListWidget, &ExperimentListWidget::sgn_selectionChanged, this, &ExperimentManagerWidget::handleSelectionChanged);
-    connect(m_experimentListWidget, &ExperimentListWidget::sgn_experimentDoubleClicked, this, &ExperimentManagerWidget::handleExperimentDoubleClicked);
 
     if (!RedisDBManager::getInstance()->isConnected()) {
         RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
@@ -112,15 +110,6 @@ void ExperimentManagerWidget::deleteClicked()
         return;
     }
 
-    QMessageBox::StandardButton reply = QMessageBox::question(
-        this,
-        tr("Delete Experiment"),
-        tr("Are you sure you want to delete this experiment?"),
-        QMessageBox::Yes | QMessageBox::No);
-    if (reply != QMessageBox::Yes) {
-        return;
-    }
-
     RedisDBManager::getInstance()->deleteExperiment(selected.experimentId());
     m_experimentListWidget->reloadExperiments();
     updateActionButtons();
@@ -133,24 +122,7 @@ void ExperimentManagerWidget::handleSelectionChanged()
 
 void ExperimentManagerWidget::handleExperimentSaved()
 {
-    // Stay on the current screen; the list will be refreshed when reopened.
-}
-
-void ExperimentManagerWidget::handleExperimentDoubleClicked(const Experiment &experiment)
-{
-    if (experiment.experimentId().empty()) {
-        return;
-    }
-
-    clearMainLayout();
-    ExperimentCreateWidget *createWid = new ExperimentCreateWidget(this);
-    createWid->setCurrentUser(m_currentUser);
-    createWid->loadExperiment(experiment, ExperimentCreateWidget::Mode::Show);
-    ui->mainGridLayout->addWidget(createWid);
-    ui->listExperimentsPushButton->setVisible(true);
-    ui->createPushButton->setVisible(false);
-    ui->delExperimentPushButton->setVisible(false);
-    ui->edtExperimentPushButton->setVisible(false);
+    showListWidget();
 }
 
 void ExperimentManagerWidget::updateActionButtons()

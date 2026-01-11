@@ -693,35 +693,17 @@ void ExperimentCreateWidget::updateModeUi()
     if (m_mode == Mode::Create) {
         ui->createPushButton->setText(tr("Create"));
         setInputsEnabled(true);
-        if (m_assignButton) {
-            m_assignButton->setEnabled(true);
-        }
-        if (m_assignButtonAdvanced) {
-            m_assignButtonAdvanced->setEnabled(true);
-        }
         return;
     }
 
     if (m_mode == Mode::Edit) {
         ui->createPushButton->setText(tr("Update"));
         setInputsEnabled(true);
-        if (m_assignButton) {
-            m_assignButton->setEnabled(true);
-        }
-        if (m_assignButtonAdvanced) {
-            m_assignButtonAdvanced->setEnabled(true);
-        }
         return;
     }
 
     ui->createPushButton->setText(tr("Assign"));
     setInputsEnabled(false);
-    if (m_assignButton) {
-        m_assignButton->setEnabled(true);
-    }
-    if (m_assignButtonAdvanced) {
-        m_assignButtonAdvanced->setEnabled(true);
-    }
 }
 
 std::string ExperimentCreateWidget::promptExperimentName(const QString &currentName)
@@ -822,14 +804,6 @@ void ExperimentCreateWidget::setInputsEnabled(bool enabled)
 
 void ExperimentCreateWidget::assignExperimentToCells()
 {
-    if (m_mode != Mode::Show) {
-        Profile profile;
-        if (!buildProfile(profile)) {
-            return;
-        }
-        m_currentExperiment.setProfile(profile);
-    }
-
     if (!RedisDBManager::getInstance()->isConnected()) {
         RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
     }
@@ -902,17 +876,6 @@ void ExperimentCreateWidget::assignExperimentToCells()
                 continue;
             }
             Cell cell = cells.at(row);
-            if (!cell.asignedExperiment().name().empty()) {
-                QMessageBox::StandardButton reply = QMessageBox::question(
-                    this,
-                    tr("Replace Experiment"),
-                    tr("Cell %1 already has an experiment. Stop it and run the new experiment?")
-                        .arg(QString::fromStdString(cell.cellID())),
-                    QMessageBox::Yes | QMessageBox::No);
-                if (reply != QMessageBox::Yes) {
-                    continue;
-                }
-            }
             Experiment assignedExperiment = m_currentExperiment;
             assignedExperiment.setStartSystemTimeMSecs(startTime);
             cell.setAsignedExperiment(assignedExperiment);

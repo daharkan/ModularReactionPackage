@@ -33,7 +33,6 @@ private slots:
 
 signals:
     void sgn_selectionChanged();
-    void sgn_experimentDoubleClicked(const Experiment &experiment);
 
 };
 

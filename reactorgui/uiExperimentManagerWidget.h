@@ -35,7 +35,6 @@ private slots:
     void deleteClicked();
     void handleSelectionChanged();
     void handleExperimentSaved();
-    void handleExperimentDoubleClicked(const Experiment &experiment);
     void clearMainLayout();
 
 
