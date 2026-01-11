@@ -1,9 +1,23 @@
 #include "uiExperimentCreateWidget.h"
 #include "qmessagebox.h"
 #include "ui_uiExperimentCreateWidget.h"
+#include "RedisDBManager.h"
+#include "ExperimentRunner.h"
 
 #include <QButtonGroup>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QHeaderView>
+#include <QComboBox>
+#include <QInputDialog>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QRadioButton>
+#include <QTableWidget>
 #include <QTimer>
+#include <QVBoxLayout>
+#include <QUuid>
+#include <QtConcurrent>
 
 ExperimentCreateWidget::ExperimentCreateWidget(QWidget *parent)
     : QWidget(parent)
@@ -117,6 +131,23 @@ ExperimentCreateWidget::ExperimentCreateWidget(QWidget *parent)
 ExperimentCreateWidget::~ExperimentCreateWidget()
 {
     delete ui;
+}
+
+void ExperimentCreateWidget::setCurrentUser(const User &user)
+{
+    m_currentUser = user;
+}
+
+void ExperimentCreateWidget::loadExperiment(const Experiment &experiment, Mode mode)
+{
+    m_currentExperiment = experiment;
+    m_mode = mode;
+    m_currentExpType = static_cast<ExperimentType>(experiment.experimentType());
+
+    applyExperimentType(m_currentExpType);
+    applyUiState(experiment.settingsJson());
+    m_expGraph->updateTheExperiment(m_currentExperiment);
+    updateModeUi();
 }
 
 void ExperimentCreateWidget::setVisibleAllBasicExperimentItems(bool en)
@@ -399,126 +430,504 @@ void ExperimentCreateWidget::blinkLineEdit(QLineEdit* lineEdit, int blinkCount)
     timer->start(200); // 200ms interval
 }
 
-void ExperimentCreateWidget::updateClicked()
+bool ExperimentCreateWidget::buildProfile(Profile &profile)
 {
-
-    int numOfCycles = ui->numOfCyclesLineEdit->text().toInt();
-    if(numOfCycles < 1){
-
-        blinkLineEdit(ui->numOfCyclesLineEdit);
-        return;
-    }
-
-
-
-    Profile profile;
-
-    if(m_currentExpType == EXP_BASIC_STANDARD){
+    if (m_currentExpType == EXP_BASIC_STANDARD) {
+        int numOfCycles = ui->numOfCyclesLineEdit->text().toInt();
+        if (numOfCycles < 1) {
+            blinkLineEdit(ui->numOfCyclesLineEdit);
+            return false;
+        }
         int rank = ui->initRampLineEdit->text().toInt();
-         if(rank < 1){
+        if (rank < 1) {
             blinkLineEdit(ui->initRampLineEdit);
-            return;
+            return false;
         }
         rank = ui->finalRampLineEdit->text().toInt();
-        if(rank < 1){
-         blinkLineEdit(ui->finalRampLineEdit);
-         return;
+        if (rank < 1) {
+            blinkLineEdit(ui->finalRampLineEdit);
+            return false;
         }
 
         profile = createBasicStandardProfile();
-    }
-
-    else if(m_currentExpType == EXP_BASIC_LI_UP_ST_DOWN){
+    } else if (m_currentExpType == EXP_BASIC_LI_UP_ST_DOWN) {
+        int numOfCycles = ui->numOfCyclesLineEdit->text().toInt();
+        if (numOfCycles < 1) {
+            blinkLineEdit(ui->numOfCyclesLineEdit);
+            return false;
+        }
         int rank = ui->initRampLineEdit->text().toInt();
-        if(rank < 1){
+        if (rank < 1) {
             blinkLineEdit(ui->initRampLineEdit);
-            return;
+            return false;
         }
 
-
         int stCount = ui->numOfStepsDownLineEdit->text().toInt();
-        if(stCount < 1){
+        if (stCount < 1) {
             blinkLineEdit(ui->numOfStepsDownLineEdit);
-            return;
+            return false;
         }
 
         float stDur = ui->stepsDownDurationLineEdit->text().toFloat();
-        if(stDur == 0){
+        if (stDur == 0) {
             blinkLineEdit(ui->stepsDownDurationLineEdit);
-            return;
+            return false;
         }
 
         profile = createLinearUpStepDownProfile();
-    }
-
-
-    else if(m_currentExpType == EXP_BASIC_ST_UP_LI_DOWN){
+    } else if (m_currentExpType == EXP_BASIC_ST_UP_LI_DOWN) {
+        int numOfCycles = ui->numOfCyclesLineEdit->text().toInt();
+        if (numOfCycles < 1) {
+            blinkLineEdit(ui->numOfCyclesLineEdit);
+            return false;
+        }
         int rank = ui->finalRampLineEdit->text().toInt();
-        if(rank < 1){
+        if (rank < 1) {
             blinkLineEdit(ui->finalRampLineEdit);
-            return;
+            return false;
         }
 
         int stCount = ui->numOfStepsUpLineEdit->text().toInt();
-        if(stCount < 1){
+        if (stCount < 1) {
             blinkLineEdit(ui->numOfStepsUpLineEdit);
-            return;
+            return false;
         }
 
         float stDur = ui->stepsUpDurationLineEdit->text().toFloat();
-        if(stDur == 0){
+        if (stDur == 0) {
             blinkLineEdit(ui->stepsUpDurationLineEdit);
-            return;
+            return false;
         }
 
-
-
-
         profile = createStepUpLinearDownProfile();
-    }
-
-    else if(m_currentExpType == EXP_BASIC_ST_UP_ST_DOWN){
+    } else if (m_currentExpType == EXP_BASIC_ST_UP_ST_DOWN) {
+        int numOfCycles = ui->numOfCyclesLineEdit->text().toInt();
+        if (numOfCycles < 1) {
+            blinkLineEdit(ui->numOfCyclesLineEdit);
+            return false;
+        }
         int stCount = ui->numOfStepsDownLineEdit->text().toInt();
-        if(stCount < 1){
+        if (stCount < 1) {
             blinkLineEdit(ui->numOfStepsDownLineEdit);
-            return;
+            return false;
         }
 
         float stDur = ui->stepsDownDurationLineEdit->text().toFloat();
-        if(stDur == 0){
+        if (stDur == 0) {
             blinkLineEdit(ui->stepsDownDurationLineEdit);
-            return;
+            return false;
         }
 
         stCount = ui->numOfStepsUpLineEdit->text().toInt();
-        if(stCount < 1){
+        if (stCount < 1) {
             blinkLineEdit(ui->numOfStepsUpLineEdit);
-            return;
+            return false;
         }
 
         stDur = ui->stepsUpDurationLineEdit->text().toFloat();
-        if(stDur == 0){
+        if (stDur == 0) {
             blinkLineEdit(ui->stepsUpDurationLineEdit);
-            return;
+            return false;
         }
 
-
-
         profile = createStepUpStepDownProfile();
+    } else if (m_currentExpType == EXP_ADVANCED_LIN || m_currentExpType == EXP_ADVANCED_PLATUE ||
+               m_currentExpType == EXP_ADVANCED_STEPS || m_currentExpType == EXP_ADVANCED_2NDDEG) {
+        profile = m_currentExperiment.profile();
     }
+
+    if (profile.tempArcsInSeq().empty()) {
+        return false;
+    }
+
     TempArc firstTempArc = profile.tempArcsInSeq().at(0);
-    TempArc lastTempARc = profile.tempArcsInSeq().at(profile.tempArcsInSeq().size()-1);
+    TempArc lastTempARc = profile.tempArcsInSeq().at(profile.tempArcsInSeq().size() - 1);
 
     float rpmC = ui->initRPMLineEdit->text().toFloat();
-    RPMArc rpmarc(0, 0, rpmC, firstTempArc.startTimeMsec(), lastTempARc.finishTimeMsec()-firstTempArc.startTimeMsec());
+    RPMArc rpmarc(0, 0, rpmC, firstTempArc.startTimeMsec(),
+                  lastTempARc.finishTimeMsec() - firstTempArc.startTimeMsec());
     profile.addRPMArcInSequence(rpmarc);
 
-    m_currentExperiment.setProfile(profile);
-    m_expGraph->updateTheExperiment(m_currentExperiment);
-    m_currentExpType = EXP_UNDEFINED;
-
+    return true;
 }
 
+void ExperimentCreateWidget::applyExperimentType(ExperimentType type)
+{
+    if (type == EXP_UNDEFINED) {
+        return;
+    }
+
+    m_currentExpType = type;
+
+    if (type == EXP_BASIC_STANDARD || type == EXP_BASIC_LI_UP_ST_DOWN ||
+        type == EXP_BASIC_ST_UP_LI_DOWN || type == EXP_BASIC_ST_UP_ST_DOWN) {
+        ui->basicStandard->setChecked(type == EXP_BASIC_STANDARD);
+        ui->basicLinUpStepDown->setChecked(type == EXP_BASIC_LI_UP_ST_DOWN);
+        ui->basicStepUpLinDown->setChecked(type == EXP_BASIC_ST_UP_LI_DOWN);
+        ui->basicStepUpStepDown->setChecked(type == EXP_BASIC_ST_UP_ST_DOWN);
+        ui->advancedProfile->setChecked(false);
+        ui->stackedWidget->setCurrentIndex(PAGE_CREATE_IDX);
+        setVisibleAllBasicExperimentItems(true);
+
+        ui->initRampCLabel->setVisible(true);
+        ui->initRampLabel->setVisible(true);
+        ui->initRampLineEdit->setVisible(true);
+        ui->finalRampCLabel->setVisible(true);
+        ui->finalRampLabel->setVisible(true);
+        ui->finalRampLineEdit->setVisible(true);
+        ui->numOfStepsDownLineEdit->setVisible(true);
+        ui->numOfStepsDownLabel->setVisible(true);
+        ui->stepsDownDurationLineEdit->setVisible(true);
+        ui->stepsDownDurationLabel->setVisible(true);
+        ui->stepsDownDurationComboBox->setVisible(true);
+        ui->numOfStepsUpLineEdit->setVisible(true);
+        ui->numOfStepsUpLabel->setVisible(true);
+        ui->stepsUpDurationLineEdit->setVisible(true);
+        ui->stepsUpDurationLabel->setVisible(true);
+        ui->stepsUpDurationComboBox->setVisible(true);
+
+        if (type == EXP_BASIC_ST_UP_ST_DOWN) {
+            ui->initRampCLabel->setVisible(false);
+            ui->initRampLabel->setVisible(false);
+            ui->initRampLineEdit->setVisible(false);
+            ui->finalRampCLabel->setVisible(false);
+            ui->finalRampLabel->setVisible(false);
+            ui->finalRampLineEdit->setVisible(false);
+        } else if (type == EXP_BASIC_ST_UP_LI_DOWN) {
+            ui->initRampCLabel->setVisible(false);
+            ui->initRampLabel->setVisible(false);
+            ui->initRampLineEdit->setVisible(false);
+
+            ui->numOfStepsDownLineEdit->setVisible(false);
+            ui->numOfStepsDownLabel->setVisible(false);
+            ui->stepsDownDurationLineEdit->setVisible(false);
+            ui->stepsDownDurationLabel->setVisible(false);
+            ui->stepsDownDurationComboBox->setVisible(false);
+        } else if (type == EXP_BASIC_LI_UP_ST_DOWN) {
+            ui->finalRampCLabel->setVisible(false);
+            ui->finalRampLabel->setVisible(false);
+            ui->finalRampLineEdit->setVisible(false);
+
+            ui->numOfStepsUpLineEdit->setVisible(false);
+            ui->numOfStepsUpLabel->setVisible(false);
+            ui->stepsUpDurationLineEdit->setVisible(false);
+            ui->stepsUpDurationLabel->setVisible(false);
+            ui->stepsUpDurationComboBox->setVisible(false);
+        } else if (type == EXP_BASIC_STANDARD) {
+            ui->numOfStepsDownLineEdit->setVisible(false);
+            ui->numOfStepsDownLabel->setVisible(false);
+            ui->stepsDownDurationLineEdit->setVisible(false);
+            ui->stepsDownDurationLabel->setVisible(false);
+            ui->stepsDownDurationComboBox->setVisible(false);
+
+            ui->numOfStepsUpLineEdit->setVisible(false);
+            ui->numOfStepsUpLabel->setVisible(false);
+            ui->stepsUpDurationLineEdit->setVisible(false);
+            ui->stepsUpDurationLabel->setVisible(false);
+            ui->stepsUpDurationComboBox->setVisible(false);
+        }
+        return;
+    }
+
+    if (type == EXP_ADVANCED_LIN || type == EXP_ADVANCED_PLATUE ||
+        type == EXP_ADVANCED_STEPS || type == EXP_ADVANCED_2NDDEG) {
+        ui->basicStandard->setChecked(false);
+        ui->basicLinUpStepDown->setChecked(false);
+        ui->basicStepUpLinDown->setChecked(false);
+        ui->basicStepUpStepDown->setChecked(false);
+        ui->advancedProfile->setChecked(true);
+        ui->stackedWidget->setCurrentIndex(PAGE_ADVANCED_IDX);
+        setVisibleAllAdvExperimentItems(false, false);
+
+        ui->adv_initTempCLabel->setVisible(true);
+        ui->adv_initTempLabel->setVisible(true);
+        ui->adv_initTempLineEdit->setVisible(true);
+        ui->adv_arcDurationLineEdit->setVisible(true);
+        ui->adv_arcDurationLabel->setVisible(true);
+        ui->adv_arcDurationComboBox->setVisible(true);
+        ui->adv_numOfCyclesLabel->setVisible(true);
+        ui->adv_numOfCyclesLineEdit->setVisible(true);
+
+        if (type == EXP_ADVANCED_PLATUE) {
+            ui->adv_addPlatueRadioButton->setChecked(true);
+        } else if (type == EXP_ADVANCED_LIN) {
+            ui->adv_finalTempLabel->setVisible(true);
+            ui->adv_finalTempLineEdit->setVisible(true);
+            ui->adv_finalTempCLabel->setVisible(true);
+            ui->adv_arcRampLabel->setVisible(true);
+            ui->adv_arcRampLineEdit->setVisible(true);
+            ui->adv_arcRampCLabel->setVisible(true);
+            ui->adv_addLinearRadioButton->setChecked(true);
+        } else if (type == EXP_ADVANCED_STEPS) {
+            ui->adv_finalTempLabel->setVisible(true);
+            ui->adv_finalTempLineEdit->setVisible(true);
+            ui->adv_finalTempCLabel->setVisible(true);
+            ui->adv_stepCntLabel->setVisible(true);
+            ui->adv_stepCntLieEdit->setVisible(true);
+            ui->adv_arcRampLabel->setVisible(true);
+            ui->adv_arcRampLineEdit->setVisible(true);
+            ui->adv_arcRampCLabel->setVisible(true);
+            ui->adv_addStepsRadioButton->setChecked(true);
+        } else if (type == EXP_ADVANCED_2NDDEG) {
+            ui->adv_finalTempLabel->setVisible(true);
+            ui->adv_finalTempLineEdit->setVisible(true);
+            ui->adv_finalTempCLabel->setVisible(true);
+            ui->adv_polyALabel->setVisible(true);
+            ui->adv_polyALineEdit->setVisible(true);
+            ui->adv_polyDescrLabel->setVisible(true);
+            ui->adv_add2ndDegRadioButton->setChecked(true);
+        }
+    }
+}
+
+void ExperimentCreateWidget::updateModeUi()
+{
+    if (m_mode == Mode::Create) {
+        ui->createPushButton->setText(tr("Create"));
+        setInputsEnabled(true);
+        return;
+    }
+
+    if (m_mode == Mode::Edit) {
+        ui->createPushButton->setText(tr("Update"));
+        setInputsEnabled(true);
+        return;
+    }
+
+    ui->createPushButton->setText(tr("Assign"));
+    setInputsEnabled(false);
+}
+
+std::string ExperimentCreateWidget::promptExperimentName(const QString &currentName)
+{
+    bool ok = false;
+    QString text = QInputDialog::getText(this, tr("Experiment Name"),
+                                         tr("Enter experiment name:"), QLineEdit::Normal,
+                                         currentName, &ok);
+    if (!ok) {
+        return {};
+    }
+    return text.trimmed().toStdString();
+}
+
+std::string ExperimentCreateWidget::captureUiState() const
+{
+    QJsonObject root;
+
+    const QList<QLineEdit*> edits = findChildren<QLineEdit*>();
+    for (QLineEdit *edit : edits) {
+        root.insert(edit->objectName(), edit->text());
+    }
+
+    const QList<QComboBox*> combos = findChildren<QComboBox*>();
+    for (QComboBox *combo : combos) {
+        root.insert(combo->objectName(), combo->currentIndex());
+    }
+
+    const QList<QRadioButton*> radios = findChildren<QRadioButton*>();
+    for (QRadioButton *radio : radios) {
+        root.insert(radio->objectName(), radio->isChecked());
+    }
+
+    QJsonDocument doc(root);
+    return doc.toJson(QJsonDocument::Compact).toStdString();
+}
+
+void ExperimentCreateWidget::applyUiState(const std::string &stateJson)
+{
+    if (stateJson.empty()) {
+        return;
+    }
+
+    QJsonDocument doc = QJsonDocument::fromJson(QByteArray::fromStdString(stateJson));
+    if (!doc.isObject()) {
+        return;
+    }
+
+    QJsonObject root = doc.object();
+    const QList<QLineEdit*> edits = findChildren<QLineEdit*>();
+    for (QLineEdit *edit : edits) {
+        QJsonValue value = root.value(edit->objectName());
+        if (value.isString()) {
+            edit->setText(value.toString());
+        }
+    }
+
+    const QList<QComboBox*> combos = findChildren<QComboBox*>();
+    for (QComboBox *combo : combos) {
+        QJsonValue value = root.value(combo->objectName());
+        if (value.isDouble()) {
+            combo->setCurrentIndex(value.toInt());
+        }
+    }
+
+    const QList<QRadioButton*> radios = findChildren<QRadioButton*>();
+    for (QRadioButton *radio : radios) {
+        QJsonValue value = root.value(radio->objectName());
+        if (value.isBool()) {
+            radio->setChecked(value.toBool());
+        }
+    }
+}
+
+void ExperimentCreateWidget::setInputsEnabled(bool enabled)
+{
+    const QList<QLineEdit*> edits = findChildren<QLineEdit*>();
+    for (QLineEdit *edit : edits) {
+        edit->setEnabled(enabled);
+    }
+    const QList<QComboBox*> combos = findChildren<QComboBox*>();
+    for (QComboBox *combo : combos) {
+        combo->setEnabled(enabled);
+    }
+    ui->basicStandard->setEnabled(enabled);
+    ui->basicLinUpStepDown->setEnabled(enabled);
+    ui->basicStepUpLinDown->setEnabled(enabled);
+    ui->basicStepUpStepDown->setEnabled(enabled);
+    ui->advancedProfile->setEnabled(enabled);
+    ui->adv_addPlatueRadioButton->setEnabled(enabled);
+    ui->adv_addLinearRadioButton->setEnabled(enabled);
+    ui->adv_addStepsRadioButton->setEnabled(enabled);
+    ui->adv_add2ndDegRadioButton->setEnabled(enabled);
+    ui->adv_addArcToExpButton->setEnabled(enabled);
+    ui->adv_delLastArcButton->setEnabled(enabled);
+    ui->adv_clearProfileButton->setEnabled(enabled);
+}
+
+void ExperimentCreateWidget::assignExperimentToCells()
+{
+    if (!RedisDBManager::getInstance()->isConnected()) {
+        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+    }
+
+    std::vector<std::string> busboardIds = RedisDBManager::getInstance()->getBusboardIds();
+    std::vector<std::string> cellIds;
+    for (const auto &busboardId : busboardIds) {
+        std::vector<std::string> ids = RedisDBManager::getInstance()->getBusboardCellIds(busboardId);
+        cellIds.insert(cellIds.end(), ids.begin(), ids.end());
+    }
+
+    std::vector<Cell> cells = RedisDBManager::getInstance()->getCellList(cellIds);
+    if (cells.empty()) {
+        return;
+    }
+
+    QDialog dialog(this);
+    dialog.setWindowTitle(tr("Assign Experiment"));
+    QVBoxLayout *layout = new QVBoxLayout(&dialog);
+    QTableWidget *table = new QTableWidget(&dialog);
+    table->setColumnCount(2);
+    table->setHorizontalHeaderLabels(QStringList() << tr("Cell ID") << tr("Assigned Experiment"));
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setSelectionMode(QAbstractItemView::MultiSelection);
+    table->setRowCount(static_cast<int>(cells.size()));
+
+    for (int row = 0; row < static_cast<int>(cells.size()); ++row) {
+        const Cell &cell = cells.at(row);
+        QString cellId = QString::fromStdString(cell.cellID());
+        QTableWidgetItem *idItem = new QTableWidgetItem(cellId);
+        table->setItem(row, 0, idItem);
+
+        QString expName = QString::fromStdString(cell.asignedExperiment().name());
+        if (expName.isEmpty()) {
+            expName = tr("--");
+        }
+        QTableWidgetItem *expItem = new QTableWidgetItem(expName);
+        table->setItem(row, 1, expItem);
+
+        QString owner = QString::fromStdString(cell.asignedExperiment().owner().username());
+        bool available = cell.asignedExperiment().name().empty() ||
+                         owner == QString::fromStdString(m_currentUser.username());
+        if (!available) {
+            idItem->setFlags(idItem->flags() & ~Qt::ItemIsSelectable);
+            expItem->setFlags(expItem->flags() & ~Qt::ItemIsSelectable);
+        }
+    }
+
+    layout->addWidget(table);
+    QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    layout->addWidget(buttons);
+    QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    QList<QTableWidgetSelectionRange> ranges = table->selectedRanges();
+    if (ranges.isEmpty()) {
+        return;
+    }
+
+    unsigned long startTime = Cell::getCurrentTimeMillis();
+    std::vector<Cell> updatedCells;
+    for (const auto &range : ranges) {
+        for (int row = range.topRow(); row <= range.bottomRow(); ++row) {
+            if (row < 0 || row >= static_cast<int>(cells.size())) {
+                continue;
+            }
+            Cell cell = cells.at(row);
+            Experiment assignedExperiment = m_currentExperiment;
+            assignedExperiment.setStartSystemTimeMSecs(startTime);
+            cell.setAsignedExperiment(assignedExperiment);
+            updatedCells.push_back(cell);
+
+            ExperimentRunner *runner = new ExperimentRunner(this);
+            runner->assignExperiment(assignedExperiment);
+            runner->setCellId(cell.cellID());
+            QtConcurrent::run([runner]() {
+                runner->run();
+            });
+        }
+    }
+
+    if (!updatedCells.empty()) {
+        RedisDBManager::getInstance()->pushCellList(updatedCells);
+    }
+}
+
+void ExperimentCreateWidget::updateClicked()
+{
+    if (m_mode == Mode::Show) {
+        assignExperimentToCells();
+        return;
+    }
+
+    Profile profile;
+    if (!buildProfile(profile)) {
+        return;
+    }
+
+    m_currentExperiment.setProfile(profile);
+    m_currentExperiment.setExperimentType(static_cast<int>(m_currentExpType));
+    m_currentExperiment.setSettingsJson(captureUiState());
+
+    std::string expName = m_currentExperiment.name();
+    if (expName.empty()) {
+        expName = promptExperimentName(QString::fromStdString(expName));
+        if (expName.empty()) {
+            return;
+        }
+        m_currentExperiment.setName(expName);
+    }
+
+    if (m_mode == Mode::Create) {
+        if (m_currentExperiment.experimentId().empty()) {
+            m_currentExperiment.setExperimentId(QUuid::createUuid().toString(QUuid::WithoutBraces).toStdString());
+        }
+        m_currentExperiment.setCreatedAtMSecs(Cell::getCurrentTimeMillis());
+        m_currentExperiment.setOwner(m_currentUser);
+    }
+
+    if (!RedisDBManager::getInstance()->isConnected()) {
+        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+    }
+    RedisDBManager::getInstance()->pushExperiment(m_currentExperiment);
+
+    m_expGraph->updateTheExperiment(m_currentExperiment);
+    emit sgn_experimentSaved();
+}
 
 
 
@@ -527,7 +936,7 @@ void ExperimentCreateWidget::updateClicked()
 ///ADVANCED EXPERIMENTS----------
 
 
-void ExperimentCreateWidget::setVisibleAllAdvExperimentItems(bool en)
+void ExperimentCreateWidget::setVisibleAllAdvExperimentItems(bool en, bool clearFields)
 {
     ui->adv_arcDurationComboBox->setVisible(en);
     ui->adv_arcDurationLabel->setVisible(en);
@@ -547,15 +956,17 @@ void ExperimentCreateWidget::setVisibleAllAdvExperimentItems(bool en)
     ui->adv_stepCntLabel->setVisible(en);
     ui->adv_stepCntLieEdit->setVisible(en);
 
-    ui->adv_initTempLineEdit->clear();
-    ui->adv_finalTempLineEdit->clear();
-    ui->adv_arcRampLineEdit->clear();
-    ui->adv_arcDurationLineEdit->clear();
-    ui->adv_numOfCyclesLineEdit->clear();
-    ui->adv_stepCntLieEdit->clear();
-    ui->adv_polyALineEdit->clear();
+    if (clearFields) {
+        ui->adv_initTempLineEdit->clear();
+        ui->adv_finalTempLineEdit->clear();
+        ui->adv_arcRampLineEdit->clear();
+        ui->adv_arcDurationLineEdit->clear();
+        ui->adv_numOfCyclesLineEdit->clear();
+        ui->adv_stepCntLieEdit->clear();
+        ui->adv_polyALineEdit->clear();
 
-    ui->adv_initTempLineEdit->setEnabled(true);
+        ui->adv_initTempLineEdit->setEnabled(true);
+    }
 
 }
 
@@ -1275,4 +1686,3 @@ Profile ExperimentCreateWidget::createStepUpStepDownProfile()
     }
     return profile;
 }
-

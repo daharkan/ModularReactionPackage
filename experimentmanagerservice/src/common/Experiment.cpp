@@ -10,7 +10,11 @@ Experiment::Experiment(const Experiment& other) :
     m_cellID(other.m_cellID),
     m_busboardID(other.m_busboardID),
     m_totalProfileDurationMSecs(other.m_totalProfileDurationMSecs),
-    m_startSystemTimeMSecs(other.m_startSystemTimeMSecs)
+    m_startSystemTimeMSecs(other.m_startSystemTimeMSecs),
+    m_experimentId(other.m_experimentId),
+    m_experimentType(other.m_experimentType),
+    m_createdAtMSecs(other.m_createdAtMSecs),
+    m_settingsJson(other.m_settingsJson)
 {
     // Copy constructor implementation
 }
@@ -25,6 +29,10 @@ Experiment& Experiment::operator=(const Experiment& other) {
         m_busboardID = other.m_busboardID;
         m_totalProfileDurationMSecs = other.m_totalProfileDurationMSecs;
         m_startSystemTimeMSecs = other.m_startSystemTimeMSecs;
+        m_experimentId = other.m_experimentId;
+        m_experimentType = other.m_experimentType;
+        m_createdAtMSecs = other.m_createdAtMSecs;
+        m_settingsJson = other.m_settingsJson;
     }
 
     return *this;
@@ -47,6 +55,46 @@ std::string Experiment::name() const
 void Experiment::setName(const std::string &newName)
 {
     m_name = newName;
+}
+
+std::string Experiment::experimentId() const
+{
+    return m_experimentId;
+}
+
+void Experiment::setExperimentId(const std::string &newExperimentId)
+{
+    m_experimentId = newExperimentId;
+}
+
+int Experiment::experimentType() const
+{
+    return m_experimentType;
+}
+
+void Experiment::setExperimentType(int newExperimentType)
+{
+    m_experimentType = newExperimentType;
+}
+
+unsigned long Experiment::createdAtMSecs() const
+{
+    return m_createdAtMSecs;
+}
+
+void Experiment::setCreatedAtMSecs(unsigned long newCreatedAtMSecs)
+{
+    m_createdAtMSecs = newCreatedAtMSecs;
+}
+
+std::string Experiment::settingsJson() const
+{
+    return m_settingsJson;
+}
+
+void Experiment::setSettingsJson(const std::string &newSettingsJson)
+{
+    m_settingsJson = newSettingsJson;
 }
 
 Profile& Experiment::profile() {

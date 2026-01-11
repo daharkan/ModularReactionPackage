@@ -61,6 +61,7 @@ private:
     UserManagementWidget *m_userManagementWidget = nullptr;
     ReactorViewWidget *m_reactorViewWidget = nullptr;
     ExperimentManagerWidget *m_experimentManagerWidget = nullptr;
+    User m_currentUser;
 
 
     PageType m_currentPageType = PAGE_TYPE_UNKNOWN;

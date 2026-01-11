@@ -250,6 +250,156 @@ std::vector<CellTarget> RedisDBManager::getCellTargets(std::vector<std::string> 
     return celltargets;
 }
 
+bool RedisDBManager::pushExperiment(const Experiment &experiment)
+{
+    if (!m_client.is_connected()) {
+        return false;
+    }
+
+    if (experiment.experimentId().empty()) {
+        return false;
+    }
+
+    Document document;
+    document.SetObject();
+    Document::AllocatorType& allocator = document.GetAllocator();
+
+    Value experimentJSON = experiment.toJSON(allocator);
+    Value experimentWrapper(experimentJSON, allocator);
+    document.AddMember(DB_EXPERIMENTJSON_KEY, experimentWrapper, allocator);
+
+    StringBuffer buffer;
+    Writer<StringBuffer> writer(buffer);
+    document.Accept(writer);
+
+    std::string jsonString = buffer.GetString();
+    m_client.hset(DB_EXPERIMENTS_TABLE_KEY, experiment.experimentId(), jsonString);
+    m_client.sync_commit();
+    return true;
+}
+
+std::optional<Experiment> RedisDBManager::getExperiment(const std::string &experimentId)
+{
+    if (!m_client.is_connected()) {
+        return std::nullopt;
+    }
+
+    if (experimentId.empty()) {
+        return std::nullopt;
+    }
+
+    std::future<cpp_redis::reply> future_reply = m_client.hget(DB_EXPERIMENTS_TABLE_KEY, experimentId);
+    m_client.sync_commit();
+
+    if (replyTimedOut(future_reply)) {
+        return std::nullopt;
+    }
+
+    cpp_redis::reply reply = future_reply.get();
+    if (!reply.is_string()) {
+        return std::nullopt;
+    }
+
+    std::string jsonString = reply.as_string();
+    if (jsonString.empty()) {
+        return std::nullopt;
+    }
+
+    Document jsonDocument;
+    jsonDocument.Parse(jsonString.c_str());
+
+    const Value* experimentValue = nullptr;
+    if (jsonDocument.IsObject() && jsonDocument.HasMember(DB_EXPERIMENTJSON_KEY) && jsonDocument[DB_EXPERIMENTJSON_KEY].IsObject()) {
+        experimentValue = &jsonDocument[DB_EXPERIMENTJSON_KEY];
+    } else if (jsonDocument.IsObject()) {
+        experimentValue = &jsonDocument;
+    }
+
+    if (!experimentValue) {
+        return std::nullopt;
+    }
+
+    Experiment experiment;
+    experiment.fromJSON(*experimentValue);
+    if (experiment.experimentId().empty()) {
+        experiment.setExperimentId(experimentId);
+    }
+    return experiment;
+}
+
+std::vector<Experiment> RedisDBManager::getExperiments()
+{
+    std::vector<Experiment> experiments;
+    if (!m_client.is_connected()) {
+        return experiments;
+    }
+
+    std::future<cpp_redis::reply> future_reply = m_client.hgetall(DB_EXPERIMENTS_TABLE_KEY);
+    m_client.sync_commit();
+
+    if (replyTimedOut(future_reply)) {
+        return experiments;
+    }
+
+    cpp_redis::reply reply = future_reply.get();
+    if (!reply.is_array()) {
+        return experiments;
+    }
+
+    const auto& values = reply.as_array();
+    for (size_t i = 0; i + 1 < values.size(); i += 2) {
+        const auto& keyReply = values.at(i);
+        const auto& valueReply = values.at(i + 1);
+        if (!keyReply.is_string() || !valueReply.is_string()) {
+            continue;
+        }
+
+        std::string experimentId = keyReply.as_string();
+        std::string jsonString = valueReply.as_string();
+        if (jsonString.empty()) {
+            continue;
+        }
+
+        Document jsonDocument;
+        jsonDocument.Parse(jsonString.c_str());
+
+        const Value* experimentValue = nullptr;
+        if (jsonDocument.IsObject() && jsonDocument.HasMember(DB_EXPERIMENTJSON_KEY) && jsonDocument[DB_EXPERIMENTJSON_KEY].IsObject()) {
+            experimentValue = &jsonDocument[DB_EXPERIMENTJSON_KEY];
+        } else if (jsonDocument.IsObject()) {
+            experimentValue = &jsonDocument;
+        }
+
+        if (!experimentValue) {
+            continue;
+        }
+
+        Experiment experiment;
+        experiment.fromJSON(*experimentValue);
+        if (experiment.experimentId().empty()) {
+            experiment.setExperimentId(experimentId);
+        }
+        experiments.push_back(experiment);
+    }
+
+    return experiments;
+}
+
+bool RedisDBManager::deleteExperiment(const std::string &experimentId)
+{
+    if (!m_client.is_connected()) {
+        return false;
+    }
+
+    if (experimentId.empty()) {
+        return false;
+    }
+
+    m_client.hdel(DB_EXPERIMENTS_TABLE_KEY, {experimentId});
+    m_client.sync_commit();
+    return true;
+}
+
 std::vector<std::string> RedisDBManager::getBusboardCellIds(std::string busboardID)
 {
     std::future<cpp_redis::reply> future_reply = m_client.hget(DB_BUSBOARD_TABLE_KEY, busboardID);

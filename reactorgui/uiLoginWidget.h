@@ -2,6 +2,7 @@
 #define UILOGINWIDGET_H
 
 #include <QWidget>
+#include "User.h"
 
 namespace Ui {
 class LoginWidget;
@@ -14,10 +15,12 @@ class LoginWidget : public QWidget
 public:
     explicit LoginWidget(bool isMachineConnected, QWidget *parent = nullptr);
     ~LoginWidget();
+    User currentUser() const;
 
 private:
     Ui::LoginWidget *ui;
     bool m_isMachineConnected;
+    User m_currentUser;
 
 private slots:
     void loginPressed();
