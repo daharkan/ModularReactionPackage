@@ -13,22 +13,23 @@ class BusboardSerialManager : public QObject
 {
     Q_OBJECT
 public:
-    static BusboardSerialManager* getInstance();
+    explicit BusboardSerialManager(QObject *parent = nullptr);
+    ~BusboardSerialManager();
     bool connectAndAssignThePort();
     void sendExampleString(QString str);
     bool isSerialPortOK();
     bool writeCellUpdateString(QString str);
 
     std::string recievedBusboardSerial() const;
+    QString portName() const;
 
 private:
-    BusboardSerialManager();
     QSerialPort* m_serialPort = nullptr;
-    static BusboardSerialManager *m_instance;
     bool m_sleeping = false;
     QQueue<QString> m_messageQueue;
     QMap<int, QString> m_pendingUpdates;
     bool m_writing = false;
+    QString m_portName;
 
     void writeString(QString str, QSerialPort *port);
     void writeString2Queue(QString str);

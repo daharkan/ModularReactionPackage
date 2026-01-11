@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -21,7 +21,11 @@ SOURCES += \
     ../experimentmanagerservice/src/common/RedisDBManager.cpp \
     ../experimentmanagerservice/src/common/TempArc.cpp \
     ../experimentmanagerservice/src/common/User.cpp \
+    ../CellViewer/ExperimentRunner.cpp \
+    ../CellViewer/uiCellGraph.cpp \
     main.cpp \
+    uiCellOverviewWidget.cpp \
+    uiCellWidget.cpp \
     uiExperimentCreateWidget.cpp \
     uiExperimentGraph.cpp \
     uiExperimentListWidget.cpp \
@@ -45,6 +49,8 @@ HEADERS += \
     ../experimentmanagerservice/src/common/RedisDBManager.h \
     ../experimentmanagerservice/src/common/TempArc.h \
     ../experimentmanagerservice/src/common/User.h \
+    ../CellViewer/ExperimentRunner.h \
+    ../CellViewer/uiCellGraph.h \
     ../experimentmanagerservice/src/common/rapidjson/allocators.h \
     ../experimentmanagerservice/src/common/rapidjson/cursorstreamwrapper.h \
     ../experimentmanagerservice/src/common/rapidjson/document.h \
@@ -83,6 +89,8 @@ HEADERS += \
     ../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
     ../experimentmanagerservice/src/common/rapidjson/uri.h \
     ../experimentmanagerservice/src/common/rapidjson/writer.h \
+    uiCellOverviewWidget.h \
+    uiCellWidget.h \
     uiExperimentCreateWidget.h \
     uiExperimentGraph.h \
     uiExperimentListWidget.h \
@@ -95,6 +103,9 @@ HEADERS += \
     uiUserManagementWidget.h
 
 FORMS += \
+    ../CellViewer/uiCellGraph.ui \
+    uiCellOverviewWidget.ui \
+    uiCellWidget.ui \
     uiExperimentCreateWidget.ui \
     uiExperimentGraph.ui \
     uiExperimentListWidget.ui \
@@ -112,6 +123,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 INCLUDEPATH += ../experimentmanagerservice/src/common/
+INCLUDEPATH += ../CellViewer
 INCLUDEPATH += $$(DEV_EXTERNALS_PATH)/qwt-6.2.0/src
 DEPENDPATH +=  $$(DEV_EXTERNALS_PATH)/qwt-6.2.0/lib/
 LIBS += -L$$(DEV_EXTERNALS_PATH)/qwt-6.2.0/lib/

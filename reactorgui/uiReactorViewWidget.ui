@@ -63,6 +63,26 @@
      </item>
     </layout>
    </item>
+   <item row="1" column="0">
+    <layout class="QHBoxLayout" name="cellsLayout">
+     <item>
+      <widget class="QGroupBox" name="lhsGroupBox">
+       <property name="title">
+        <string>LHS Cells</string>
+       </property>
+       <layout class="QVBoxLayout" name="lhsCellsLayout"/>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="rhsGroupBox">
+       <property name="title">
+        <string>RHS Cells</string>
+       </property>
+       <layout class="QVBoxLayout" name="rhsCellsLayout"/>
+      </widget>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
  <resources/>

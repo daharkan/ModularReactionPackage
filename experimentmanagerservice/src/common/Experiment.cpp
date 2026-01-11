@@ -4,6 +4,7 @@
 Experiment::Experiment() {}
 
 Experiment::Experiment(const Experiment& other) :
+    m_name(other.m_name),
     m_owner(other.m_owner),
     m_profile(other.m_profile),
     m_cellID(other.m_cellID),
@@ -17,6 +18,7 @@ Experiment::Experiment(const Experiment& other) :
 
 Experiment& Experiment::operator=(const Experiment& other) {
     if (this != &other) { // Self-assignment check
+        m_name = other.m_name;
         m_owner = other.m_owner;
         m_profile = other.m_profile;
         m_cellID = other.m_cellID;
@@ -35,6 +37,16 @@ User Experiment::owner() const
 void Experiment::setOwner(const User &newOwner)
 {
     m_owner = newOwner;
+}
+
+std::string Experiment::name() const
+{
+    return m_name;
+}
+
+void Experiment::setName(const std::string &newName)
+{
+    m_name = newName;
 }
 
 Profile& Experiment::profile() {

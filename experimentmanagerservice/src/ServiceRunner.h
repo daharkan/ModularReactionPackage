@@ -14,8 +14,8 @@ public:
     void startServiceLoop();
 
 private:
-    std::shared_ptr<IBusboard>  m_busboard = nullptr;
-    std::vector<Cell> getUpdatedCells();
+    std::vector<std::shared_ptr<IBusboard>> m_busboards;
+    void processBusboard(const std::shared_ptr<IBusboard>& busboard);
     std::unordered_map<std::string, unsigned int> m_lastMotorSelect;
 
 };

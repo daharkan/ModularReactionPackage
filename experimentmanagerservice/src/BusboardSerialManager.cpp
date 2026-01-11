@@ -1,35 +1,67 @@
 #include "BusboardSerialManager.h"
 #include "src/common/Cell.h"
 #include <QCoreApplication>
+#include <algorithm>
 #include <chrono>
-#include <thread>
+#include <cctype>
 #include <sstream>
+#include <thread>
+#include <QSet>
 
 #define BAUDRATE 115200
 #define BUSBOARD_HANDSHAKE "bb"
 
-BusboardSerialManager* BusboardSerialManager::m_instance = nullptr;
+namespace {
+QSet<QString> s_usedPorts;
 
-
-BusboardSerialManager::BusboardSerialManager() : QObject() {
-}
-
-
-
-BusboardSerialManager* BusboardSerialManager::getInstance()
-{
-    if(m_instance == nullptr){
-        m_instance = new BusboardSerialManager();
-    }
-    return m_instance;
-}
-
-std::string removeNonAlphanumeric(const std::string& str) {
+std::string cleanBusboardToken(const std::string& str) {
     std::string result;
     std::copy_if(str.begin(), str.end(), std::back_inserter(result), [](char c) {
-        return std::isalnum(static_cast<unsigned char>(c));
+        return std::isalnum(static_cast<unsigned char>(c)) || c == '_';
     });
     return result;
+}
+
+std::string normalizeBusboardId(const std::string& token) {
+    std::string cleaned = cleanBusboardToken(token);
+    std::string upper = cleaned;
+    std::transform(upper.begin(), upper.end(), upper.begin(), [](unsigned char c) {
+        return static_cast<char>(std::toupper(c));
+    });
+
+    std::string side = "RHS";
+    if (upper.find("LHS") != std::string::npos || upper.find("LEFT") != std::string::npos) {
+        side = "LHS";
+    } else if (upper.find("RHS") != std::string::npos || upper.find("RIGHT") != std::string::npos) {
+        side = "RHS";
+    }
+
+    std::string digits;
+    for (char c : cleaned) {
+        if (std::isdigit(static_cast<unsigned char>(c))) {
+            digits.push_back(c);
+        }
+    }
+    if (digits.empty()) {
+        digits = "000";
+    } else if (digits.size() < 3) {
+        digits.insert(digits.begin(), 3 - digits.size(), '0');
+    }
+
+    return "bbb_" + side + "_" + digits;
+}
+} // namespace
+
+BusboardSerialManager::BusboardSerialManager(QObject *parent)
+    : QObject(parent)
+{
+}
+
+BusboardSerialManager::~BusboardSerialManager()
+{
+    if (m_serialPort) {
+        m_serialPort->close();
+    }
 }
 bool BusboardSerialManager::connectAndAssignThePort()
 {    
@@ -39,8 +71,13 @@ bool BusboardSerialManager::connectAndAssignThePort()
     for (int i = 0; i < comPorts.size(); i++) {
         //qDebug() << " tss com port processing..." << comPorts.at(i).portName();
 
-        QSerialPort *tmpSerial = new QSerialPort(comPorts.at(i).portName());
-        tmpSerial->setPortName(comPorts.at(i).portName());
+        QString portName = comPorts.at(i).portName();
+        if (s_usedPorts.contains(portName)) {
+            continue;
+        }
+
+        QSerialPort *tmpSerial = new QSerialPort(this);
+        tmpSerial->setPortName(portName);
         tmpSerial->setBaudRate(BAUDRATE);
         tmpSerial->setDataBits(QSerialPort::Data8);
         tmpSerial->setParity(QSerialPort::NoParity);
@@ -68,11 +105,13 @@ bool BusboardSerialManager::connectAndAssignThePort()
 
                     // Read tokens separated by '#' delimiter
                     std::getline(ss, token, '#'); // Serial number, ignoring
-                    m_recievedBusboardSerial = removeNonAlphanumeric(token);
+                    m_recievedBusboardSerial = normalizeBusboardId(token);
 
                     qDebug() << "connected to " << tmpSerial->portName() << " with the serial: " << m_recievedBusboardSerial;
 
                     m_serialPort = tmpSerial;
+                    m_portName = portName;
+                    s_usedPorts.insert(portName);
                     m_serialPort->clearError();
                     connect(m_serialPort, &QSerialPort::readyRead, this, &BusboardSerialManager::serialRecieved);
                     return true;
@@ -83,6 +122,7 @@ bool BusboardSerialManager::connectAndAssignThePort()
         }
         qDebug() << " tss com port closing..." << comPorts.at(i).portName();
         tmpSerial->close();
+        tmpSerial->deleteLater();
 
     } //for all com ports
 
@@ -98,6 +138,9 @@ void BusboardSerialManager::sendExampleString(QString str)
 bool BusboardSerialManager::isSerialPortOK()
 {
     //qDebug() << "::: " << m_serialPort->error();
+    if (!m_serialPort) {
+        return false;
+    }
     return (m_serialPort->isOpen() && (m_serialPort->error() == QSerialPort::NoError));
 }
 
@@ -314,4 +357,9 @@ void BusboardSerialManager::delay(int msec)
 std::string BusboardSerialManager::recievedBusboardSerial() const
 {
     return m_recievedBusboardSerial;
+}
+
+QString BusboardSerialManager::portName() const
+{
+    return m_portName;
 }
