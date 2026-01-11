@@ -6,7 +6,7 @@
 #include "common/Cell.h"
 #include "common/FlowStatus.h"
 
-#define CELL_COUNT 10
+#define CELL_COUNT 5
 
 class BusboardV1 : public IBusboard
 {
@@ -14,6 +14,7 @@ class BusboardV1 : public IBusboard
 
 public:
     BusboardV1();
+    ~BusboardV1();
     bool connectBoard() override;
     void sendExampleString() override;
     bool checkHealth() override;
@@ -26,6 +27,7 @@ public:
 private:
     std::vector<Cell> m_cellArray;
     FlowStatus m_flowStatus;
+    BusboardSerialManager *m_serialManager = nullptr;
     float calculateTargetTemp(Cell cell);
     int calculateTargetRPM(Cell cell);
 

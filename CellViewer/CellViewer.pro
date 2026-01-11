@@ -24,7 +24,7 @@ SOURCES += \
     ../experimentmanagerservice/src/common/User.cpp \
     ../experimentmanagerservice/src/common/TempArc.cpp \
     uiCellGraph.cpp \
-    uiCellWidget.cpp \
+    ../reactorgui/uiCellWidget.cpp \
     uiMainWindow.cpp
 
 HEADERS += \
@@ -41,12 +41,12 @@ HEADERS += \
     ../experimentmanagerservice/src/common/TempArc.h \
     ExperimentRunner.h \
     uiCellGraph.h \
-    uiCellWidget.h \
+    ../reactorgui/uiCellWidget.h \
     uiMainWindow.h
 
 FORMS += \
     uiCellGraph.ui \
-    uiCellWidget.ui \
+    ../reactorgui/uiCellWidget.ui \
     uiMainWindow.ui
 
 # Default rules for deployment.
@@ -56,6 +56,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 
 INCLUDEPATH += ../experimentmanagerservice/src/common/
+INCLUDEPATH += ../reactorgui
 INCLUDEPATH += $$(DEV_EXTERNALS_PATH)/qwt-6.2.0/src
 DEPENDPATH +=  $$(DEV_EXTERNALS_PATH)/qwt-6.2.0/lib/
 LIBS += -L$$(DEV_EXTERNALS_PATH)/qwt-6.2.0/lib/

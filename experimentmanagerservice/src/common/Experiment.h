@@ -16,6 +16,9 @@ public:
     User owner() const;
     void setOwner(const User &newOwner);
 
+    std::string name() const;
+    void setName(const std::string &newName);
+
     Profile& profile();
     void setProfile(const Profile &newProfile);
 
@@ -32,6 +35,7 @@ public:
 
     Value toJSON(Document::AllocatorType& allocator) const {
         Value experiment(kObjectType);
+        experiment.AddMember("name", Value().SetString(m_name.c_str(), static_cast<SizeType>(m_name.length()), allocator), allocator);
         experiment.AddMember("owner", m_owner.toJSON(allocator), allocator);
         experiment.AddMember("profile", m_profile.toJSON(allocator), allocator);
         experiment.AddMember("cellID", Value().SetString(m_cellID.c_str(), static_cast<SizeType>(m_cellID.length()), allocator), allocator);
@@ -43,6 +47,9 @@ public:
     }
 
     void fromJSON(const Value& json) {
+        if (json.HasMember("name") && json["name"].IsString()) {
+            m_name = json["name"].GetString();
+        }
         m_owner.fromJSON(json["owner"]);
         m_profile.fromJSON(json["profile"]);
         m_cellID = json["cellID"].GetString();
@@ -57,6 +64,7 @@ public:
     void setStartSystemTimeMSecs(unsigned long newStartSystemTimeMSecs);
 
 private:
+    std::string m_name;
     User m_owner;
     Profile m_profile;
     std::string m_cellID;

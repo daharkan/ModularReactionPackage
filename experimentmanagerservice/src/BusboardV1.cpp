@@ -7,25 +7,30 @@ BusboardV1::BusboardV1()
 {
     m_cellArray.resize(CELL_COUNT, Cell());
     m_cellCount = CELL_COUNT;
-    QObject::connect(BusboardSerialManager::getInstance(), &BusboardSerialManager::sgn_updateCell, this, &BusboardV1::cellStatusUpdated);
-    QObject::connect(BusboardSerialManager::getInstance(), &BusboardSerialManager::sgn_presenceUpdate, this, &BusboardV1::presenceStatusUpdated);
+    m_serialManager = new BusboardSerialManager(this);
+    QObject::connect(m_serialManager, &BusboardSerialManager::sgn_updateCell, this, &BusboardV1::cellStatusUpdated);
+    QObject::connect(m_serialManager, &BusboardSerialManager::sgn_presenceUpdate, this, &BusboardV1::presenceStatusUpdated);
+}
+
+BusboardV1::~BusboardV1()
+{
 }
 
 bool BusboardV1::connectBoard()
 {
-    bool succ = BusboardSerialManager::getInstance()->connectAndAssignThePort();
-    m_busboardID = BusboardSerialManager::getInstance()->recievedBusboardSerial();
+    bool succ = m_serialManager->connectAndAssignThePort();
+    m_busboardID = m_serialManager->recievedBusboardSerial();
     return succ;
 }
 
 void BusboardV1::sendExampleString()
 {
-    BusboardSerialManager::getInstance()->sendExampleString("aabbcc");
+    m_serialManager->sendExampleString("aabbcc");
 }
 
 bool BusboardV1::checkHealth()
 {
-    return BusboardSerialManager::getInstance()->isSerialPortOK();
+    return m_serialManager->isSerialPortOK();
 }
 
 
@@ -41,7 +46,7 @@ FlowStatus BusboardV1::flowStatus() const
 
 bool BusboardV1::sendUpdateString(QString str)
 {
-    return BusboardSerialManager::getInstance()->writeCellUpdateString(str);
+    return m_serialManager->writeCellUpdateString(str);
 }
 
 std::vector<std::string> BusboardV1::getCellIdList()
@@ -77,6 +82,12 @@ void BusboardV1::cellStatusUpdated(Cell &cell)
     int idx = cell.positionIdx();
     if(idx > 0 && idx < CELL_COUNT+1){
         cell.setLastUpdatedTimestamp(Cell::getCurrentTimeMillis());
+        if (!m_busboardID.empty() && !cell.cellID().empty()) {
+            std::string prefixedId = m_busboardID + "_" + cell.cellID();
+            if (cell.cellID().find(m_busboardID + "_") != 0) {
+                cell.setCellID(prefixedId);
+            }
+        }
 
         //qDebug() << "updating cell status pos " << idx << " with inner: " << cell.currentTempInner() << " with rpm: " << cell.currentRPM();
         m_cellArray[idx-1] = cell;
