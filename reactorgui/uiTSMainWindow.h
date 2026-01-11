@@ -11,6 +11,7 @@
 #include "uiReactorViewWidget.h"
 #include "uiUserManagementWidget.h"
 #include "uiHomeWidget.h"
+#include "uiTempCellViewWidget.h"
 
 #define WIDGET_IDX_LOGIN                0
 #define WIDGET_IDX_HOME                 1
@@ -18,6 +19,7 @@
 #define WIDGET_IDX_USERMANAGEMENT       3
 #define WIDGET_IDX_REACTOR              4
 #define WIDGET_IDX_EXPMANAGER           5
+#define WIDGET_IDX_CELLVIEW             6
 
 
 QT_BEGIN_NAMESPACE
@@ -61,6 +63,7 @@ private:
     UserManagementWidget *m_userManagementWidget = nullptr;
     ReactorViewWidget *m_reactorViewWidget = nullptr;
     ExperimentManagerWidget *m_experimentManagerWidget = nullptr;
+    TempCellViewWidget *m_tempCellViewWidget = nullptr;
     User m_currentUser;
 
 
@@ -80,6 +83,7 @@ private slots:
     void showExpManagerWidget();
     void showUserManagementWidget();
     void showOptionsWidget();
+    void showCellViewWidget(const std::string &cellId);
     void closeApp();
 
     void showPreviousPage();

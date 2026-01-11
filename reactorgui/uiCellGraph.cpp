@@ -1,6 +1,9 @@
 #include "uiCellGraph.h"
 #include "ui_uiCellGraph.h"
 
+#include <algorithm>
+#include <limits>
+
 CellGraph::CellGraph(Experiment &experiment, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::CellGraph)
@@ -61,11 +64,20 @@ void CellGraph::updateTheExperiment(Experiment &experiment)
     std::vector<double> rpmData;
 
     Profile profile = experiment.profile();
+    bool hasTempRange = false;
+    double minTemp = std::numeric_limits<double>::max();
+    double maxTemp = std::numeric_limits<double>::lowest();
     for(int i = 0; i < profile.tempArcsInSeq().size(); i++){
         TempArc tempArc = profile.tempArcsInSeq().at(i);
         unsigned long arcDurationMsecs = tempArc.durationMSec();
 
         qDebug() << "arcDurationMsecs: " << arcDurationMsecs;
+
+        minTemp = std::min<double>(minTemp, tempArc.startTemp());
+        minTemp = std::min<double>(minTemp, tempArc.finishTemp());
+        maxTemp = std::max<double>(maxTemp, tempArc.startTemp());
+        maxTemp = std::max<double>(maxTemp, tempArc.finishTemp());
+        hasTempRange = true;
 
         unsigned long lastSecs = 0;
         if(tempTimeData.size() > 0){
@@ -99,6 +111,12 @@ void CellGraph::updateTheExperiment(Experiment &experiment)
 
     m_expRpmCurve->setSamples(rpmTimeData.data(), rpmData.data(), rpmTimeData.size());
     m_expTempCurve->setSamples(tempTimeData.data(), temperatureData.data(), tempTimeData.size());
+    if (hasTempRange) {
+        if (minTemp == maxTemp) {
+            maxTemp += 1.0;
+        }
+        m_plot->setAxisScale(QwtPlot::yLeft, minTemp, maxTemp);
+    }
     m_plot->replot();
 
     //qDebug() << "graph updated.";
@@ -142,5 +160,3 @@ void CellGraph::initilizeExperimentGraph()
     m_pushingDataStarted = true;
     updateTheExperiment(m_experiment);
 }
-
-
