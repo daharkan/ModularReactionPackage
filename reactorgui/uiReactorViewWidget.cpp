@@ -68,7 +68,8 @@ void ReactorViewWidget::setupCellOverviewWidgets()
         m_lhsCells.push_back(lhsWidget);
 
         CellOverviewWidget *rhsWidget = new CellOverviewWidget(this);
-        rhsWidget->setSlotInfo("RHS", i + 1);
+        int displayIndex = 10 - i;
+        rhsWidget->setSlotInfo("RHS", displayIndex);
         connect(rhsWidget, &CellOverviewWidget::sgn_cellClicked, this, &ReactorViewWidget::handleCellClicked);
         ui->rhsCellsLayout->addWidget(rhsWidget);
         m_rhsCells.push_back(rhsWidget);
@@ -110,8 +111,15 @@ void ReactorViewWidget::updateCellGroup(const std::string &busboardId, QVector<C
 
     for (int i = 0; i < widgets.size(); i++) {
         int slotIndex = i + 1;
+        if (sideLabel == "RHS") {
+            slotIndex = widgets.size() - i;
+        }
         CellOverviewWidget *widget = widgets.at(i);
-        widget->setSlotInfo(sideLabel, slotIndex);
+        int displayIndex = slotIndex;
+        if (sideLabel == "RHS") {
+            displayIndex = 5 + slotIndex;
+        }
+        widget->setSlotInfo(sideLabel, displayIndex);
         if (cellsBySlot.contains(slotIndex)) {
             widget->setCellData(cellsBySlot.value(slotIndex));
         } else {

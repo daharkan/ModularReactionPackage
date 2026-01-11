@@ -18,6 +18,7 @@
 #include <QVBoxLayout>
 #include <QUuid>
 #include <QtConcurrent>
+#include <algorithm>
 #include <unordered_set>
 #include <unordered_map>
 
@@ -873,6 +874,15 @@ void ExperimentCreateWidget::assignExperimentToCells()
             item->setFlags(item->flags() & ~Qt::ItemIsSelectable);
             cellWidget->setEnabled(false);
         }
+    };
+
+    for (const auto &cell : lhsCells) {
+        int displayIndex = cell.positionIdx();
+        addCellItem(lhsListWidget, cell, displayIndex);
+    }
+    for (const auto &cell : rhsCells) {
+        int displayIndex = 5 + cell.positionIdx();
+        addCellItem(rhsListWidget, cell, displayIndex);
     }
 
     layout->addWidget(listWidget);

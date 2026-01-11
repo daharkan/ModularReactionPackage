@@ -151,6 +151,7 @@ void CellGraph::pushTemperatureAndRPMData(double temp, double rpm, unsigned long
 
     m_currentRpmCurve->setSamples(timeData.data(), m_currentRPMList.data(), timeData.size());
     m_currentTempCurve->setSamples(timeData.data(), m_currentTempList.data(), timeData.size());
+    applyTempAxisRange();
     m_plot->replot();
 }
 
