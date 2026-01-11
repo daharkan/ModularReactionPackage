@@ -5,7 +5,7 @@
 #include <sstream>
 
 
-#define BAUDRATE 9600
+#define BAUDRATE 115200
 #define BUSBOARD_HANDSHAKE "bb"
 #define DEVICE_UPDATE_ASK_COMMAND "GO"
 
@@ -72,6 +72,9 @@ bool OnlyCellSerialManager::connectAndAssignThePort()
                     // Read tokens separated by '#' delimiter
                     std::getline(ss, token, '#'); // Serial number, ignoring
                     m_recievedBusboardSerial = removeNonAlphanumeric(token);
+                    if (incoming.contains("HELLO")) {
+                        m_useBusboardDummyFormat = true;
+                    }
 
                     qDebug() << "connected to " << tmpSerial->portName() << " with the serial: " << m_recievedBusboardSerial;
 
@@ -110,6 +113,10 @@ bool OnlyCellSerialManager::writeCellUpdateString(QString str)
 
     if(!m_serialPort){
         return false;
+    }
+
+    if (m_useBusboardDummyFormat) {
+        str = convertUpdateStringForDummy(str);
     }
 
     writeString2Queue(str);
@@ -168,7 +175,7 @@ void OnlyCellSerialManager::serialRecieved()
                         int peltierPerc = QString::fromStdString(token).toInt();
                         emit sgn_updatePIDParameters(heaterPerc, peltierPerc);
                     }
-                    if(dataString.count("#") != 8){
+                    if(dataString.count("#") < 8){
                         return;
                     }
 
@@ -177,6 +184,11 @@ void OnlyCellSerialManager::serialRecieved()
                     cell.updateStatusFromBoard(dataString.toStdString());
                     //qDebug() << "cell id: " << cell.cellID();
                     QCoreApplication::processEvents();
+
+                    if (cell.positionIdx() != 1) {
+                        data.clear();
+                        continue;
+                    }
 
                     m_cell = cell;
                     emit sgn_updateCell(m_cell);
@@ -234,6 +246,56 @@ void OnlyCellSerialManager::writeString2Queue(QString str)
     }
 }
 
+QString OnlyCellSerialManager::convertUpdateStringForDummy(const QString &command) const
+{
+    QString output;
+    int start = 0;
+    bool converted = false;
+    while (true) {
+        int open = command.indexOf('>', start);
+        if (open == -1) {
+            break;
+        }
+        int close = command.indexOf('<', open);
+        if (close == -1) {
+            break;
+        }
+
+        QString payload = command.mid(open + 1, close - open - 1);
+        QStringList parts = payload.split('#');
+        if (parts.size() < 3) {
+            start = close + 1;
+            continue;
+        }
+
+        bool okPos = false;
+        bool okTemp = false;
+        bool okRpm = false;
+        int positionIdx = parts.at(0).toInt(&okPos);
+        double targetTemp = parts.at(1).toDouble(&okTemp);
+        int targetRpm = parts.at(2).toInt(&okRpm);
+        if (!okPos || !okTemp || !okRpm) {
+            start = close + 1;
+            continue;
+        }
+
+        int checksum = positionIdx + static_cast<int>(targetTemp) + targetRpm;
+        output += QString(">%1#%2#%3#%4<")
+                      .arg(positionIdx)
+                      .arg(parts.at(1))
+                      .arg(parts.at(2))
+                      .arg(checksum);
+        converted = true;
+        start = close + 1;
+    }
+
+    if (!converted) {
+        return command;
+    }
+
+    return output;
+}
+
 void OnlyCellSerialManager::clearMessageQueue()
 {
     m_messageQueue = "";
@@ -264,5 +326,4 @@ std::string OnlyCellSerialManager::recievedBusboardSerial() const
 {
     return m_recievedBusboardSerial;
 }
-
 

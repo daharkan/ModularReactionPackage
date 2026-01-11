@@ -29,8 +29,10 @@ private:
     bool m_sleeping = false;
     QString m_messageQueue = "";
     bool m_writing = false;
+    bool m_useBusboardDummyFormat = false;
 
     void writeString(QString str, QSerialPort *port);
+    QString convertUpdateStringForDummy(const QString &command) const;
     void clearMessageQueue();
     void delay(int msec);
 
