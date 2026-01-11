@@ -68,6 +68,8 @@ private:
     User m_currentUser;
     QPushButton* m_lastClickedButton = nullptr;
     int m_lastPageIndex = 0;
+    QPushButton *m_assignButton = nullptr;
+    QPushButton *m_assignButtonAdvanced = nullptr;
 
     void setVisibleAllBasicExperimentItems(bool en);
     void setVisibleAllAdvExperimentItems(bool en, bool clearFields = true);

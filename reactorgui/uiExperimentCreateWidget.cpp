@@ -126,6 +126,14 @@ ExperimentCreateWidget::ExperimentCreateWidget(QWidget *parent)
     buttonGroup->addButton(ui->adv_addLinearRadioButton);
     buttonGroup->addButton(ui->adv_add2ndDegRadioButton);
 
+    m_assignButton = new QPushButton(tr("Assign"), this);
+    ui->gridLayout_4->addWidget(m_assignButton, 9, 1);
+    connect(m_assignButton, &QPushButton::clicked, this, &ExperimentCreateWidget::assignExperimentToCells);
+
+    m_assignButtonAdvanced = new QPushButton(tr("Assign"), this);
+    ui->gridLayout_5->addWidget(m_assignButtonAdvanced, 13, 0, 1, 2);
+    connect(m_assignButtonAdvanced, &QPushButton::clicked, this, &ExperimentCreateWidget::assignExperimentToCells);
+
 }
 
 ExperimentCreateWidget::~ExperimentCreateWidget()
