@@ -2,9 +2,11 @@
 #define UIEXPERIMENTCREATEWIDGET_H
 
 #include <QWidget>
+#include <string>
 #include "qlineedit.h"
 #include "qpushbutton.h"
 #include "uiExperimentGraph.h"
+#include "User.h"
 
 #define PAGE_CREATE_IDX                0
 #define PAGE_WARNING_IDX               1
@@ -46,19 +48,31 @@ class ExperimentCreateWidget : public QWidget
     Q_OBJECT
 
 public:
+    enum class Mode {
+        Create,
+        Edit,
+        Show
+    };
+
     explicit ExperimentCreateWidget(QWidget *parent = nullptr);
     ~ExperimentCreateWidget();
+    void loadExperiment(const Experiment &experiment, Mode mode);
+    void setCurrentUser(const User &user);
 
 private:
     Ui::ExperimentCreateWidget *ui;
     ExperimentGraph *m_expGraph = nullptr;
     Experiment m_currentExperiment;
     ExperimentType m_currentExpType = EXP_UNDEFINED;
+    Mode m_mode = Mode::Create;
+    User m_currentUser;
     QPushButton* m_lastClickedButton = nullptr;
     int m_lastPageIndex = 0;
+    QPushButton *m_assignButton = nullptr;
+    QPushButton *m_assignButtonAdvanced = nullptr;
 
     void setVisibleAllBasicExperimentItems(bool en);
-    void setVisibleAllAdvExperimentItems(bool en);
+    void setVisibleAllAdvExperimentItems(bool en, bool clearFields = true);
     void adv_forceInitialTemp();
 
     Profile createBasicStandardProfile();
@@ -67,6 +81,14 @@ private:
     Profile createStepUpStepDownProfile();
 
     void blinkLineEdit(QLineEdit* lineEdit, int blinkCount = 3);
+    bool buildProfile(Profile &profile);
+    void applyExperimentType(ExperimentType type);
+    void updateModeUi();
+    std::string promptExperimentName(const QString &currentName);
+    std::string captureUiState() const;
+    void applyUiState(const std::string &stateJson);
+    void assignExperimentToCells();
+    void setInputsEnabled(bool enabled);
 
 
     TempArc createLinearTempArc(float startTemp, float endTemp, float rank, unsigned long startTimeMSec);
@@ -92,6 +114,9 @@ private slots:
 
     void adv_addArcDurationChanged();
     void adv_rampChanged();
+
+signals:
+    void sgn_experimentSaved();
 
 
 

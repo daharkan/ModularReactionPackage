@@ -3,19 +3,18 @@
 #include "qlineedit.h"
 #include "qpushbutton.h"
 #include "ui_uiExperimentListWidget.h"
+#include "RedisDBManager.h"
+#include <QDateTime>
+#include <QHeaderView>
 
-
-std::string generateRandomWord(int length) {
-    static const char alphabet[] =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "abcdefghijklmnopqrstuvwxyz";
-
-    std::string word;
-    for (int i = 0; i < length; ++i) {
-        word += alphabet[rand() % (sizeof(alphabet) - 1)];
+namespace {
+QString formatExperimentDate(unsigned long createdAt) {
+    if (createdAt == 0) {
+        return "--";
     }
-    return word;
+    return QDateTime::fromMSecsSinceEpoch(createdAt).toString("yyyy-MM-dd HH:mm");
 }
+} // namespace
 
 
 
@@ -25,10 +24,19 @@ ExperimentListWidget::ExperimentListWidget(QWidget *parent)
 {
     ui->setupUi(this);
 
-    ui->experimentsTableWidget->setWindowTitle("Alphabet Table");
-    ui->experimentsTableWidget->setRowCount(26); // 26 rows for each letter of the alphabet
-    ui->experimentsTableWidget->setColumnCount(1); // One column for names
-    ui->experimentsTableWidget->setHorizontalHeaderLabels(QStringList() << "Name");
+    ui->experimentsTableWidget->setWindowTitle("Experiments");
+    ui->experimentsTableWidget->setColumnCount(3);
+    ui->experimentsTableWidget->setHorizontalHeaderLabels(QStringList() << tr("name") << tr("Created By") << tr("Created At"));
+    ui->experimentsTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->experimentsTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->experimentsTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+    connect(ui->experimentsTableWidget, &QTableWidget::itemSelectionChanged, this, &ExperimentListWidget::sgn_selectionChanged);
+    connect(ui->experimentsTableWidget, &QTableWidget::cellDoubleClicked, this, [this](int row, int) {
+        if (row < 0 || row >= static_cast<int>(m_experiments.size())) {
+            return;
+        }
+        emit sgn_experimentDoubleClicked(m_experiments.at(row));
+    });
     QGridLayout *layout = new QGridLayout();
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setHorizontalSpacing(4);
@@ -66,20 +74,7 @@ ExperimentListWidget::ExperimentListWidget(QWidget *parent)
     connect(searchLineEdit, &QLineEdit::textChanged, this, &ExperimentListWidget::filterTableBySearch);
 
 
-    ui->experimentsTableWidget->setRowCount(45); // Example row count
-    ui->experimentsTableWidget->setColumnCount(3); // Example column count
-    ui->experimentsTableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    char Aletter = 'A';
-    // Set initial data for the table (example)
-    for (int row = 0; row < 45; ++row) {
-        QTableWidgetItem *itemExp = new QTableWidgetItem(QString("%1 Experiment").arg( QString::fromStdString(generateRandomWord(5))) );
-        ui->experimentsTableWidget->setItem(row, 0, itemExp);
-
-        for (int col = 1; col < 3; ++col) {
-            QTableWidgetItem *item = new QTableWidgetItem(QString("%1 Col %2").arg(rand()%555).arg(col + 1));
-            ui->experimentsTableWidget->setItem(row, col, item);
-        }
-    }
+    reloadExperiments();
 
 }
 
@@ -139,4 +134,67 @@ void ExperimentListWidget::filterTableBySearch(const QString &text)
         listAllData();
     }
 
+}
+
+void ExperimentListWidget::reloadExperiments()
+{
+    if (!RedisDBManager::getInstance()->isConnected()) {
+        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+    }
+
+    m_experiments = RedisDBManager::getInstance()->getExperiments();
+    ui->experimentsTableWidget->setRowCount(static_cast<int>(m_experiments.size()));
+
+    for (int row = 0; row < static_cast<int>(m_experiments.size()); ++row) {
+        const Experiment &experiment = m_experiments.at(row);
+        QString expName = QString::fromStdString(experiment.name());
+        if (expName.isEmpty()) {
+            expName = tr("(Unnamed)");
+        }
+        QTableWidgetItem *nameItem = new QTableWidgetItem(expName);
+        nameItem->setData(Qt::UserRole, QString::fromStdString(experiment.experimentId()));
+        nameItem->setData(Qt::UserRole + 1, experiment.experimentType());
+        ui->experimentsTableWidget->setItem(row, 0, nameItem);
+
+        QString createdBy = QString::fromStdString(experiment.owner().username());
+        if (createdBy.isEmpty()) {
+            createdBy = "--";
+        }
+        ui->experimentsTableWidget->setItem(row, 1, new QTableWidgetItem(createdBy));
+
+        ui->experimentsTableWidget->setItem(row, 2, new QTableWidgetItem(formatExperimentDate(experiment.createdAtMSecs())));
+    }
+
+    listAllData();
+}
+
+QString ExperimentListWidget::selectedExperimentId() const
+{
+    QList<QTableWidgetItem*> items = ui->experimentsTableWidget->selectedItems();
+    if (items.isEmpty()) {
+        return QString();
+    }
+    QTableWidgetItem *item = ui->experimentsTableWidget->item(items.first()->row(), 0);
+    if (!item) {
+        return QString();
+    }
+    return item->data(Qt::UserRole).toString();
+}
+
+Experiment ExperimentListWidget::selectedExperiment() const
+{
+    QList<QTableWidgetItem*> items = ui->experimentsTableWidget->selectedItems();
+    if (items.isEmpty()) {
+        return Experiment();
+    }
+    int row = items.first()->row();
+    if (row < 0 || row >= static_cast<int>(m_experiments.size())) {
+        return Experiment();
+    }
+    return m_experiments.at(row);
+}
+
+bool ExperimentListWidget::hasSelection() const
+{
+    return !ui->experimentsTableWidget->selectedItems().isEmpty();
 }

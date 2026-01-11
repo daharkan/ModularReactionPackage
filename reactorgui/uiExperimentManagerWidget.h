@@ -5,6 +5,7 @@
 
 #include "uiExperimentListWidget.h"
 #include "uiExperimentCreateWidget.h"
+#include "User.h"
 
 namespace Ui {
 class ExperimentManagerWidget;
@@ -17,16 +18,25 @@ class ExperimentManagerWidget : public QWidget
 public:
     explicit ExperimentManagerWidget(QWidget *parent = nullptr);
     ~ExperimentManagerWidget();
+    void setCurrentUser(const User &user);
 
 private:
     Ui::ExperimentManagerWidget *ui;
     ExperimentListWidget *m_experimentListWidget = nullptr;
+    User m_currentUser;
 
-    void clearMainLayout();
+    void updateActionButtons();
+    bool canModifyExperiment(const Experiment &experiment) const;
 
 private slots:
     void createClicked();
     void showListWidget();
+    void editClicked();
+    void deleteClicked();
+    void handleSelectionChanged();
+    void handleExperimentSaved();
+    void handleExperimentDoubleClicked(const Experiment &experiment);
+    void clearMainLayout();
 
 
 };

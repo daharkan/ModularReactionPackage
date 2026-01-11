@@ -170,6 +170,8 @@ void TSMainWindow::mainPageChanged(int idx)
 
 void TSMainWindow::loginSucceed()
 {
+    m_currentUser = m_loginWidget->currentUser();
+    m_experimentManagerWidget->setCurrentUser(m_currentUser);
     ui->backPushButton->setVisible(true);
     ui->homePushButton->setVisible(true);
     showHomeWidget();
@@ -179,4 +181,3 @@ void TSMainWindow::loginFailed()
 {
 
 }
-
