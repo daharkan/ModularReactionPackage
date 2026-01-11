@@ -86,7 +86,7 @@ void ExperimentRunner::run()
         float targetTemp =  m_temperatureData.at(0);
         qDebug() << "ExperimentRunner    STATE_PREHEAT targetTemp: " << targetTemp;
 
-        std::string updateString = m_cell.generateUpdateDataStringToBoard(targetTemp, 555);
+        std::string updateString = m_cell.generateUpdateDataStringToBoard(targetTemp, 555, 0);
         OnlyCellSerialManager::getInstance()->writeCellUpdateString(QString::fromStdString(updateString));
 
         emit sgn_updateExperimentState(m_state);
@@ -106,7 +106,7 @@ void ExperimentRunner::run()
         qDebug() << "ExperimentRunner    STATE_RUNNING targetTemp: " << targetTemp << "  time: " << m_tempTimeData.at(i);
 
 
-        std::string updateString = m_cell.generateUpdateDataStringToBoard(targetTemp, 555);
+        std::string updateString = m_cell.generateUpdateDataStringToBoard(targetTemp, 555, 0);
         OnlyCellSerialManager::getInstance()->writeCellUpdateString(QString::fromStdString(updateString));
         emit sgn_updateExperimentState(m_state);
         delay(LOOP_TIME_INTERVAL_MSECS);
