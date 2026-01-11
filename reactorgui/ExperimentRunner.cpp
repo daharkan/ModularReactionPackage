@@ -4,6 +4,7 @@
 #include <QDebug>
 
 #include <QCoreApplication>
+#include <cmath>
 #include <thread>
 
 #define EPSILON_TEMP 0.2
@@ -82,6 +83,10 @@ void ExperimentRunner::run()
         return;
     }
 
+    if (m_experiment.profile().tempArcsInSeq().empty()) {
+        return;
+    }
+
     std::vector<std::string> cellIds = {m_cellId};
     std::vector<Cell> cells = RedisDBManager::getInstance()->getCellList(cellIds);
     if (cells.empty()) {
@@ -92,7 +97,11 @@ void ExperimentRunner::run()
     float startTemp = m_experiment.profile().tempArcsInSeq().at(0).startTemp();
     qDebug() << "ExperimentRunner    runinit...";
 
-    while(abs(startTemp - m_cell.currentTempExt()) > EPSILON_TEMP){
+    auto currentTemp = [&]() {
+        return m_cell.isExtTempPlugged() ? m_cell.currentTempExt() : m_cell.currentTempInner();
+    };
+
+    while(std::abs(startTemp - currentTemp()) > EPSILON_TEMP){
         cells = RedisDBManager::getInstance()->getCellList(cellIds);
         if (cells.empty()) {
             return;
@@ -118,8 +127,12 @@ void ExperimentRunner::run()
         delay(LOOP_TIME_INTERVAL_MSECS);
     }
 
-
     m_startingTimestampMsec = Cell::getCurrentTimeMillis();
+    if (m_experiment.startSystemTimeMSecs() == 0) {
+        m_experiment.setStartSystemTimeMSecs(m_startingTimestampMsec);
+        m_cell.setAsignedExperiment(m_experiment);
+        RedisDBManager::getInstance()->pushCellList({m_cell});
+    }
 
     cells = RedisDBManager::getInstance()->getCellList(cellIds);
     if (cells.empty()) {
