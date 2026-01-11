@@ -172,6 +172,7 @@ void TSMainWindow::loginSucceed()
 {
     m_currentUser = m_loginWidget->currentUser();
     m_experimentManagerWidget->setCurrentUser(m_currentUser);
+    m_userManagementWidget->setCurrentUser(m_currentUser);
     ui->backPushButton->setVisible(true);
     ui->homePushButton->setVisible(true);
     showHomeWidget();

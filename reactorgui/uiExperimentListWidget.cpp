@@ -31,6 +31,7 @@ ExperimentListWidget::ExperimentListWidget(QWidget *parent)
     ui->experimentsTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->experimentsTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     connect(ui->experimentsTableWidget, &QTableWidget::itemSelectionChanged, this, &ExperimentListWidget::sgn_selectionChanged);
+    connect(ui->experimentsTableWidget, &QTableWidget::itemDoubleClicked, this, &ExperimentListWidget::handleItemDoubleClicked);
     QGridLayout *layout = new QGridLayout();
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setHorizontalSpacing(4);
@@ -70,6 +71,14 @@ ExperimentListWidget::ExperimentListWidget(QWidget *parent)
 
     reloadExperiments();
 
+}
+
+void ExperimentListWidget::handleItemDoubleClicked(QTableWidgetItem *item)
+{
+    if (!item) {
+        return;
+    }
+    emit sgn_experimentActivated();
 }
 
 ExperimentListWidget::~ExperimentListWidget()

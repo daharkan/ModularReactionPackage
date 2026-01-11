@@ -7,6 +7,7 @@
 #include "CellVisualsHistory.h"
 #include "FlowStatus.h"
 #include "Experiment.h"
+#include "User.h"
 #include <optional>
 
 #define DB_SCHEMA_VERSION_KEY "mr10:schema_version"
@@ -26,6 +27,7 @@
 #define DB_BUSBOARD_FLOW_KEY "flowStatus"
 #define DB_BUSBOARD_CELLIDS_KEY "cellIDs"
 #define DB_BUSBOARD_LAST_UPDATED_KEY "lastUpdatedTimestamp"
+#define DB_USERJSON_KEY "user"
 
 class RedisDBManager: public QObject
 {
@@ -47,6 +49,10 @@ public:
     std::optional<Experiment> getExperiment(const std::string& experimentId);
     std::vector<Experiment> getExperiments();
     bool deleteExperiment(const std::string& experimentId);
+    bool pushUser(const User& user);
+    std::optional<User> getUser(const std::string& username);
+    std::vector<User> getUsers();
+    bool deleteUser(const std::string& username);
 
     bool pushBusboardCellIds(std::string busboardID, std::vector<std::string> cellIDs);
     bool pushCellList(std::vector<Cell> cells);

@@ -400,6 +400,156 @@ bool RedisDBManager::deleteExperiment(const std::string &experimentId)
     return true;
 }
 
+bool RedisDBManager::pushUser(const User &user)
+{
+    if (!m_client.is_connected()) {
+        return false;
+    }
+
+    if (user.username().empty()) {
+        return false;
+    }
+
+    Document document;
+    document.SetObject();
+    Document::AllocatorType& allocator = document.GetAllocator();
+
+    Value userJSON = user.toJSON(allocator);
+    Value userWrapper(userJSON, allocator);
+    document.AddMember(DB_USERJSON_KEY, userWrapper, allocator);
+
+    StringBuffer buffer;
+    Writer<StringBuffer> writer(buffer);
+    document.Accept(writer);
+
+    std::string jsonString = buffer.GetString();
+    m_client.hset(DB_USERS_TABLE_KEY, user.username(), jsonString);
+    m_client.sync_commit();
+    return true;
+}
+
+std::optional<User> RedisDBManager::getUser(const std::string &username)
+{
+    if (!m_client.is_connected()) {
+        return std::nullopt;
+    }
+
+    if (username.empty()) {
+        return std::nullopt;
+    }
+
+    std::future<cpp_redis::reply> future_reply = m_client.hget(DB_USERS_TABLE_KEY, username);
+    m_client.sync_commit();
+
+    if (replyTimedOut(future_reply)) {
+        return std::nullopt;
+    }
+
+    cpp_redis::reply reply = future_reply.get();
+    if (!reply.is_string()) {
+        return std::nullopt;
+    }
+
+    std::string jsonString = reply.as_string();
+    if (jsonString.empty()) {
+        return std::nullopt;
+    }
+
+    Document jsonDocument;
+    jsonDocument.Parse(jsonString.c_str());
+
+    const Value* userValue = nullptr;
+    if (jsonDocument.IsObject() && jsonDocument.HasMember(DB_USERJSON_KEY) && jsonDocument[DB_USERJSON_KEY].IsObject()) {
+        userValue = &jsonDocument[DB_USERJSON_KEY];
+    } else if (jsonDocument.IsObject()) {
+        userValue = &jsonDocument;
+    }
+
+    if (!userValue) {
+        return std::nullopt;
+    }
+
+    User user;
+    user.fromJSON(*userValue);
+    if (user.username().empty()) {
+        user.setUsername(username);
+    }
+    return user;
+}
+
+std::vector<User> RedisDBManager::getUsers()
+{
+    std::vector<User> users;
+    if (!m_client.is_connected()) {
+        return users;
+    }
+
+    std::future<cpp_redis::reply> future_reply = m_client.hgetall(DB_USERS_TABLE_KEY);
+    m_client.sync_commit();
+
+    if (replyTimedOut(future_reply)) {
+        return users;
+    }
+
+    cpp_redis::reply reply = future_reply.get();
+    if (!reply.is_array()) {
+        return users;
+    }
+
+    const auto& values = reply.as_array();
+    for (size_t i = 0; i + 1 < values.size(); i += 2) {
+        const auto& keyReply = values.at(i);
+        const auto& valueReply = values.at(i + 1);
+        if (!keyReply.is_string() || !valueReply.is_string()) {
+            continue;
+        }
+
+        std::string username = keyReply.as_string();
+        std::string jsonString = valueReply.as_string();
+        if (jsonString.empty()) {
+            continue;
+        }
+
+        Document jsonDocument;
+        jsonDocument.Parse(jsonString.c_str());
+
+        const Value* userValue = nullptr;
+        if (jsonDocument.IsObject() && jsonDocument.HasMember(DB_USERJSON_KEY) && jsonDocument[DB_USERJSON_KEY].IsObject()) {
+            userValue = &jsonDocument[DB_USERJSON_KEY];
+        } else if (jsonDocument.IsObject()) {
+            userValue = &jsonDocument;
+        }
+
+        if (!userValue) {
+            continue;
+        }
+
+        User user;
+        user.fromJSON(*userValue);
+        if (user.username().empty()) {
+            user.setUsername(username);
+        }
+        users.push_back(user);
+    }
+
+    return users;
+}
+
+bool RedisDBManager::deleteUser(const std::string &username)
+{
+    if (!m_client.is_connected()) {
+        return false;
+    }
+
+    if (username.empty()) {
+        return false;
+    }
+
+    m_client.hdel(DB_USERS_TABLE_KEY, {username});
+    m_client.sync_commit();
+    return true;
+}
+
 std::vector<std::string> RedisDBManager::getBusboardCellIds(std::string busboardID)
 {
     std::future<cpp_redis::reply> future_reply = m_client.hget(DB_BUSBOARD_TABLE_KEY, busboardID);

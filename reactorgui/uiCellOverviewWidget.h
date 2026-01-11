@@ -25,7 +25,7 @@ signals:
     void sgn_cellClicked(const std::string &cellId);
 
 protected:
-    void mousePressEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
 
 private:
     Ui::CellOverviewWidget *ui;
@@ -36,6 +36,7 @@ private:
 
     void updateHeader();
     void applyActiveStyle(bool active);
+    void applyStateStyle(const QString &stateKey);
 };
 
 #endif // UICELLOVERVIEWWIDGET_H
