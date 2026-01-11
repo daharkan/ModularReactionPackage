@@ -17,7 +17,7 @@
 #define TEMP_EPSILON 0.5
 
 namespace {
-unsigned long long totalExperimentDurationMs(const Experiment& experiment)
+unsigned long long totalExperimentDurationMs(Experiment& experiment)
 {
     unsigned long long totalDurationMs = 0;
     const auto &tempArcs = experiment.profile().tempArcsInSeq();
@@ -215,7 +215,7 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
     RedisDBManager::getInstance()->pushCellList(cellsToDB);
     QCoreApplication::processEvents();
 
-    for (const auto& cell : cellsToDB) {
+    for (auto& cell : cellsToDB) {
         const std::string& cellID = cell.cellID();
         if (cellID.empty()) {
             continue;

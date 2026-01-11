@@ -84,6 +84,7 @@ void CellGraph::updateTheExperiment(Experiment &experiment)
             lastSecs = tempTimeData.at(tempTimeData.size()-1);
         }
 
+        qDebug() << "minTemp: " << minTemp << ", maxTemp: " << maxTemp;
         qDebug() << "lastSecs: " << lastSecs;
 
         for(unsigned long time = GRAPH_RESOLUTION_MSECS; time < arcDurationMsecs; time+=GRAPH_RESOLUTION_MSECS){
