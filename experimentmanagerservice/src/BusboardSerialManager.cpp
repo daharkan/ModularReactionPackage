@@ -9,7 +9,7 @@
 #include <QSet>
 
 #define BAUDRATE 115200
-#define BUSBOARD_HANDSHAKE "bb"
+#define BUSBOARD_HANDSHAKE "bbb"
 
 namespace {
 QSet<QString> s_usedPorts;

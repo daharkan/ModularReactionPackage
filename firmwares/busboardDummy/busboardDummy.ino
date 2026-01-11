@@ -11,8 +11,8 @@
 static const uint16_t STATUS_PERIOD_MS = 500;
 static const uint16_t GO_INTERVAL_MS = 100;
 
-static const float TEMP_APPROACH_FACTOR = 0.15f;
-static const float TEMP_NOISE_RANGE = 0.6f;
+static const float TEMP_APPROACH_FACTOR = 0.95f;
+static const float TEMP_NOISE_RANGE = 0.2f;
 
 struct CellState {
   float targetTemp;
@@ -170,7 +170,7 @@ static void sendStatus() {
     dtostrf(flowLpm, 4, 3, flowStr);
     dtostrf(flowTempMv, 4, 1, flowTempStr);
 
-    Serial.print(F("bb_000#"));
+    Serial.print(F("bbb_RHS_000#"));
     Serial.print(CELL_IDS[i]);
     Serial.print('#');
     Serial.print(i + 1);

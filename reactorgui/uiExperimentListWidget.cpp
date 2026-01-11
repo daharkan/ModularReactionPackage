@@ -29,18 +29,30 @@ ExperimentListWidget::ExperimentListWidget(QWidget *parent)
     ui->experimentsTableWidget->setRowCount(26); // 26 rows for each letter of the alphabet
     ui->experimentsTableWidget->setColumnCount(1); // One column for names
     ui->experimentsTableWidget->setHorizontalHeaderLabels(QStringList() << "Name");
+    QGridLayout *layout = new QGridLayout();
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setHorizontalSpacing(4);
+    layout->setVerticalSpacing(4);
 
-    QHBoxLayout *layout = new QHBoxLayout(this);
     QPushButton *allButton = new QPushButton(tr("All"), this);
-    layout->addWidget(allButton);
+    layout->addWidget(allButton, 0, 0);
     connect(allButton, &QPushButton::clicked, this, &ExperimentListWidget::listAllData);
 
-    // Connect a slot to all buttons
+    int row = 0;
+    int col = 1;
+    int columnCount = 9;
     for (char letter = 'A'; letter <= 'Z'; ++letter) {
         QPushButton *button = new QPushButton(QString(letter), this);
-        layout->addWidget(button);
+        layout->addWidget(button, row, col);
         connect(button, &QPushButton::clicked, this, &ExperimentListWidget::filterTableByLetter);
+
+        col++;
+        if (col >= columnCount) {
+            col = 0;
+            row++;
+        }
     }
+
 
     ui->horizontalLayout->addLayout(layout);
 
@@ -49,8 +61,7 @@ ExperimentListWidget::ExperimentListWidget(QWidget *parent)
     searchLayout->addWidget(searchLabel);
     QLineEdit* searchLineEdit = new QLineEdit(this);
     searchLayout->addWidget(searchLineEdit);
-    layout->addLayout(searchLayout);
-
+    ui->horizontalLayout->addLayout(searchLayout);
     // Connect search box signal
     connect(searchLineEdit, &QLineEdit::textChanged, this, &ExperimentListWidget::filterTableBySearch);
 

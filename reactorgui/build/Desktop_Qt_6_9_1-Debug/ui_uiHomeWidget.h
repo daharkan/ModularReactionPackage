@@ -46,7 +46,7 @@ public:
         HomeWidget->setSizePolicy(sizePolicy);
         gridLayout = new QGridLayout(HomeWidget);
         gridLayout->setObjectName("gridLayout");
-        gridLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+        gridLayout->setSizeConstraint(QLayout::SizeConstraint::SetDefaultConstraint);
         line = new QFrame(HomeWidget);
         line->setObjectName("line");
         line->setFrameShape(QFrame::Shape::HLine);

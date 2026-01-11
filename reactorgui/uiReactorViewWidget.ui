@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>739</width>
+    <height>395</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -22,13 +22,16 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="flowLayout">
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTop</set>
-     </property>
      <item>
       <layout class="QHBoxLayout" name="flowRateLayout">
        <item>
         <widget class="QLabel" name="flowRateLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Flow (L/min):</string>
          </property>
@@ -36,6 +39,12 @@
        </item>
        <item>
         <widget class="QLabel" name="flowRateValueLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>--</string>
          </property>
@@ -47,6 +56,12 @@
       <layout class="QHBoxLayout" name="flowTempLayout">
        <item>
         <widget class="QLabel" name="flowTempLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Flow Temp (mV):</string>
          </property>
@@ -54,6 +69,12 @@
        </item>
        <item>
         <widget class="QLabel" name="flowTempValueLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>--</string>
          </property>
@@ -67,6 +88,12 @@
     <layout class="QHBoxLayout" name="cellsLayout">
      <item>
       <widget class="QGroupBox" name="lhsGroupBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="title">
         <string>LHS Cells</string>
        </property>
@@ -75,6 +102,12 @@
      </item>
      <item>
       <widget class="QGroupBox" name="rhsGroupBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="title">
         <string>RHS Cells</string>
        </property>

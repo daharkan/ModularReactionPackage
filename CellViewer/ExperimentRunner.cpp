@@ -1,6 +1,7 @@
 #include "ExperimentRunner.h"
 #include "RedisDBManager.h"
 #include "CellTarget.h"
+#include <QDebug>
 
 #include <QCoreApplication>
 #include <thread>

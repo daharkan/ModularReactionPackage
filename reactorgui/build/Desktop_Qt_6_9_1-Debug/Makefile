@@ -14,10 +14,10 @@ EQ            = =
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CONCURRENT_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -Wextra -fPIC -D_REENTRANT $(DEFINES)
 CXXFLAGS      = -pipe -g -std=gnu++1z -Wall -Wextra -fPIC -D_REENTRANT $(DEFINES)
-INCPATH       = -I../../../reactorgui -I. -I../../../experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I. -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++
+INCPATH       = -I../../../reactorgui -I. -I../../../experimentmanagerservice/src/common -I../../../CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I. -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++
 QMAKE         = /home/dev/Qt/6.9.1/gcc_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -40,7 +40,7 @@ DISTNAME      = ReactorGUI1.0.0
 DISTDIR = /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/.tmp/ReactorGUI1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/home/dev/Qt/6.9.1/gcc_64/lib -Wl,-rpath-link,/home/dev/Qt/6.9.1/gcc_64/lib
-LIBS          = $(SUBLIBS) -L/home/dev/perdev/Externals//qwt-6.2.0/lib/ -ltacopie -lcpp_redis -lqwt -L/usr/local/lib /home/dev/Qt/6.9.1/gcc_64/lib/libQt6Widgets.so /home/dev/Qt/6.9.1/gcc_64/lib/libQt6Gui.so /home/dev/Qt/6.9.1/gcc_64/lib/libQt6Core.so -lpthread -lGL   
+LIBS          = $(SUBLIBS) -L/home/dev/perdev/Externals//qwt-6.2.0/lib/ -ltacopie -lcpp_redis -lqwt -L/usr/local/lib /home/dev/Qt/6.9.1/gcc_64/lib/libQt6Widgets.so /home/dev/Qt/6.9.1/gcc_64/lib/libQt6Gui.so /home/dev/Qt/6.9.1/gcc_64/lib/libQt6Concurrent.so /home/dev/Qt/6.9.1/gcc_64/lib/libQt6Core.so -lpthread -lGL   
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -64,7 +64,11 @@ SOURCES       = ../../../experimentmanagerservice/src/common/Arc.cpp \
 		../../../experimentmanagerservice/src/common/RedisDBManager.cpp \
 		../../../experimentmanagerservice/src/common/TempArc.cpp \
 		../../../experimentmanagerservice/src/common/User.cpp \
+		../../../CellViewer/ExperimentRunner.cpp \
+		../../../CellViewer/uiCellGraph.cpp \
 		../../main.cpp \
+		../../uiCellOverviewWidget.cpp \
+		../../uiCellWidget.cpp \
 		../../uiExperimentCreateWidget.cpp \
 		../../uiExperimentGraph.cpp \
 		../../uiExperimentListWidget.cpp \
@@ -76,6 +80,10 @@ SOURCES       = ../../../experimentmanagerservice/src/common/Arc.cpp \
 		../../uiTSMainWindow.cpp \
 		../../uiUserManagementWidget.cpp qrc_resources.cpp \
 		moc_RedisDBManager.cpp \
+		moc_ExperimentRunner.cpp \
+		moc_uiCellGraph.cpp \
+		moc_uiCellOverviewWidget.cpp \
+		moc_uiCellWidget.cpp \
 		moc_uiExperimentCreateWidget.cpp \
 		moc_uiExperimentGraph.cpp \
 		moc_uiExperimentListWidget.cpp \
@@ -98,7 +106,11 @@ OBJECTS       = Arc.o \
 		RedisDBManager.o \
 		TempArc.o \
 		User.o \
+		ExperimentRunner.o \
+		uiCellGraph.o \
 		main.o \
+		uiCellOverviewWidget.o \
+		uiCellWidget.o \
 		uiExperimentCreateWidget.o \
 		uiExperimentGraph.o \
 		uiExperimentListWidget.o \
@@ -111,6 +123,10 @@ OBJECTS       = Arc.o \
 		uiUserManagementWidget.o \
 		qrc_resources.o \
 		moc_RedisDBManager.o \
+		moc_ExperimentRunner.o \
+		moc_uiCellGraph.o \
+		moc_uiCellOverviewWidget.o \
+		moc_uiCellWidget.o \
 		moc_uiExperimentCreateWidget.o \
 		moc_uiExperimentGraph.o \
 		moc_uiExperimentListWidget.o \
@@ -495,6 +511,8 @@ DIST          = /home/dev/Qt/6.9.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../experimentmanagerservice/src/common/RedisDBManager.h \
 		../../../experimentmanagerservice/src/common/TempArc.h \
 		../../../experimentmanagerservice/src/common/User.h \
+		../../../CellViewer/ExperimentRunner.h \
+		../../../CellViewer/uiCellGraph.h \
 		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
 		../../../experimentmanagerservice/src/common/rapidjson/cursorstreamwrapper.h \
 		../../../experimentmanagerservice/src/common/rapidjson/document.h \
@@ -533,6 +551,8 @@ DIST          = /home/dev/Qt/6.9.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
 		../../../experimentmanagerservice/src/common/rapidjson/uri.h \
 		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../uiCellOverviewWidget.h \
+		../../uiCellWidget.h \
 		../../uiExperimentCreateWidget.h \
 		../../uiExperimentGraph.h \
 		../../uiExperimentListWidget.h \
@@ -554,7 +574,11 @@ DIST          = /home/dev/Qt/6.9.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../experimentmanagerservice/src/common/RedisDBManager.cpp \
 		../../../experimentmanagerservice/src/common/TempArc.cpp \
 		../../../experimentmanagerservice/src/common/User.cpp \
+		../../../CellViewer/ExperimentRunner.cpp \
+		../../../CellViewer/uiCellGraph.cpp \
 		../../main.cpp \
+		../../uiCellOverviewWidget.cpp \
+		../../uiCellWidget.cpp \
 		../../uiExperimentCreateWidget.cpp \
 		../../uiExperimentGraph.cpp \
 		../../uiExperimentListWidget.cpp \
@@ -573,7 +597,7 @@ TARGET        = ReactorGUI
 first: all
 ####### Build rules
 
-ReactorGUI: ui_uiExperimentCreateWidget.h ui_uiExperimentGraph.h ui_uiExperimentListWidget.h ui_uiExperimentManagerWidget.h ui_uiHomeWidget.h ui_uiLoginWidget.h ui_uiOptionsWidget.h ui_uiReactorViewWidget.h ui_uiTSMainWindow.h ui_uiUserManagementWidget.h $(OBJECTS)  
+ReactorGUI: ui_uiCellGraph.h ui_uiCellOverviewWidget.h ui_uiCellWidget.h ui_uiExperimentCreateWidget.h ui_uiExperimentGraph.h ui_uiExperimentListWidget.h ui_uiExperimentManagerWidget.h ui_uiHomeWidget.h ui_uiLoginWidget.h ui_uiOptionsWidget.h ui_uiReactorViewWidget.h ui_uiTSMainWindow.h ui_uiUserManagementWidget.h $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET)  $(OBJECTS) $(OBJCOMP) $(LIBS)
 
 Makefile: ../../ReactorGUI.pro /home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++/qmake.conf /home/dev/Qt/6.9.1/gcc_64/mkspecs/features/spec_pre.prf \
@@ -944,6 +968,7 @@ Makefile: ../../ReactorGUI.pro /home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++/qmake
 		/home/dev/perdev/Externals/qwt-6.2.0/lib/libqwt.prl \
 		/home/dev/Qt/6.9.1/gcc_64/lib/libQt6Widgets.prl \
 		/home/dev/Qt/6.9.1/gcc_64/lib/libQt6Gui.prl \
+		/home/dev/Qt/6.9.1/gcc_64/lib/libQt6Concurrent.prl \
 		/home/dev/Qt/6.9.1/gcc_64/lib/libQt6Core.prl
 	$(QMAKE) -o Makefile ../../ReactorGUI.pro -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug
 /home/dev/Qt/6.9.1/gcc_64/mkspecs/features/spec_pre.prf:
@@ -1314,6 +1339,7 @@ Makefile: ../../ReactorGUI.pro /home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++/qmake
 /home/dev/perdev/Externals/qwt-6.2.0/lib/libqwt.prl:
 /home/dev/Qt/6.9.1/gcc_64/lib/libQt6Widgets.prl:
 /home/dev/Qt/6.9.1/gcc_64/lib/libQt6Gui.prl:
+/home/dev/Qt/6.9.1/gcc_64/lib/libQt6Concurrent.prl:
 /home/dev/Qt/6.9.1/gcc_64/lib/libQt6Core.prl:
 qmake: FORCE
 	@$(QMAKE) -o Makefile ../../ReactorGUI.pro -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug
@@ -1331,9 +1357,9 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../resources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /home/dev/Qt/6.9.1/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../../experimentmanagerservice/src/common/Cell.h ../../../experimentmanagerservice/src/common/CellTarget.h ../../../experimentmanagerservice/src/common/CellVisuals.h ../../../experimentmanagerservice/src/common/CellVisualsHistory.h ../../../experimentmanagerservice/src/common/Experiment.h ../../../experimentmanagerservice/src/common/FlowStatus.h ../../../experimentmanagerservice/src/common/Profile.h ../../../experimentmanagerservice/src/common/RPMArc.h ../../../experimentmanagerservice/src/common/RedisDBManager.h ../../../experimentmanagerservice/src/common/TempArc.h ../../../experimentmanagerservice/src/common/User.h ../../../experimentmanagerservice/src/common/rapidjson/allocators.h ../../../experimentmanagerservice/src/common/rapidjson/cursorstreamwrapper.h ../../../experimentmanagerservice/src/common/rapidjson/document.h ../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h ../../../experimentmanagerservice/src/common/rapidjson/encodings.h ../../../experimentmanagerservice/src/common/rapidjson/error/en.h ../../../experimentmanagerservice/src/common/rapidjson/error/error.h ../../../experimentmanagerservice/src/common/rapidjson/filereadstream.h ../../../experimentmanagerservice/src/common/rapidjson/filewritestream.h ../../../experimentmanagerservice/src/common/rapidjson/fwd.h ../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h ../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h ../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h ../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h ../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h ../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h ../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h ../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h ../../../experimentmanagerservice/src/common/rapidjson/internal/regex.h ../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h ../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h ../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h ../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h ../../../experimentmanagerservice/src/common/rapidjson/istreamwrapper.h ../../../experimentmanagerservice/src/common/rapidjson/memorybuffer.h ../../../experimentmanagerservice/src/common/rapidjson/memorystream.h ../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h ../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h ../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h ../../../experimentmanagerservice/src/common/rapidjson/pointer.h ../../../experimentmanagerservice/src/common/rapidjson/prettywriter.h ../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h ../../../experimentmanagerservice/src/common/rapidjson/reader.h ../../../experimentmanagerservice/src/common/rapidjson/schema.h ../../../experimentmanagerservice/src/common/rapidjson/stream.h ../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h ../../../experimentmanagerservice/src/common/rapidjson/uri.h ../../../experimentmanagerservice/src/common/rapidjson/writer.h ../../uiExperimentCreateWidget.h ../../uiExperimentGraph.h ../../uiExperimentListWidget.h ../../uiExperimentManagerWidget.h ../../uiHomeWidget.h ../../uiLoginWidget.h ../../uiOptionsWidget.h ../../uiReactorViewWidget.h ../../uiTSMainWindow.h ../../uiUserManagementWidget.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../../experimentmanagerservice/src/common/Arc.cpp ../../../experimentmanagerservice/src/common/Cell.cpp ../../../experimentmanagerservice/src/common/CellTarget.cpp ../../../experimentmanagerservice/src/common/CellVisuals.cpp ../../../experimentmanagerservice/src/common/CellVisualsHistory.cpp ../../../experimentmanagerservice/src/common/Experiment.cpp ../../../experimentmanagerservice/src/common/FlowStatus.cpp ../../../experimentmanagerservice/src/common/Profile.cpp ../../../experimentmanagerservice/src/common/RPMArc.cpp ../../../experimentmanagerservice/src/common/RedisDBManager.cpp ../../../experimentmanagerservice/src/common/TempArc.cpp ../../../experimentmanagerservice/src/common/User.cpp ../../main.cpp ../../uiExperimentCreateWidget.cpp ../../uiExperimentGraph.cpp ../../uiExperimentListWidget.cpp ../../uiExperimentManagerWidget.cpp ../../uiHomeWidget.cpp ../../uiLoginWidget.cpp ../../uiOptionsWidget.cpp ../../uiReactorViewWidget.cpp ../../uiTSMainWindow.cpp ../../uiUserManagementWidget.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../uiExperimentCreateWidget.ui ../../uiExperimentGraph.ui ../../uiExperimentListWidget.ui ../../uiExperimentManagerWidget.ui ../../uiHomeWidget.ui ../../uiLoginWidget.ui ../../uiOptionsWidget.ui ../../uiReactorViewWidget.ui ../../uiTSMainWindow.ui ../../uiUserManagementWidget.ui $(DISTDIR)/
+	$(COPY_FILE) --parents ../../../experimentmanagerservice/src/common/Cell.h ../../../experimentmanagerservice/src/common/CellTarget.h ../../../experimentmanagerservice/src/common/CellVisuals.h ../../../experimentmanagerservice/src/common/CellVisualsHistory.h ../../../experimentmanagerservice/src/common/Experiment.h ../../../experimentmanagerservice/src/common/FlowStatus.h ../../../experimentmanagerservice/src/common/Profile.h ../../../experimentmanagerservice/src/common/RPMArc.h ../../../experimentmanagerservice/src/common/RedisDBManager.h ../../../experimentmanagerservice/src/common/TempArc.h ../../../experimentmanagerservice/src/common/User.h ../../../CellViewer/ExperimentRunner.h ../../../CellViewer/uiCellGraph.h ../../../experimentmanagerservice/src/common/rapidjson/allocators.h ../../../experimentmanagerservice/src/common/rapidjson/cursorstreamwrapper.h ../../../experimentmanagerservice/src/common/rapidjson/document.h ../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h ../../../experimentmanagerservice/src/common/rapidjson/encodings.h ../../../experimentmanagerservice/src/common/rapidjson/error/en.h ../../../experimentmanagerservice/src/common/rapidjson/error/error.h ../../../experimentmanagerservice/src/common/rapidjson/filereadstream.h ../../../experimentmanagerservice/src/common/rapidjson/filewritestream.h ../../../experimentmanagerservice/src/common/rapidjson/fwd.h ../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h ../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h ../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h ../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h ../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h ../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h ../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h ../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h ../../../experimentmanagerservice/src/common/rapidjson/internal/regex.h ../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h ../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h ../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h ../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h ../../../experimentmanagerservice/src/common/rapidjson/istreamwrapper.h ../../../experimentmanagerservice/src/common/rapidjson/memorybuffer.h ../../../experimentmanagerservice/src/common/rapidjson/memorystream.h ../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h ../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h ../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h ../../../experimentmanagerservice/src/common/rapidjson/pointer.h ../../../experimentmanagerservice/src/common/rapidjson/prettywriter.h ../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h ../../../experimentmanagerservice/src/common/rapidjson/reader.h ../../../experimentmanagerservice/src/common/rapidjson/schema.h ../../../experimentmanagerservice/src/common/rapidjson/stream.h ../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h ../../../experimentmanagerservice/src/common/rapidjson/uri.h ../../../experimentmanagerservice/src/common/rapidjson/writer.h ../../uiCellOverviewWidget.h ../../uiCellWidget.h ../../uiExperimentCreateWidget.h ../../uiExperimentGraph.h ../../uiExperimentListWidget.h ../../uiExperimentManagerWidget.h ../../uiHomeWidget.h ../../uiLoginWidget.h ../../uiOptionsWidget.h ../../uiReactorViewWidget.h ../../uiTSMainWindow.h ../../uiUserManagementWidget.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../../experimentmanagerservice/src/common/Arc.cpp ../../../experimentmanagerservice/src/common/Cell.cpp ../../../experimentmanagerservice/src/common/CellTarget.cpp ../../../experimentmanagerservice/src/common/CellVisuals.cpp ../../../experimentmanagerservice/src/common/CellVisualsHistory.cpp ../../../experimentmanagerservice/src/common/Experiment.cpp ../../../experimentmanagerservice/src/common/FlowStatus.cpp ../../../experimentmanagerservice/src/common/Profile.cpp ../../../experimentmanagerservice/src/common/RPMArc.cpp ../../../experimentmanagerservice/src/common/RedisDBManager.cpp ../../../experimentmanagerservice/src/common/TempArc.cpp ../../../experimentmanagerservice/src/common/User.cpp ../../../CellViewer/ExperimentRunner.cpp ../../../CellViewer/uiCellGraph.cpp ../../main.cpp ../../uiCellOverviewWidget.cpp ../../uiCellWidget.cpp ../../uiExperimentCreateWidget.cpp ../../uiExperimentGraph.cpp ../../uiExperimentListWidget.cpp ../../uiExperimentManagerWidget.cpp ../../uiHomeWidget.cpp ../../uiLoginWidget.cpp ../../uiOptionsWidget.cpp ../../uiReactorViewWidget.cpp ../../uiTSMainWindow.cpp ../../uiUserManagementWidget.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../../CellViewer/uiCellGraph.ui ../../uiCellOverviewWidget.ui ../../uiCellWidget.ui ../../uiExperimentCreateWidget.ui ../../uiExperimentGraph.ui ../../uiExperimentListWidget.ui ../../uiExperimentManagerWidget.ui ../../uiHomeWidget.ui ../../uiLoginWidget.ui ../../uiOptionsWidget.ui ../../uiReactorViewWidget.ui ../../uiTSMainWindow.ui ../../uiUserManagementWidget.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -1916,9 +1942,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /home/dev/Qt/6.9.1/gcc_64/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++1z -Wall -Wextra -fPIC -dM -E -o moc_predefs.h /home/dev/Qt/6.9.1/gcc_64/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_RedisDBManager.cpp moc_uiExperimentCreateWidget.cpp moc_uiExperimentGraph.cpp moc_uiExperimentListWidget.cpp moc_uiExperimentManagerWidget.cpp moc_uiHomeWidget.cpp moc_uiLoginWidget.cpp moc_uiOptionsWidget.cpp moc_uiReactorViewWidget.cpp moc_uiTSMainWindow.cpp moc_uiUserManagementWidget.cpp
+compiler_moc_header_make_all: moc_RedisDBManager.cpp moc_ExperimentRunner.cpp moc_uiCellGraph.cpp moc_uiCellOverviewWidget.cpp moc_uiCellWidget.cpp moc_uiExperimentCreateWidget.cpp moc_uiExperimentGraph.cpp moc_uiExperimentListWidget.cpp moc_uiExperimentManagerWidget.cpp moc_uiHomeWidget.cpp moc_uiLoginWidget.cpp moc_uiOptionsWidget.cpp moc_uiReactorViewWidget.cpp moc_uiTSMainWindow.cpp moc_uiUserManagementWidget.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_RedisDBManager.cpp moc_uiExperimentCreateWidget.cpp moc_uiExperimentGraph.cpp moc_uiExperimentListWidget.cpp moc_uiExperimentManagerWidget.cpp moc_uiHomeWidget.cpp moc_uiLoginWidget.cpp moc_uiOptionsWidget.cpp moc_uiReactorViewWidget.cpp moc_uiTSMainWindow.cpp moc_uiUserManagementWidget.cpp
+	-$(DEL_FILE) moc_RedisDBManager.cpp moc_ExperimentRunner.cpp moc_uiCellGraph.cpp moc_uiCellOverviewWidget.cpp moc_uiCellWidget.cpp moc_uiExperimentCreateWidget.cpp moc_uiExperimentGraph.cpp moc_uiExperimentListWidget.cpp moc_uiExperimentManagerWidget.cpp moc_uiHomeWidget.cpp moc_uiLoginWidget.cpp moc_uiOptionsWidget.cpp moc_uiReactorViewWidget.cpp moc_uiTSMainWindow.cpp moc_uiUserManagementWidget.cpp
 moc_RedisDBManager.cpp: ../../../experimentmanagerservice/src/common/RedisDBManager.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QObject \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject.h \
@@ -2069,7 +2095,901 @@ moc_RedisDBManager.cpp: ../../../experimentmanagerservice/src/common/RedisDBMana
 		../../../experimentmanagerservice/src/common/FlowStatus.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../../experimentmanagerservice/src/common/RedisDBManager.h -o moc_RedisDBManager.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../../experimentmanagerservice/src/common/RedisDBManager.h -o moc_RedisDBManager.cpp
+
+moc_ExperimentRunner.cpp: ../../../CellViewer/ExperimentRunner.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QObject \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnamespace.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversionchecks.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfiginclude.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconfig.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcore-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfigmacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationdefinitions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationmarkers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtclasshelpermacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtpreprocessorsupport.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qassert.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtnoop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypes.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsysinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlogging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qflags.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qyieldcpu.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconstructormacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdarwinhelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qexceptionhandling.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qforeach.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttypetraits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmalloc.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qminmax.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnumeric.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qoverload.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qswap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtenvironmentvariables.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtresource.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttranslation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qversiontagging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstdlibdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcomparehelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20type_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtmetamacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionaltools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstring.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qchar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrefcount.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpair.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydatapointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydataops.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainertools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qxptype_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20functional.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q17memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringliteral.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlatin1stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qanystringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qutf8stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringtokenizer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter_base.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreevent.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasictimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstracteventdispatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qeventloop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdeadlinetimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qelapsedtimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetatype.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatastream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevicebase.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfloat16.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmath.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtformat_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetacontainer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtaggedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopeguard.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbindingstorage.h \
+		../../../experimentmanagerservice/src/common/Experiment.h \
+		../../../experimentmanagerservice/src/common/User.h \
+		../../../experimentmanagerservice/src/common/rapidjson/document.h \
+		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
+		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
+		../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodings.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/memorystream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h \
+		../../../experimentmanagerservice/src/common/rapidjson/error/error.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h \
+		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		../../../experimentmanagerservice/src/common/Profile.h \
+		../../../experimentmanagerservice/src/common/TempArc.h \
+		../../../experimentmanagerservice/src/common/Arc.h \
+		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../../experimentmanagerservice/src/common/Cell.h \
+		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		moc_predefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../../CellViewer/ExperimentRunner.h -o moc_ExperimentRunner.cpp
+
+moc_uiCellGraph.cpp: ../../../CellViewer/uiCellGraph.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversionchecks.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfiginclude.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconfig.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcore-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfigmacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationdefinitions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationmarkers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtclasshelpermacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtpreprocessorsupport.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qassert.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtnoop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypes.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsysinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlogging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qflags.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qyieldcpu.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconstructormacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdarwinhelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qexceptionhandling.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qforeach.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttypetraits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmalloc.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qminmax.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnumeric.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qoverload.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qswap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtenvironmentvariables.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtresource.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttranslation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qversiontagging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtgui-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnamespace.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstdlibdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcomparehelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20type_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtmetamacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionaltools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstring.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qchar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrefcount.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpair.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydatapointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydataops.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainertools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qxptype_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20functional.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q17memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringliteral.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlatin1stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qanystringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qutf8stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringtokenizer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter_base.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreevent.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasictimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstracteventdispatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qeventloop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdeadlinetimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qelapsedtimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetatype.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatastream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevicebase.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfloat16.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmath.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtformat_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetacontainer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtaggedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopeguard.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbindingstorage.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmargins.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q23utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qaction.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qkeysequence.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qicon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsize.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpixmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpaintdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrect.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpoint.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qcolor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qrgb.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qrgba64.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qimage.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpixelformat.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtransform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpolygon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qregion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qspan.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20iterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qline.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariant.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdebug.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtextstream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qset.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpalette.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qbrush.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfont.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qendian.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontmetrics.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontvariableaxis.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qcursor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qbitmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qevent.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qurl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qeventpoint.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvector2d.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvectornd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpointingdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qscreen.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QList \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QObject \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QRect \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSize \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSizeF \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/QTransform \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnativeinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qscreen_platform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication_platform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuture.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfutureinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmutex.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtsan_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qresultstore.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuture_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthreadpool.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthread.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrunnable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qexception.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpromise.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputmethod.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis_id.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_dict.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_item.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_curve.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_seriesitem.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_store.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_data.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_samples.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_interval.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_point_3d.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
+		../../../experimentmanagerservice/src/common/Experiment.h \
+		../../../experimentmanagerservice/src/common/User.h \
+		../../../experimentmanagerservice/src/common/rapidjson/document.h \
+		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
+		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
+		../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodings.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/memorystream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h \
+		../../../experimentmanagerservice/src/common/rapidjson/error/error.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h \
+		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		../../../experimentmanagerservice/src/common/Profile.h \
+		../../../experimentmanagerservice/src/common/TempArc.h \
+		../../../experimentmanagerservice/src/common/Arc.h \
+		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../../experimentmanagerservice/src/common/Cell.h \
+		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		moc_predefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../../CellViewer/uiCellGraph.h -o moc_uiCellGraph.cpp
+
+moc_uiCellOverviewWidget.cpp: ../../uiCellOverviewWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversionchecks.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfiginclude.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconfig.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcore-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfigmacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationdefinitions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationmarkers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtclasshelpermacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtpreprocessorsupport.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qassert.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtnoop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypes.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsysinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlogging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qflags.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qyieldcpu.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconstructormacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdarwinhelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qexceptionhandling.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qforeach.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttypetraits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmalloc.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qminmax.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnumeric.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qoverload.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qswap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtenvironmentvariables.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtresource.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttranslation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qversiontagging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtgui-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnamespace.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstdlibdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcomparehelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20type_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtmetamacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionaltools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstring.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qchar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrefcount.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpair.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydatapointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydataops.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainertools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qxptype_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20functional.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q17memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringliteral.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlatin1stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qanystringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qutf8stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringtokenizer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter_base.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreevent.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasictimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstracteventdispatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qeventloop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdeadlinetimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qelapsedtimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetatype.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatastream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevicebase.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfloat16.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmath.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtformat_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetacontainer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtaggedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopeguard.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbindingstorage.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmargins.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q23utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qaction.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qkeysequence.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qicon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsize.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpixmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpaintdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrect.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpoint.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qcolor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qrgb.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qrgba64.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qimage.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpixelformat.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtransform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpolygon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qregion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qspan.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20iterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qline.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariant.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdebug.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtextstream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qset.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpalette.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qbrush.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfont.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qendian.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontmetrics.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontvariableaxis.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qcursor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qbitmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qevent.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qurl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qeventpoint.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvector2d.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvectornd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpointingdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qscreen.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QList \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QObject \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QRect \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSize \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSizeF \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/QTransform \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnativeinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qscreen_platform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication_platform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuture.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfutureinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmutex.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtsan_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qresultstore.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuture_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthreadpool.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthread.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrunnable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qexception.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpromise.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputmethod.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
+		../../../experimentmanagerservice/src/common/Cell.h \
+		../../../experimentmanagerservice/src/common/Experiment.h \
+		../../../experimentmanagerservice/src/common/User.h \
+		../../../experimentmanagerservice/src/common/rapidjson/document.h \
+		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
+		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
+		../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodings.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/memorystream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h \
+		../../../experimentmanagerservice/src/common/rapidjson/error/error.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h \
+		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		../../../experimentmanagerservice/src/common/Profile.h \
+		../../../experimentmanagerservice/src/common/TempArc.h \
+		../../../experimentmanagerservice/src/common/Arc.h \
+		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		moc_predefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiCellOverviewWidget.h -o moc_uiCellOverviewWidget.cpp
+
+moc_uiCellWidget.cpp: ../../uiCellWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversionchecks.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfiginclude.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconfig.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcore-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfigmacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationdefinitions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationmarkers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtclasshelpermacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtpreprocessorsupport.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qassert.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtnoop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypes.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsysinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlogging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qflags.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qyieldcpu.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconstructormacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdarwinhelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qexceptionhandling.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qforeach.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttypetraits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmalloc.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qminmax.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnumeric.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qoverload.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qswap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtenvironmentvariables.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtresource.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttranslation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qversiontagging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtgui-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnamespace.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstdlibdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcomparehelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20type_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtmetamacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionaltools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstring.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qchar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrefcount.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpair.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydatapointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydataops.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainertools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qxptype_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20functional.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q17memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringliteral.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlatin1stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qanystringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qutf8stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringtokenizer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter_base.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreevent.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasictimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstracteventdispatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qeventloop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdeadlinetimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qelapsedtimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetatype.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatastream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevicebase.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfloat16.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmath.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtformat_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetacontainer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtaggedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopeguard.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbindingstorage.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmargins.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q23utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qaction.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qkeysequence.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qicon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsize.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpixmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpaintdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrect.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpoint.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qcolor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qrgb.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qrgba64.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qimage.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpixelformat.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtransform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpolygon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qregion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qspan.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20iterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qline.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariant.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdebug.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtextstream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qset.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpalette.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qbrush.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfont.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qendian.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontmetrics.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontvariableaxis.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qcursor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qbitmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qevent.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qurl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qeventpoint.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvector2d.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvectornd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpointingdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qscreen.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QList \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QObject \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QRect \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSize \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSizeF \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/QTransform \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnativeinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qscreen_platform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication_platform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuture.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfutureinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmutex.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtsan_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qresultstore.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuture_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthreadpool.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthread.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrunnable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qexception.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpromise.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputmethod.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
+		../../../CellViewer/ExperimentRunner.h \
+		../../../experimentmanagerservice/src/common/Experiment.h \
+		../../../experimentmanagerservice/src/common/User.h \
+		../../../experimentmanagerservice/src/common/rapidjson/document.h \
+		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
+		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
+		../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodings.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/memorystream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h \
+		../../../experimentmanagerservice/src/common/rapidjson/error/error.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h \
+		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		../../../experimentmanagerservice/src/common/Profile.h \
+		../../../experimentmanagerservice/src/common/TempArc.h \
+		../../../experimentmanagerservice/src/common/Arc.h \
+		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../../experimentmanagerservice/src/common/Cell.h \
+		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		../../../CellViewer/uiCellGraph.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis_id.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_dict.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_item.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_curve.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_seriesitem.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_store.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_data.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_samples.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_interval.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_point_3d.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
+		moc_predefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiCellWidget.h -o moc_uiCellWidget.cpp
 
 moc_uiExperimentCreateWidget.cpp: ../../uiExperimentCreateWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -2332,7 +3252,7 @@ moc_uiExperimentCreateWidget.cpp: ../../uiExperimentCreateWidget.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentCreateWidget.h -o moc_uiExperimentCreateWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentCreateWidget.h -o moc_uiExperimentCreateWidget.cpp
 
 moc_uiExperimentGraph.cpp: ../../uiExperimentGraph.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -2586,7 +3506,7 @@ moc_uiExperimentGraph.cpp: ../../uiExperimentGraph.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentGraph.h -o moc_uiExperimentGraph.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentGraph.h -o moc_uiExperimentGraph.cpp
 
 moc_uiExperimentListWidget.cpp: ../../uiExperimentListWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -2787,7 +3707,7 @@ moc_uiExperimentListWidget.cpp: ../../uiExperimentListWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentListWidget.h -o moc_uiExperimentListWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentListWidget.h -o moc_uiExperimentListWidget.cpp
 
 moc_uiExperimentManagerWidget.cpp: ../../uiExperimentManagerWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -3052,7 +3972,7 @@ moc_uiExperimentManagerWidget.cpp: ../../uiExperimentManagerWidget.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentManagerWidget.h -o moc_uiExperimentManagerWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentManagerWidget.h -o moc_uiExperimentManagerWidget.cpp
 
 moc_uiHomeWidget.cpp: ../../uiHomeWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -3253,7 +4173,7 @@ moc_uiHomeWidget.cpp: ../../uiHomeWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiHomeWidget.h -o moc_uiHomeWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiHomeWidget.h -o moc_uiHomeWidget.cpp
 
 moc_uiLoginWidget.cpp: ../../uiLoginWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -3454,7 +4374,7 @@ moc_uiLoginWidget.cpp: ../../uiLoginWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiLoginWidget.h -o moc_uiLoginWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiLoginWidget.h -o moc_uiLoginWidget.cpp
 
 moc_uiOptionsWidget.cpp: ../../uiOptionsWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -3655,7 +4575,7 @@ moc_uiOptionsWidget.cpp: ../../uiOptionsWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiOptionsWidget.h -o moc_uiOptionsWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiOptionsWidget.h -o moc_uiOptionsWidget.cpp
 
 moc_uiReactorViewWidget.cpp: ../../uiReactorViewWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -3856,9 +4776,46 @@ moc_uiReactorViewWidget.cpp: ../../uiReactorViewWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QTimer \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVector \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
+		../../uiCellOverviewWidget.h \
+		../../../experimentmanagerservice/src/common/Cell.h \
+		../../../experimentmanagerservice/src/common/Experiment.h \
+		../../../experimentmanagerservice/src/common/User.h \
+		../../../experimentmanagerservice/src/common/rapidjson/document.h \
+		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
+		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
+		../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodings.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/memorystream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h \
+		../../../experimentmanagerservice/src/common/rapidjson/error/error.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h \
+		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		../../../experimentmanagerservice/src/common/Profile.h \
+		../../../experimentmanagerservice/src/common/TempArc.h \
+		../../../experimentmanagerservice/src/common/Arc.h \
+		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiReactorViewWidget.h -o moc_uiReactorViewWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiReactorViewWidget.h -o moc_uiReactorViewWidget.cpp
 
 moc_uiTSMainWindow.cpp: ../../uiTSMainWindow.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QMainWindow \
@@ -4132,11 +5089,13 @@ moc_uiTSMainWindow.cpp: ../../uiTSMainWindow.h \
 		../../uiReactorViewWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QTimer \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVector \
+		../../uiCellOverviewWidget.h \
 		../../uiUserManagementWidget.h \
 		../../uiHomeWidget.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiTSMainWindow.h -o moc_uiTSMainWindow.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiTSMainWindow.h -o moc_uiTSMainWindow.cpp
 
 moc_uiUserManagementWidget.cpp: ../../uiUserManagementWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -4337,15 +5296,27 @@ moc_uiUserManagementWidget.cpp: ../../uiUserManagementWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiUserManagementWidget.h -o moc_uiUserManagementWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiUserManagementWidget.h -o moc_uiUserManagementWidget.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
-compiler_uic_make_all: ui_uiExperimentCreateWidget.h ui_uiExperimentGraph.h ui_uiExperimentListWidget.h ui_uiExperimentManagerWidget.h ui_uiHomeWidget.h ui_uiLoginWidget.h ui_uiOptionsWidget.h ui_uiReactorViewWidget.h ui_uiTSMainWindow.h ui_uiUserManagementWidget.h
+compiler_uic_make_all: ui_uiCellGraph.h ui_uiCellOverviewWidget.h ui_uiCellWidget.h ui_uiExperimentCreateWidget.h ui_uiExperimentGraph.h ui_uiExperimentListWidget.h ui_uiExperimentManagerWidget.h ui_uiHomeWidget.h ui_uiLoginWidget.h ui_uiOptionsWidget.h ui_uiReactorViewWidget.h ui_uiTSMainWindow.h ui_uiUserManagementWidget.h
 compiler_uic_clean:
-	-$(DEL_FILE) ui_uiExperimentCreateWidget.h ui_uiExperimentGraph.h ui_uiExperimentListWidget.h ui_uiExperimentManagerWidget.h ui_uiHomeWidget.h ui_uiLoginWidget.h ui_uiOptionsWidget.h ui_uiReactorViewWidget.h ui_uiTSMainWindow.h ui_uiUserManagementWidget.h
+	-$(DEL_FILE) ui_uiCellGraph.h ui_uiCellOverviewWidget.h ui_uiCellWidget.h ui_uiExperimentCreateWidget.h ui_uiExperimentGraph.h ui_uiExperimentListWidget.h ui_uiExperimentManagerWidget.h ui_uiHomeWidget.h ui_uiLoginWidget.h ui_uiOptionsWidget.h ui_uiReactorViewWidget.h ui_uiTSMainWindow.h ui_uiUserManagementWidget.h
+ui_uiCellGraph.h: ../../../CellViewer/uiCellGraph.ui \
+		/home/dev/Qt/6.9.1/gcc_64/libexec/uic
+	/home/dev/Qt/6.9.1/gcc_64/libexec/uic ../../../CellViewer/uiCellGraph.ui -o ui_uiCellGraph.h
+
+ui_uiCellOverviewWidget.h: ../../uiCellOverviewWidget.ui \
+		/home/dev/Qt/6.9.1/gcc_64/libexec/uic
+	/home/dev/Qt/6.9.1/gcc_64/libexec/uic ../../uiCellOverviewWidget.ui -o ui_uiCellOverviewWidget.h
+
+ui_uiCellWidget.h: ../../uiCellWidget.ui \
+		/home/dev/Qt/6.9.1/gcc_64/libexec/uic
+	/home/dev/Qt/6.9.1/gcc_64/libexec/uic ../../uiCellWidget.ui -o ui_uiCellWidget.h
+
 ui_uiExperimentCreateWidget.h: ../../uiExperimentCreateWidget.ui \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/uic
 	/home/dev/Qt/6.9.1/gcc_64/libexec/uic ../../uiExperimentCreateWidget.ui -o ui_uiExperimentCreateWidget.h
@@ -4837,6 +5808,440 @@ User.o: ../../../experimentmanagerservice/src/common/User.cpp ../../../experimen
 		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o User.o ../../../experimentmanagerservice/src/common/User.cpp
 
+ExperimentRunner.o: ../../../CellViewer/ExperimentRunner.cpp ../../../CellViewer/ExperimentRunner.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QObject \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnamespace.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversionchecks.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfiginclude.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconfig.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcore-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfigmacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationdefinitions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationmarkers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtclasshelpermacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtpreprocessorsupport.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qassert.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtnoop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypes.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsysinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlogging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qflags.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qyieldcpu.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconstructormacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdarwinhelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qexceptionhandling.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qforeach.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttypetraits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmalloc.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qminmax.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnumeric.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qoverload.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qswap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtenvironmentvariables.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtresource.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttranslation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qversiontagging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstdlibdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcomparehelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20type_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtmetamacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionaltools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstring.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qchar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrefcount.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpair.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydatapointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydataops.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainertools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qxptype_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20functional.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q17memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringliteral.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlatin1stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qanystringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qutf8stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringtokenizer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter_base.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreevent.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasictimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstracteventdispatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qeventloop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdeadlinetimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qelapsedtimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetatype.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatastream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevicebase.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfloat16.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmath.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtformat_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetacontainer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtaggedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopeguard.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbindingstorage.h \
+		../../../experimentmanagerservice/src/common/Experiment.h \
+		../../../experimentmanagerservice/src/common/User.h \
+		../../../experimentmanagerservice/src/common/rapidjson/document.h \
+		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
+		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
+		../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodings.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/memorystream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h \
+		../../../experimentmanagerservice/src/common/rapidjson/error/error.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h \
+		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		../../../experimentmanagerservice/src/common/Profile.h \
+		../../../experimentmanagerservice/src/common/TempArc.h \
+		../../../experimentmanagerservice/src/common/Arc.h \
+		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../../experimentmanagerservice/src/common/Cell.h \
+		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		../../../experimentmanagerservice/src/common/RedisDBManager.h \
+		../../../experimentmanagerservice/src/common/CellTarget.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
+		../../../experimentmanagerservice/src/common/FlowStatus.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDebug \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdebug.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtextstream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qset.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QCoreApplication \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnativeinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication_platform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuture.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfutureinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmutex.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtsan_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qresultstore.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuture_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthreadpool.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthread.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrunnable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qexception.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpromise.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariant.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q23utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20utility.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ExperimentRunner.o ../../../CellViewer/ExperimentRunner.cpp
+
+uiCellGraph.o: ../../../CellViewer/uiCellGraph.cpp ../../../CellViewer/uiCellGraph.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversionchecks.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfiginclude.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconfig.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcore-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfigmacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationdefinitions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationmarkers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtclasshelpermacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtpreprocessorsupport.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qassert.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtnoop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypes.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsysinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlogging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qflags.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qyieldcpu.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconstructormacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdarwinhelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qexceptionhandling.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qforeach.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttypetraits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmalloc.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qminmax.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnumeric.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qoverload.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qswap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtenvironmentvariables.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtresource.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttranslation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qversiontagging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtgui-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnamespace.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstdlibdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcomparehelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20type_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtmetamacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionaltools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstring.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qchar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrefcount.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpair.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydatapointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydataops.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainertools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qxptype_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20functional.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q17memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringliteral.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlatin1stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qanystringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qutf8stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringtokenizer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter_base.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreevent.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasictimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstracteventdispatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qeventloop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdeadlinetimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qelapsedtimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetatype.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatastream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevicebase.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfloat16.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmath.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtformat_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetacontainer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtaggedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopeguard.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbindingstorage.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmargins.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q23utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qaction.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qkeysequence.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qicon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsize.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpixmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpaintdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrect.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpoint.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qcolor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qrgb.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qrgba64.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qimage.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpixelformat.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtransform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpolygon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qregion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qspan.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20iterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qline.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariant.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdebug.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtextstream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qset.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpalette.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qbrush.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfont.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qendian.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontmetrics.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontvariableaxis.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qcursor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qbitmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qevent.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qurl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qeventpoint.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvector2d.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvectornd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpointingdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qscreen.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QList \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QObject \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QRect \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSize \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSizeF \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/QTransform \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnativeinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qscreen_platform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication_platform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuture.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfutureinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmutex.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtsan_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qresultstore.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuture_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthreadpool.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthread.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrunnable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qexception.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpromise.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputmethod.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis_id.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_dict.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_item.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_curve.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_seriesitem.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_store.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_data.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_samples.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_interval.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_point_3d.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
+		../../../experimentmanagerservice/src/common/Experiment.h \
+		../../../experimentmanagerservice/src/common/User.h \
+		../../../experimentmanagerservice/src/common/rapidjson/document.h \
+		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
+		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
+		../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodings.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/memorystream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h \
+		../../../experimentmanagerservice/src/common/rapidjson/error/error.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h \
+		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		../../../experimentmanagerservice/src/common/Profile.h \
+		../../../experimentmanagerservice/src/common/TempArc.h \
+		../../../experimentmanagerservice/src/common/Arc.h \
+		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../../experimentmanagerservice/src/common/Cell.h \
+		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		ui_uiCellGraph.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiCellGraph.o ../../../CellViewer/uiCellGraph.cpp
+
 main.o: ../../main.cpp ../../uiTSMainWindow.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QMainWindow \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qmainwindow.h \
@@ -5109,11 +6514,656 @@ main.o: ../../main.cpp ../../uiTSMainWindow.h \
 		../../uiReactorViewWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QTimer \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVector \
+		../../uiCellOverviewWidget.h \
 		../../uiUserManagementWidget.h \
 		../../uiHomeWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../../main.cpp
+
+uiCellOverviewWidget.o: ../../uiCellOverviewWidget.cpp ../../uiCellOverviewWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversionchecks.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfiginclude.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconfig.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcore-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfigmacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationdefinitions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationmarkers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtclasshelpermacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtpreprocessorsupport.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qassert.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtnoop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypes.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsysinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlogging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qflags.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qyieldcpu.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconstructormacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdarwinhelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qexceptionhandling.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qforeach.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttypetraits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmalloc.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qminmax.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnumeric.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qoverload.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qswap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtenvironmentvariables.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtresource.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttranslation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qversiontagging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtgui-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnamespace.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstdlibdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcomparehelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20type_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtmetamacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionaltools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstring.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qchar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrefcount.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpair.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydatapointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydataops.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainertools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qxptype_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20functional.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q17memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringliteral.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlatin1stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qanystringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qutf8stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringtokenizer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter_base.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreevent.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasictimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstracteventdispatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qeventloop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdeadlinetimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qelapsedtimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetatype.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatastream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevicebase.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfloat16.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmath.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtformat_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetacontainer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtaggedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopeguard.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbindingstorage.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmargins.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q23utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qaction.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qkeysequence.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qicon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsize.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpixmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpaintdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrect.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpoint.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qcolor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qrgb.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qrgba64.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qimage.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpixelformat.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtransform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpolygon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qregion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qspan.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20iterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qline.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariant.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdebug.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtextstream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qset.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpalette.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qbrush.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfont.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qendian.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontmetrics.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontvariableaxis.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qcursor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qbitmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qevent.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qurl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qeventpoint.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvector2d.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvectornd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpointingdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qscreen.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QList \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QObject \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QRect \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSize \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSizeF \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/QTransform \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnativeinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qscreen_platform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication_platform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuture.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfutureinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmutex.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtsan_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qresultstore.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuture_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthreadpool.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthread.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrunnable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qexception.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpromise.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputmethod.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
+		../../../experimentmanagerservice/src/common/Cell.h \
+		../../../experimentmanagerservice/src/common/Experiment.h \
+		../../../experimentmanagerservice/src/common/User.h \
+		../../../experimentmanagerservice/src/common/rapidjson/document.h \
+		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
+		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
+		../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodings.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/memorystream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h \
+		../../../experimentmanagerservice/src/common/rapidjson/error/error.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h \
+		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		../../../experimentmanagerservice/src/common/Profile.h \
+		../../../experimentmanagerservice/src/common/TempArc.h \
+		../../../experimentmanagerservice/src/common/Arc.h \
+		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		ui_uiCellOverviewWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDateTime \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatetime.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcalendar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/QMouseEvent
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiCellOverviewWidget.o ../../uiCellOverviewWidget.cpp
+
+uiCellWidget.o: ../../uiCellWidget.cpp ../../uiCellWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreglobal.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversionchecks.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfiginclude.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconfig.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcore-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtconfigmacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationdefinitions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtdeprecationmarkers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtclasshelpermacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtpreprocessorsupport.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qassert.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtnoop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypes.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtversion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsysinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlogging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qflags.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qyieldcpu.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconstructormacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdarwinhelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qexceptionhandling.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qforeach.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttypetraits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmalloc.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qminmax.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnumeric.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qoverload.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qswap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtenvironmentvariables.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtresource.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qttranslation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qversiontagging.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtgui-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnamespace.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcompare.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstdlibdetection.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcomparehelpers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20type_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtmetamacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfunctionaltools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstring.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qchar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrefcount.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpair.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydatapointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qarraydataops.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainertools_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qxptype_traits.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20functional.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q17memory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearrayview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringfwd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringliteral.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlatin1stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qanystringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qutf8stringview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringtokenizer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringconverter_base.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qalgorithms.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreevent.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbasictimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstracteventdispatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qeventloop.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdeadlinetimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qelapsedtimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetatype.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatastream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevicebase.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfloat16.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmath.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtformat_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiterable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetacontainer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontainerinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtaggedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopeguard.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbindingstorage.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmargins.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q23utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20utility.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qaction.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qkeysequence.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qicon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsize.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpixmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpaintdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrect.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpoint.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qcolor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qrgb.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qrgba64.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qimage.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpixelformat.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtransform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpolygon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qregion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qspan.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20iterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qline.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariant.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdebug.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtextstream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qshareddata_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qset.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpalette.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qbrush.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfont.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qendian.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontmetrics.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qfontvariableaxis.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qcursor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qbitmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qevent.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qurl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qeventpoint.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvector2d.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvectornd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpointingdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputdevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qscreen.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QList \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QObject \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QRect \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSize \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSizeF \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/QTransform \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnativeinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qscreen_platform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication_platform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuture.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfutureinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmutex.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtsan_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qresultstore.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuture_impl.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthreadpool.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthread.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrunnable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qexception.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpromise.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputmethod.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
+		../../../CellViewer/ExperimentRunner.h \
+		../../../experimentmanagerservice/src/common/Experiment.h \
+		../../../experimentmanagerservice/src/common/User.h \
+		../../../experimentmanagerservice/src/common/rapidjson/document.h \
+		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
+		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
+		../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodings.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/memorystream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h \
+		../../../experimentmanagerservice/src/common/rapidjson/error/error.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h \
+		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		../../../experimentmanagerservice/src/common/Profile.h \
+		../../../experimentmanagerservice/src/common/TempArc.h \
+		../../../experimentmanagerservice/src/common/Arc.h \
+		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../../experimentmanagerservice/src/common/Cell.h \
+		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		../../../CellViewer/uiCellGraph.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis_id.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_dict.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_item.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_curve.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_seriesitem.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_store.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_data.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_samples.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_interval.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_point_3d.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
+		ui_uiCellWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/QtConcurrent \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/QtConcurrentDepends \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QtCore \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QtCoreDepends \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20algorithm.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20chrono.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20map.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20vector.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q23functional.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q26numeric.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractanimation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractnativeeventfilter.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractproxymodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qanimationgroup.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qapplicationstatic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QMutex \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qassociativeiterable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomicscopedvaluerollback.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbitarray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbuffer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearraymatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcache.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcalendar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcborarray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcborvalue.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcborcommon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatetime.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qregularexpression.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/quuid.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcbormap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcborstream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcborstreamreader.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcborstreamwriter.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qchronotimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qproperty.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpropertyprivate.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcollator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcommandlineoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcommandlineparser.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconcatenatetablesproxymodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcryptographichash.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdir.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdirlisting.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfiledevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfile.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfileinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimezone.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdiriterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qeasingcurve.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfactoryinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfileselector.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QStringList \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfilesystemwatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuturesynchronizer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuturewatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qidentityproxymodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qjsonarray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qjsonvalue.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qjsondocument.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qjsonparseerror.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qjsonobject.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlatin1stringmatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlibrary.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlibraryinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qversionnumber.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtyperevision.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlockfile.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qloggingcategory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmessageauthenticationcode.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetaobject.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmimedata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmimedatabase.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmimetype.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectcleanuphandler.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qoperatingsystemversion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qparallelanimationgroup.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpauseanimation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpermissions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qplugin.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpluginloader.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qprocess.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpropertyanimation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariantanimation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qqueue.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrandom.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qreadwritelock.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qresource.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsavefile.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopedvaluerollback.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsemaphore.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsequentialanimationgroup.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsequentialiterable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsettings.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedmemory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtipccommon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsignalmapper.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsimd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsocketnotifier.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsortfilterproxymodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstack.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstandardpaths.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstaticlatin1stringmatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstorageinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringlistmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsystemsemaphore.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreversion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtemporarydir.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtemporaryfile.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtextboundaryfinder.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthreadstorage.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimeline.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtmocconstants.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtranslator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtransposeproxymodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtsymbolmacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qurlquery.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarianthash.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QHash \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QString \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariantlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariantmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QMap \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qwaitcondition.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDeadlineTimer \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qwineventnotifier.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qxmlstream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qxpfunctional.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtaskbuilder.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentstoredfunctioncall.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrent_global.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentrunbase.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentcompilertest.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentfilter.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentfilterkernel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentiteratekernel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentmedian.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentthreadengine.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentmapkernel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentreducekernel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentfunctionwrappers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentrun.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrenttask.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentversion.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiCellWidget.o ../../uiCellWidget.cpp
 
 uiExperimentCreateWidget.o: ../../uiExperimentCreateWidget.cpp ../../uiExperimentCreateWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -6924,8 +8974,9 @@ uiReactorViewWidget.o: ../../uiReactorViewWidget.cpp ../../uiReactorViewWidget.h
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QTimer \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimer.h \
-		ui_uiReactorViewWidget.h \
-		../../../experimentmanagerservice/src/common/RedisDBManager.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVector \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
+		../../uiCellOverviewWidget.h \
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/Experiment.h \
 		../../../experimentmanagerservice/src/common/User.h \
@@ -6960,9 +9011,40 @@ uiReactorViewWidget.o: ../../uiReactorViewWidget.cpp ../../uiReactorViewWidget.h
 		../../../experimentmanagerservice/src/common/Arc.h \
 		../../../experimentmanagerservice/src/common/RPMArc.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		ui_uiReactorViewWidget.h \
+		../../../experimentmanagerservice/src/common/RedisDBManager.h \
 		../../../experimentmanagerservice/src/common/CellTarget.h \
 		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
-		../../../experimentmanagerservice/src/common/FlowStatus.h
+		../../../experimentmanagerservice/src/common/FlowStatus.h \
+		../../uiCellWidget.h \
+		../../../CellViewer/ExperimentRunner.h \
+		../../../CellViewer/uiCellGraph.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis_id.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_dict.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_item.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_curve.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_seriesitem.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_store.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_data.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_samples.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_interval.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_point_3d.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QDialog \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qdialog.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QMap \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QVBoxLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiReactorViewWidget.o ../../uiReactorViewWidget.cpp
 
 uiTSMainWindow.o: ../../uiTSMainWindow.cpp ../../uiTSMainWindow.h \
@@ -7237,6 +9319,8 @@ uiTSMainWindow.o: ../../uiTSMainWindow.cpp ../../uiTSMainWindow.h \
 		../../uiReactorViewWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QTimer \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVector \
+		../../uiCellOverviewWidget.h \
 		../../uiUserManagementWidget.h \
 		../../uiHomeWidget.h \
 		ui_uiTSMainWindow.h
@@ -7447,6 +9531,18 @@ qrc_resources.o: qrc_resources.cpp
 
 moc_RedisDBManager.o: moc_RedisDBManager.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_RedisDBManager.o moc_RedisDBManager.cpp
+
+moc_ExperimentRunner.o: moc_ExperimentRunner.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_ExperimentRunner.o moc_ExperimentRunner.cpp
+
+moc_uiCellGraph.o: moc_uiCellGraph.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_uiCellGraph.o moc_uiCellGraph.cpp
+
+moc_uiCellOverviewWidget.o: moc_uiCellOverviewWidget.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_uiCellOverviewWidget.o moc_uiCellOverviewWidget.cpp
+
+moc_uiCellWidget.o: moc_uiCellWidget.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_uiCellWidget.o moc_uiCellWidget.cpp
 
 moc_uiExperimentCreateWidget.o: moc_uiExperimentCreateWidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_uiExperimentCreateWidget.o moc_uiExperimentCreateWidget.cpp

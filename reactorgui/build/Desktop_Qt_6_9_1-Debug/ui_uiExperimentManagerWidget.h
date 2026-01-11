@@ -35,7 +35,12 @@ public:
     {
         if (ExperimentManagerWidget->objectName().isEmpty())
             ExperimentManagerWidget->setObjectName("ExperimentManagerWidget");
-        ExperimentManagerWidget->resize(817, 482);
+        ExperimentManagerWidget->resize(621, 389);
+        QSizePolicy sizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(ExperimentManagerWidget->sizePolicy().hasHeightForWidth());
+        ExperimentManagerWidget->setSizePolicy(sizePolicy);
         gridLayout = new QGridLayout(ExperimentManagerWidget);
         gridLayout->setObjectName("gridLayout");
         mainGridLayout = new QGridLayout();
@@ -56,11 +61,11 @@ public:
 
         createPushButton = new QPushButton(ExperimentManagerWidget);
         createPushButton->setObjectName("createPushButton");
-        QSizePolicy sizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Fixed);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(createPushButton->sizePolicy().hasHeightForWidth());
-        createPushButton->setSizePolicy(sizePolicy);
+        QSizePolicy sizePolicy1(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Fixed);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(createPushButton->sizePolicy().hasHeightForWidth());
+        createPushButton->setSizePolicy(sizePolicy1);
 
         horizontalLayout->addWidget(createPushButton);
 

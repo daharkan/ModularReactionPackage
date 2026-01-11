@@ -6,6 +6,7 @@
 #include <QVector>
 #include <string>
 #include "uiCellOverviewWidget.h"
+#include "FlowStatus.h"
 
 namespace Ui {
 class ReactorViewWidget;

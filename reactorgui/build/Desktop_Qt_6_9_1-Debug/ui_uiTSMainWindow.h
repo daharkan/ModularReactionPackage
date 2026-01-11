@@ -42,7 +42,7 @@ public:
         if (TSMainWindow->objectName().isEmpty())
             TSMainWindow->setObjectName("TSMainWindow");
         TSMainWindow->resize(610, 437);
-        QSizePolicy sizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
+        QSizePolicy sizePolicy(QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::MinimumExpanding);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(TSMainWindow->sizePolicy().hasHeightForWidth());
@@ -86,6 +86,11 @@ public:
 
         mainStackedWidget = new QStackedWidget(centralwidget);
         mainStackedWidget->setObjectName("mainStackedWidget");
+        QSizePolicy sizePolicy1(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(mainStackedWidget->sizePolicy().hasHeightForWidth());
+        mainStackedWidget->setSizePolicy(sizePolicy1);
 
         gridLayout->addWidget(mainStackedWidget, 1, 0, 1, 2);
 
