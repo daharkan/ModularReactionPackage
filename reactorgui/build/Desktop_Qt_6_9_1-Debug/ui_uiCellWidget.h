@@ -44,6 +44,10 @@ public:
     QLabel *currentRPMLabel;
     QLabel *label_4;
     QLabel *expStateLabel;
+    QLabel *experimentNameLabel;
+    QLabel *experimentNameValueLabel;
+    QLabel *experimentProgressLabel;
+    QLabel *experimentProgressValueLabel;
 
     void setupUi(QWidget *CellWidget)
     {
@@ -197,6 +201,27 @@ public:
 
         gridLayout->addWidget(expStateLabel, 1, 0, 3, 1);
 
+        experimentNameLabel = new QLabel(CellWidget);
+        experimentNameLabel->setObjectName("experimentNameLabel");
+
+        gridLayout->addWidget(experimentNameLabel, 4, 0, 1, 1);
+
+        experimentNameValueLabel = new QLabel(CellWidget);
+        experimentNameValueLabel->setObjectName("experimentNameValueLabel");
+        experimentNameValueLabel->setFont(font);
+
+        gridLayout->addWidget(experimentNameValueLabel, 4, 2, 1, 2);
+
+        experimentProgressLabel = new QLabel(CellWidget);
+        experimentProgressLabel->setObjectName("experimentProgressLabel");
+
+        gridLayout->addWidget(experimentProgressLabel, 4, 5, 1, 1);
+
+        experimentProgressValueLabel = new QLabel(CellWidget);
+        experimentProgressValueLabel->setObjectName("experimentProgressValueLabel");
+
+        gridLayout->addWidget(experimentProgressValueLabel, 4, 6, 1, 1);
+
 
         gridLayout_2->addLayout(gridLayout, 1, 1, 1, 2);
 
@@ -224,6 +249,10 @@ public:
         currentRPMLabel->setText(QString());
         label_4->setText(QCoreApplication::translate("CellWidget", "Experiment State", nullptr));
         expStateLabel->setText(QString());
+        experimentNameLabel->setText(QCoreApplication::translate("CellWidget", "Experiment:", nullptr));
+        experimentNameValueLabel->setText(QCoreApplication::translate("CellWidget", "--", nullptr));
+        experimentProgressLabel->setText(QCoreApplication::translate("CellWidget", "Progress:", nullptr));
+        experimentProgressValueLabel->setText(QCoreApplication::translate("CellWidget", "--", nullptr));
     } // retranslateUi
 
 };

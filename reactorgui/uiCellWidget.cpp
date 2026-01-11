@@ -156,7 +156,7 @@ void CellWidget::updateCell(Cell &cell)
 
     pushTempAndRPMToCellGraph(currentTempExt, currentRPM);
 
-    const Experiment experiment = cell.asignedExperiment();
+    Experiment experiment = cell.asignedExperiment();
     QString expName = QString::fromStdString(experiment.name());
     if (expName.isEmpty()) {
         expName = "--";

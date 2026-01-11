@@ -39,28 +39,41 @@ template <> constexpr inline auto ExperimentListWidget::qt_create_metaobjectdata
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
         "ExperimentListWidget",
-        "filterTableByLetter",
+        "sgn_selectionChanged",
         "",
+        "sgn_experimentActivated",
+        "filterTableByLetter",
         "filterTable",
         "filterText",
         "filterTableBySearch",
         "text",
-        "listAllData"
+        "listAllData",
+        "handleItemDoubleClicked",
+        "QTableWidgetItem*",
+        "item"
     };
 
     QtMocHelpers::UintData qt_methods {
+        // Signal 'sgn_selectionChanged'
+        QtMocHelpers::SignalData<void()>(1, 2, QMC::AccessPublic, QMetaType::Void),
+        // Signal 'sgn_experimentActivated'
+        QtMocHelpers::SignalData<void()>(3, 2, QMC::AccessPublic, QMetaType::Void),
         // Slot 'filterTableByLetter'
-        QtMocHelpers::SlotData<void()>(1, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(4, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'filterTable'
-        QtMocHelpers::SlotData<void(const QString &)>(3, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::QString, 4 },
-        }}),
-        // Slot 'filterTableBySearch'
         QtMocHelpers::SlotData<void(const QString &)>(5, 2, QMC::AccessPrivate, QMetaType::Void, {{
             { QMetaType::QString, 6 },
         }}),
+        // Slot 'filterTableBySearch'
+        QtMocHelpers::SlotData<void(const QString &)>(7, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::QString, 8 },
+        }}),
         // Slot 'listAllData'
-        QtMocHelpers::SlotData<void()>(7, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(9, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'handleItemDoubleClicked'
+        QtMocHelpers::SlotData<void(QTableWidgetItem *)>(10, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 11, 12 },
+        }}),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -84,12 +97,21 @@ void ExperimentListWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c,
     auto *_t = static_cast<ExperimentListWidget *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->filterTableByLetter(); break;
-        case 1: _t->filterTable((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 2: _t->filterTableBySearch((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 3: _t->listAllData(); break;
+        case 0: _t->sgn_selectionChanged(); break;
+        case 1: _t->sgn_experimentActivated(); break;
+        case 2: _t->filterTableByLetter(); break;
+        case 3: _t->filterTable((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 4: _t->filterTableBySearch((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 5: _t->listAllData(); break;
+        case 6: _t->handleItemDoubleClicked((*reinterpret_cast< std::add_pointer_t<QTableWidgetItem*>>(_a[1]))); break;
         default: ;
         }
+    }
+    if (_c == QMetaObject::IndexOfMethod) {
+        if (QtMocHelpers::indexOfMethod<void (ExperimentListWidget::*)()>(_a, &ExperimentListWidget::sgn_selectionChanged, 0))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (ExperimentListWidget::*)()>(_a, &ExperimentListWidget::sgn_experimentActivated, 1))
+            return;
     }
 }
 
@@ -112,15 +134,27 @@ int ExperimentListWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 7;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 4)
+        if (_id < 7)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 4;
+        _id -= 7;
     }
     return _id;
+}
+
+// SIGNAL 0
+void ExperimentListWidget::sgn_selectionChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 0, nullptr);
+}
+
+// SIGNAL 1
+void ExperimentListWidget::sgn_experimentActivated()
+{
+    QMetaObject::activate(this, &staticMetaObject, 1, nullptr);
 }
 QT_WARNING_POP

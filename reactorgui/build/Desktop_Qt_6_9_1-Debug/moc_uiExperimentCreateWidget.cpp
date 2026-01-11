@@ -40,8 +40,9 @@ template <> constexpr inline auto ExperimentCreateWidget::qt_create_metaobjectda
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
         "ExperimentCreateWidget",
-        "handleBasicsButtonClicked",
+        "sgn_experimentSaved",
         "",
+        "handleBasicsButtonClicked",
         "advancedProfileButtonClicked",
         "updateClicked",
         "adv_addPlatueClicked",
@@ -56,30 +57,32 @@ template <> constexpr inline auto ExperimentCreateWidget::qt_create_metaobjectda
     };
 
     QtMocHelpers::UintData qt_methods {
+        // Signal 'sgn_experimentSaved'
+        QtMocHelpers::SignalData<void()>(1, 2, QMC::AccessPublic, QMetaType::Void),
         // Slot 'handleBasicsButtonClicked'
-        QtMocHelpers::SlotData<void()>(1, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'advancedProfileButtonClicked'
         QtMocHelpers::SlotData<void()>(3, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'updateClicked'
+        // Slot 'advancedProfileButtonClicked'
         QtMocHelpers::SlotData<void()>(4, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'adv_addPlatueClicked'
+        // Slot 'updateClicked'
         QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'adv_addLinearClicked'
+        // Slot 'adv_addPlatueClicked'
         QtMocHelpers::SlotData<void()>(6, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'adv_addStepsClicked'
+        // Slot 'adv_addLinearClicked'
         QtMocHelpers::SlotData<void()>(7, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'adv_add2ndDegClicked'
+        // Slot 'adv_addStepsClicked'
         QtMocHelpers::SlotData<void()>(8, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'adv_addArcToExperimentClicked'
+        // Slot 'adv_add2ndDegClicked'
         QtMocHelpers::SlotData<void()>(9, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'adv_delLastArcClicked'
+        // Slot 'adv_addArcToExperimentClicked'
         QtMocHelpers::SlotData<void()>(10, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'adv_clearProfileClicked'
+        // Slot 'adv_delLastArcClicked'
         QtMocHelpers::SlotData<void()>(11, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'adv_addArcDurationChanged'
+        // Slot 'adv_clearProfileClicked'
         QtMocHelpers::SlotData<void()>(12, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'adv_rampChanged'
+        // Slot 'adv_addArcDurationChanged'
         QtMocHelpers::SlotData<void()>(13, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'adv_rampChanged'
+        QtMocHelpers::SlotData<void()>(14, 2, QMC::AccessPrivate, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -103,22 +106,26 @@ void ExperimentCreateWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _
     auto *_t = static_cast<ExperimentCreateWidget *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->handleBasicsButtonClicked(); break;
-        case 1: _t->advancedProfileButtonClicked(); break;
-        case 2: _t->updateClicked(); break;
-        case 3: _t->adv_addPlatueClicked(); break;
-        case 4: _t->adv_addLinearClicked(); break;
-        case 5: _t->adv_addStepsClicked(); break;
-        case 6: _t->adv_add2ndDegClicked(); break;
-        case 7: _t->adv_addArcToExperimentClicked(); break;
-        case 8: _t->adv_delLastArcClicked(); break;
-        case 9: _t->adv_clearProfileClicked(); break;
-        case 10: _t->adv_addArcDurationChanged(); break;
-        case 11: _t->adv_rampChanged(); break;
+        case 0: _t->sgn_experimentSaved(); break;
+        case 1: _t->handleBasicsButtonClicked(); break;
+        case 2: _t->advancedProfileButtonClicked(); break;
+        case 3: _t->updateClicked(); break;
+        case 4: _t->adv_addPlatueClicked(); break;
+        case 5: _t->adv_addLinearClicked(); break;
+        case 6: _t->adv_addStepsClicked(); break;
+        case 7: _t->adv_add2ndDegClicked(); break;
+        case 8: _t->adv_addArcToExperimentClicked(); break;
+        case 9: _t->adv_delLastArcClicked(); break;
+        case 10: _t->adv_clearProfileClicked(); break;
+        case 11: _t->adv_addArcDurationChanged(); break;
+        case 12: _t->adv_rampChanged(); break;
         default: ;
         }
     }
-    (void)_a;
+    if (_c == QMetaObject::IndexOfMethod) {
+        if (QtMocHelpers::indexOfMethod<void (ExperimentCreateWidget::*)()>(_a, &ExperimentCreateWidget::sgn_experimentSaved, 0))
+            return;
+    }
 }
 
 const QMetaObject *ExperimentCreateWidget::metaObject() const
@@ -140,15 +147,21 @@ int ExperimentCreateWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 12)
+        if (_id < 13)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 12;
+        _id -= 13;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 12)
+        if (_id < 13)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 12;
+        _id -= 13;
     }
     return _id;
+}
+
+// SIGNAL 0
+void ExperimentCreateWidget::sgn_experimentSaved()
+{
+    QMetaObject::activate(this, &staticMetaObject, 0, nullptr);
 }
 QT_WARNING_POP

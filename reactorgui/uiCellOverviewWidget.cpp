@@ -6,7 +6,7 @@
 namespace {
 constexpr unsigned long long kPreheatWindowMs = 2ULL * 60ULL * 1000ULL;
 
-unsigned long long experimentDurationMs(const Experiment &experiment)
+unsigned long long experimentDurationMs(Experiment &experiment)
 {
     unsigned long long total = 0;
     Profile profile = experiment.profile();
@@ -72,7 +72,6 @@ void CellOverviewWidget::setCellData(const Cell &cell)
         return;
     }
 
-    const Experiment experiment = cell.asignedExperiment();
     bool hasExperiment = !experiment.experimentId().empty() || !experiment.name().empty();
     if (!hasExperiment) {
         applyStateStyle("idle");

@@ -42,7 +42,12 @@ template <> constexpr inline auto ExperimentManagerWidget::qt_create_metaobjectd
         "ExperimentManagerWidget",
         "createClicked",
         "",
-        "showListWidget"
+        "showListWidget",
+        "editClicked",
+        "deleteClicked",
+        "handleSelectionChanged",
+        "handleExperimentSaved",
+        "clearMainLayout"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -50,6 +55,16 @@ template <> constexpr inline auto ExperimentManagerWidget::qt_create_metaobjectd
         QtMocHelpers::SlotData<void()>(1, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'showListWidget'
         QtMocHelpers::SlotData<void()>(3, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'editClicked'
+        QtMocHelpers::SlotData<void()>(4, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'deleteClicked'
+        QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'handleSelectionChanged'
+        QtMocHelpers::SlotData<void()>(6, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'handleExperimentSaved'
+        QtMocHelpers::SlotData<void()>(7, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'clearMainLayout'
+        QtMocHelpers::SlotData<void()>(8, 2, QMC::AccessPrivate, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -75,6 +90,11 @@ void ExperimentManagerWidget::qt_static_metacall(QObject *_o, QMetaObject::Call 
         switch (_id) {
         case 0: _t->createClicked(); break;
         case 1: _t->showListWidget(); break;
+        case 2: _t->editClicked(); break;
+        case 3: _t->deleteClicked(); break;
+        case 4: _t->handleSelectionChanged(); break;
+        case 5: _t->handleExperimentSaved(); break;
+        case 6: _t->clearMainLayout(); break;
         default: ;
         }
     }
@@ -100,14 +120,14 @@ int ExperimentManagerWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 2)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 2;
+        _id -= 7;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 2)
+        if (_id < 7)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 2;
+        _id -= 7;
     }
     return _id;
 }

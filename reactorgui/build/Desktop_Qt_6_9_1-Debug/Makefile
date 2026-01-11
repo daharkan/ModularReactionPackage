@@ -17,7 +17,7 @@ CXX           = g++
 DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CONCURRENT_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -Wextra -fPIC -D_REENTRANT $(DEFINES)
 CXXFLAGS      = -pipe -g -std=gnu++1z -Wall -Wextra -fPIC -D_REENTRANT $(DEFINES)
-INCPATH       = -I../../../reactorgui -I. -I../../../experimentmanagerservice/src/common -I../../../CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I. -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++
+INCPATH       = -I../../../reactorgui -I. -I../../../experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I. -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++
 QMAKE         = /home/dev/Qt/6.9.1/gcc_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -64,8 +64,8 @@ SOURCES       = ../../../experimentmanagerservice/src/common/Arc.cpp \
 		../../../experimentmanagerservice/src/common/RedisDBManager.cpp \
 		../../../experimentmanagerservice/src/common/TempArc.cpp \
 		../../../experimentmanagerservice/src/common/User.cpp \
-		../../../CellViewer/ExperimentRunner.cpp \
-		../../../CellViewer/uiCellGraph.cpp \
+		../../ExperimentRunner.cpp \
+		../../uiCellGraph.cpp \
 		../../main.cpp \
 		../../uiCellOverviewWidget.cpp \
 		../../uiCellWidget.cpp \
@@ -511,8 +511,8 @@ DIST          = /home/dev/Qt/6.9.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../experimentmanagerservice/src/common/RedisDBManager.h \
 		../../../experimentmanagerservice/src/common/TempArc.h \
 		../../../experimentmanagerservice/src/common/User.h \
-		../../../CellViewer/ExperimentRunner.h \
-		../../../CellViewer/uiCellGraph.h \
+		../../ExperimentRunner.h \
+		../../uiCellGraph.h \
 		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
 		../../../experimentmanagerservice/src/common/rapidjson/cursorstreamwrapper.h \
 		../../../experimentmanagerservice/src/common/rapidjson/document.h \
@@ -574,8 +574,8 @@ DIST          = /home/dev/Qt/6.9.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../experimentmanagerservice/src/common/RedisDBManager.cpp \
 		../../../experimentmanagerservice/src/common/TempArc.cpp \
 		../../../experimentmanagerservice/src/common/User.cpp \
-		../../../CellViewer/ExperimentRunner.cpp \
-		../../../CellViewer/uiCellGraph.cpp \
+		../../ExperimentRunner.cpp \
+		../../uiCellGraph.cpp \
 		../../main.cpp \
 		../../uiCellOverviewWidget.cpp \
 		../../uiCellWidget.cpp \
@@ -1357,9 +1357,9 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../resources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /home/dev/Qt/6.9.1/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../../experimentmanagerservice/src/common/Cell.h ../../../experimentmanagerservice/src/common/CellTarget.h ../../../experimentmanagerservice/src/common/CellVisuals.h ../../../experimentmanagerservice/src/common/CellVisualsHistory.h ../../../experimentmanagerservice/src/common/Experiment.h ../../../experimentmanagerservice/src/common/FlowStatus.h ../../../experimentmanagerservice/src/common/Profile.h ../../../experimentmanagerservice/src/common/RPMArc.h ../../../experimentmanagerservice/src/common/RedisDBManager.h ../../../experimentmanagerservice/src/common/TempArc.h ../../../experimentmanagerservice/src/common/User.h ../../../CellViewer/ExperimentRunner.h ../../../CellViewer/uiCellGraph.h ../../../experimentmanagerservice/src/common/rapidjson/allocators.h ../../../experimentmanagerservice/src/common/rapidjson/cursorstreamwrapper.h ../../../experimentmanagerservice/src/common/rapidjson/document.h ../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h ../../../experimentmanagerservice/src/common/rapidjson/encodings.h ../../../experimentmanagerservice/src/common/rapidjson/error/en.h ../../../experimentmanagerservice/src/common/rapidjson/error/error.h ../../../experimentmanagerservice/src/common/rapidjson/filereadstream.h ../../../experimentmanagerservice/src/common/rapidjson/filewritestream.h ../../../experimentmanagerservice/src/common/rapidjson/fwd.h ../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h ../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h ../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h ../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h ../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h ../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h ../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h ../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h ../../../experimentmanagerservice/src/common/rapidjson/internal/regex.h ../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h ../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h ../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h ../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h ../../../experimentmanagerservice/src/common/rapidjson/istreamwrapper.h ../../../experimentmanagerservice/src/common/rapidjson/memorybuffer.h ../../../experimentmanagerservice/src/common/rapidjson/memorystream.h ../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h ../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h ../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h ../../../experimentmanagerservice/src/common/rapidjson/pointer.h ../../../experimentmanagerservice/src/common/rapidjson/prettywriter.h ../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h ../../../experimentmanagerservice/src/common/rapidjson/reader.h ../../../experimentmanagerservice/src/common/rapidjson/schema.h ../../../experimentmanagerservice/src/common/rapidjson/stream.h ../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h ../../../experimentmanagerservice/src/common/rapidjson/uri.h ../../../experimentmanagerservice/src/common/rapidjson/writer.h ../../uiCellOverviewWidget.h ../../uiCellWidget.h ../../uiExperimentCreateWidget.h ../../uiExperimentGraph.h ../../uiExperimentListWidget.h ../../uiExperimentManagerWidget.h ../../uiHomeWidget.h ../../uiLoginWidget.h ../../uiOptionsWidget.h ../../uiReactorViewWidget.h ../../uiTSMainWindow.h ../../uiUserManagementWidget.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../../experimentmanagerservice/src/common/Arc.cpp ../../../experimentmanagerservice/src/common/Cell.cpp ../../../experimentmanagerservice/src/common/CellTarget.cpp ../../../experimentmanagerservice/src/common/CellVisuals.cpp ../../../experimentmanagerservice/src/common/CellVisualsHistory.cpp ../../../experimentmanagerservice/src/common/Experiment.cpp ../../../experimentmanagerservice/src/common/FlowStatus.cpp ../../../experimentmanagerservice/src/common/Profile.cpp ../../../experimentmanagerservice/src/common/RPMArc.cpp ../../../experimentmanagerservice/src/common/RedisDBManager.cpp ../../../experimentmanagerservice/src/common/TempArc.cpp ../../../experimentmanagerservice/src/common/User.cpp ../../../CellViewer/ExperimentRunner.cpp ../../../CellViewer/uiCellGraph.cpp ../../main.cpp ../../uiCellOverviewWidget.cpp ../../uiCellWidget.cpp ../../uiExperimentCreateWidget.cpp ../../uiExperimentGraph.cpp ../../uiExperimentListWidget.cpp ../../uiExperimentManagerWidget.cpp ../../uiHomeWidget.cpp ../../uiLoginWidget.cpp ../../uiOptionsWidget.cpp ../../uiReactorViewWidget.cpp ../../uiTSMainWindow.cpp ../../uiUserManagementWidget.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../../CellViewer/uiCellGraph.ui ../../uiCellOverviewWidget.ui ../../uiCellWidget.ui ../../uiExperimentCreateWidget.ui ../../uiExperimentGraph.ui ../../uiExperimentListWidget.ui ../../uiExperimentManagerWidget.ui ../../uiHomeWidget.ui ../../uiLoginWidget.ui ../../uiOptionsWidget.ui ../../uiReactorViewWidget.ui ../../uiTSMainWindow.ui ../../uiUserManagementWidget.ui $(DISTDIR)/
+	$(COPY_FILE) --parents ../../../experimentmanagerservice/src/common/Cell.h ../../../experimentmanagerservice/src/common/CellTarget.h ../../../experimentmanagerservice/src/common/CellVisuals.h ../../../experimentmanagerservice/src/common/CellVisualsHistory.h ../../../experimentmanagerservice/src/common/Experiment.h ../../../experimentmanagerservice/src/common/FlowStatus.h ../../../experimentmanagerservice/src/common/Profile.h ../../../experimentmanagerservice/src/common/RPMArc.h ../../../experimentmanagerservice/src/common/RedisDBManager.h ../../../experimentmanagerservice/src/common/TempArc.h ../../../experimentmanagerservice/src/common/User.h ../../ExperimentRunner.h ../../uiCellGraph.h ../../../experimentmanagerservice/src/common/rapidjson/allocators.h ../../../experimentmanagerservice/src/common/rapidjson/cursorstreamwrapper.h ../../../experimentmanagerservice/src/common/rapidjson/document.h ../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h ../../../experimentmanagerservice/src/common/rapidjson/encodings.h ../../../experimentmanagerservice/src/common/rapidjson/error/en.h ../../../experimentmanagerservice/src/common/rapidjson/error/error.h ../../../experimentmanagerservice/src/common/rapidjson/filereadstream.h ../../../experimentmanagerservice/src/common/rapidjson/filewritestream.h ../../../experimentmanagerservice/src/common/rapidjson/fwd.h ../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h ../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h ../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h ../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h ../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h ../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h ../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h ../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h ../../../experimentmanagerservice/src/common/rapidjson/internal/regex.h ../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h ../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h ../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h ../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h ../../../experimentmanagerservice/src/common/rapidjson/istreamwrapper.h ../../../experimentmanagerservice/src/common/rapidjson/memorybuffer.h ../../../experimentmanagerservice/src/common/rapidjson/memorystream.h ../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h ../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h ../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h ../../../experimentmanagerservice/src/common/rapidjson/pointer.h ../../../experimentmanagerservice/src/common/rapidjson/prettywriter.h ../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h ../../../experimentmanagerservice/src/common/rapidjson/reader.h ../../../experimentmanagerservice/src/common/rapidjson/schema.h ../../../experimentmanagerservice/src/common/rapidjson/stream.h ../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h ../../../experimentmanagerservice/src/common/rapidjson/uri.h ../../../experimentmanagerservice/src/common/rapidjson/writer.h ../../uiCellOverviewWidget.h ../../uiCellWidget.h ../../uiExperimentCreateWidget.h ../../uiExperimentGraph.h ../../uiExperimentListWidget.h ../../uiExperimentManagerWidget.h ../../uiHomeWidget.h ../../uiLoginWidget.h ../../uiOptionsWidget.h ../../uiReactorViewWidget.h ../../uiTSMainWindow.h ../../uiUserManagementWidget.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../../experimentmanagerservice/src/common/Arc.cpp ../../../experimentmanagerservice/src/common/Cell.cpp ../../../experimentmanagerservice/src/common/CellTarget.cpp ../../../experimentmanagerservice/src/common/CellVisuals.cpp ../../../experimentmanagerservice/src/common/CellVisualsHistory.cpp ../../../experimentmanagerservice/src/common/Experiment.cpp ../../../experimentmanagerservice/src/common/FlowStatus.cpp ../../../experimentmanagerservice/src/common/Profile.cpp ../../../experimentmanagerservice/src/common/RPMArc.cpp ../../../experimentmanagerservice/src/common/RedisDBManager.cpp ../../../experimentmanagerservice/src/common/TempArc.cpp ../../../experimentmanagerservice/src/common/User.cpp ../../ExperimentRunner.cpp ../../uiCellGraph.cpp ../../main.cpp ../../uiCellOverviewWidget.cpp ../../uiCellWidget.cpp ../../uiExperimentCreateWidget.cpp ../../uiExperimentGraph.cpp ../../uiExperimentListWidget.cpp ../../uiExperimentManagerWidget.cpp ../../uiHomeWidget.cpp ../../uiLoginWidget.cpp ../../uiOptionsWidget.cpp ../../uiReactorViewWidget.cpp ../../uiTSMainWindow.cpp ../../uiUserManagementWidget.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../uiCellGraph.ui ../../uiCellOverviewWidget.ui ../../uiCellWidget.ui ../../uiExperimentCreateWidget.ui ../../uiExperimentGraph.ui ../../uiExperimentListWidget.ui ../../uiExperimentManagerWidget.ui ../../uiHomeWidget.ui ../../uiLoginWidget.ui ../../uiOptionsWidget.ui ../../uiReactorViewWidget.ui ../../uiTSMainWindow.ui ../../uiUserManagementWidget.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -2095,9 +2095,9 @@ moc_RedisDBManager.cpp: ../../../experimentmanagerservice/src/common/RedisDBMana
 		../../../experimentmanagerservice/src/common/FlowStatus.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../../experimentmanagerservice/src/common/RedisDBManager.h -o moc_RedisDBManager.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../../experimentmanagerservice/src/common/RedisDBManager.h -o moc_RedisDBManager.cpp
 
-moc_ExperimentRunner.cpp: ../../../CellViewer/ExperimentRunner.h \
+moc_ExperimentRunner.cpp: ../../ExperimentRunner.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QObject \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs.h \
@@ -2244,9 +2244,9 @@ moc_ExperimentRunner.cpp: ../../../CellViewer/ExperimentRunner.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../../CellViewer/ExperimentRunner.h -o moc_ExperimentRunner.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../ExperimentRunner.h -o moc_ExperimentRunner.cpp
 
-moc_uiCellGraph.cpp: ../../../CellViewer/uiCellGraph.h \
+moc_uiCellGraph.cpp: ../../uiCellGraph.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qwidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -2498,7 +2498,7 @@ moc_uiCellGraph.cpp: ../../../CellViewer/uiCellGraph.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../../CellViewer/uiCellGraph.h -o moc_uiCellGraph.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiCellGraph.h -o moc_uiCellGraph.cpp
 
 moc_uiCellOverviewWidget.cpp: ../../uiCellOverviewWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -2733,7 +2733,7 @@ moc_uiCellOverviewWidget.cpp: ../../uiCellOverviewWidget.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiCellOverviewWidget.h -o moc_uiCellOverviewWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiCellOverviewWidget.h -o moc_uiCellOverviewWidget.cpp
 
 moc_uiCellWidget.cpp: ../../uiCellWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -2932,7 +2932,7 @@ moc_uiCellWidget.cpp: ../../uiCellWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputmethod.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
-		../../../CellViewer/ExperimentRunner.h \
+		../../ExperimentRunner.h \
 		../../../experimentmanagerservice/src/common/Experiment.h \
 		../../../experimentmanagerservice/src/common/User.h \
 		../../../experimentmanagerservice/src/common/rapidjson/document.h \
@@ -2967,7 +2967,7 @@ moc_uiCellWidget.cpp: ../../uiCellWidget.h \
 		../../../experimentmanagerservice/src/common/RPMArc.h \
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
-		../../../CellViewer/uiCellGraph.h \
+		../../uiCellGraph.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
@@ -2989,7 +2989,7 @@ moc_uiCellWidget.cpp: ../../uiCellWidget.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiCellWidget.h -o moc_uiCellWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiCellWidget.h -o moc_uiCellWidget.cpp
 
 moc_uiExperimentCreateWidget.cpp: ../../uiExperimentCreateWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -3252,7 +3252,7 @@ moc_uiExperimentCreateWidget.cpp: ../../uiExperimentCreateWidget.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentCreateWidget.h -o moc_uiExperimentCreateWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentCreateWidget.h -o moc_uiExperimentCreateWidget.cpp
 
 moc_uiExperimentGraph.cpp: ../../uiExperimentGraph.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -3506,11 +3506,12 @@ moc_uiExperimentGraph.cpp: ../../uiExperimentGraph.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentGraph.h -o moc_uiExperimentGraph.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentGraph.h -o moc_uiExperimentGraph.cpp
 
 moc_uiExperimentListWidget.cpp: ../../uiExperimentListWidget.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QTableWidgetItem \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtablewidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtableview.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiglobal.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobal.h \
@@ -3563,6 +3564,10 @@ moc_uiExperimentListWidget.cpp: ../../uiExperimentListWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiexports.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgets-config.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qwidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qwindowdefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnamespace.h \
@@ -3705,9 +3710,55 @@ moc_uiExperimentListWidget.cpp: ../../uiExperimentListWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputmethod.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvalidator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qregularexpression.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyle.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qrubberband.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
+		../../../experimentmanagerservice/src/common/Experiment.h \
+		../../../experimentmanagerservice/src/common/User.h \
+		../../../experimentmanagerservice/src/common/rapidjson/document.h \
+		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
+		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
+		../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodings.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/memorystream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h \
+		../../../experimentmanagerservice/src/common/rapidjson/error/error.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h \
+		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		../../../experimentmanagerservice/src/common/Profile.h \
+		../../../experimentmanagerservice/src/common/TempArc.h \
+		../../../experimentmanagerservice/src/common/Arc.h \
+		../../../experimentmanagerservice/src/common/RPMArc.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentListWidget.h -o moc_uiExperimentListWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentListWidget.h -o moc_uiExperimentListWidget.cpp
 
 moc_uiExperimentManagerWidget.cpp: ../../uiExperimentManagerWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -3907,35 +3958,25 @@ moc_uiExperimentManagerWidget.cpp: ../../uiExperimentManagerWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
 		../../uiExperimentListWidget.h \
-		../../uiExperimentCreateWidget.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlineedit.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QTableWidgetItem \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtablewidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtableview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextcursor.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextformat.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpen.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextoption.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
-		../../uiExperimentGraph.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis_id.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_dict.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_item.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_curve.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_seriesitem.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_store.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_data.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_samples.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_interval.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_point_3d.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvalidator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qregularexpression.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyle.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qrubberband.h \
 		../../../experimentmanagerservice/src/common/Experiment.h \
 		../../../experimentmanagerservice/src/common/User.h \
 		../../../experimentmanagerservice/src/common/rapidjson/document.h \
@@ -3968,11 +4009,39 @@ moc_uiExperimentManagerWidget.cpp: ../../uiExperimentManagerWidget.h \
 		../../../experimentmanagerservice/src/common/TempArc.h \
 		../../../experimentmanagerservice/src/common/Arc.h \
 		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../uiExperimentCreateWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlineedit.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextcursor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextformat.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpen.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
+		../../uiExperimentGraph.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis_id.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_dict.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_item.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_curve.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_seriesitem.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_store.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_data.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_samples.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_interval.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_point_3d.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentManagerWidget.h -o moc_uiExperimentManagerWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiExperimentManagerWidget.h -o moc_uiExperimentManagerWidget.cpp
 
 moc_uiHomeWidget.cpp: ../../uiHomeWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -4173,7 +4242,7 @@ moc_uiHomeWidget.cpp: ../../uiHomeWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiHomeWidget.h -o moc_uiHomeWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiHomeWidget.h -o moc_uiHomeWidget.cpp
 
 moc_uiLoginWidget.cpp: ../../uiLoginWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -4372,9 +4441,36 @@ moc_uiLoginWidget.cpp: ../../uiLoginWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputmethod.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
+		../../../experimentmanagerservice/src/common/User.h \
+		../../../experimentmanagerservice/src/common/rapidjson/document.h \
+		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
+		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
+		../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodings.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/memorystream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h \
+		../../../experimentmanagerservice/src/common/rapidjson/error/error.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h \
+		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiLoginWidget.h -o moc_uiLoginWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiLoginWidget.h -o moc_uiLoginWidget.cpp
 
 moc_uiOptionsWidget.cpp: ../../uiOptionsWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -4575,7 +4671,7 @@ moc_uiOptionsWidget.cpp: ../../uiOptionsWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiOptionsWidget.h -o moc_uiOptionsWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiOptionsWidget.h -o moc_uiOptionsWidget.cpp
 
 moc_uiReactorViewWidget.cpp: ../../uiReactorViewWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -4813,9 +4909,10 @@ moc_uiReactorViewWidget.cpp: ../../uiReactorViewWidget.h \
 		../../../experimentmanagerservice/src/common/Arc.h \
 		../../../experimentmanagerservice/src/common/RPMArc.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		../../../experimentmanagerservice/src/common/FlowStatus.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiReactorViewWidget.h -o moc_uiReactorViewWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiReactorViewWidget.h -o moc_uiReactorViewWidget.cpp
 
 moc_uiTSMainWindow.cpp: ../../uiTSMainWindow.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QMainWindow \
@@ -5020,38 +5117,6 @@ moc_uiTSMainWindow.cpp: ../../uiTSMainWindow.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtoolbar.h \
 		../../uiLoginWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
-		../../uiExperimentManagerWidget.h \
-		../../uiExperimentListWidget.h \
-		../../uiExperimentCreateWidget.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlineedit.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextcursor.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextformat.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpen.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextoption.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
-		../../uiExperimentGraph.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis_id.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_dict.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_item.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_curve.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_seriesitem.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_store.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_data.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_samples.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_interval.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_point_3d.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
-		../../../experimentmanagerservice/src/common/Experiment.h \
 		../../../experimentmanagerservice/src/common/User.h \
 		../../../experimentmanagerservice/src/common/rapidjson/document.h \
 		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
@@ -5079,10 +5144,59 @@ moc_uiTSMainWindow.cpp: ../../uiTSMainWindow.h \
 		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
 		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
 		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		../../uiExperimentManagerWidget.h \
+		../../uiExperimentListWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QTableWidgetItem \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtablewidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtableview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvalidator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qregularexpression.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyle.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qrubberband.h \
+		../../../experimentmanagerservice/src/common/Experiment.h \
 		../../../experimentmanagerservice/src/common/Profile.h \
 		../../../experimentmanagerservice/src/common/TempArc.h \
 		../../../experimentmanagerservice/src/common/Arc.h \
 		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../uiExperimentCreateWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlineedit.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextcursor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextformat.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpen.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
+		../../uiExperimentGraph.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis_id.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_dict.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_item.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_curve.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_seriesitem.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_store.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_data.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_samples.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_interval.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_point_3d.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		../../uiOptionsWidget.h \
@@ -5091,11 +5205,12 @@ moc_uiTSMainWindow.cpp: ../../uiTSMainWindow.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimer.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVector \
 		../../uiCellOverviewWidget.h \
+		../../../experimentmanagerservice/src/common/FlowStatus.h \
 		../../uiUserManagementWidget.h \
 		../../uiHomeWidget.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiTSMainWindow.h -o moc_uiTSMainWindow.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiTSMainWindow.h -o moc_uiTSMainWindow.cpp
 
 moc_uiUserManagementWidget.cpp: ../../uiUserManagementWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
@@ -5294,9 +5409,36 @@ moc_uiUserManagementWidget.cpp: ../../uiUserManagementWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputmethod.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
+		../../../experimentmanagerservice/src/common/User.h \
+		../../../experimentmanagerservice/src/common/rapidjson/document.h \
+		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
+		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
+		../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodings.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/memorystream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h \
+		../../../experimentmanagerservice/src/common/rapidjson/error/error.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h \
+		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
-	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/CellViewer -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiUserManagementWidget.h -o moc_uiUserManagementWidget.cpp
+	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiUserManagementWidget.h -o moc_uiUserManagementWidget.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -5305,9 +5447,9 @@ compiler_moc_source_clean:
 compiler_uic_make_all: ui_uiCellGraph.h ui_uiCellOverviewWidget.h ui_uiCellWidget.h ui_uiExperimentCreateWidget.h ui_uiExperimentGraph.h ui_uiExperimentListWidget.h ui_uiExperimentManagerWidget.h ui_uiHomeWidget.h ui_uiLoginWidget.h ui_uiOptionsWidget.h ui_uiReactorViewWidget.h ui_uiTSMainWindow.h ui_uiUserManagementWidget.h
 compiler_uic_clean:
 	-$(DEL_FILE) ui_uiCellGraph.h ui_uiCellOverviewWidget.h ui_uiCellWidget.h ui_uiExperimentCreateWidget.h ui_uiExperimentGraph.h ui_uiExperimentListWidget.h ui_uiExperimentManagerWidget.h ui_uiHomeWidget.h ui_uiLoginWidget.h ui_uiOptionsWidget.h ui_uiReactorViewWidget.h ui_uiTSMainWindow.h ui_uiUserManagementWidget.h
-ui_uiCellGraph.h: ../../../CellViewer/uiCellGraph.ui \
+ui_uiCellGraph.h: ../../uiCellGraph.ui \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/uic
-	/home/dev/Qt/6.9.1/gcc_64/libexec/uic ../../../CellViewer/uiCellGraph.ui -o ui_uiCellGraph.h
+	/home/dev/Qt/6.9.1/gcc_64/libexec/uic ../../uiCellGraph.ui -o ui_uiCellGraph.h
 
 ui_uiCellOverviewWidget.h: ../../uiCellOverviewWidget.ui \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/uic
@@ -5808,7 +5950,7 @@ User.o: ../../../experimentmanagerservice/src/common/User.cpp ../../../experimen
 		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o User.o ../../../experimentmanagerservice/src/common/User.cpp
 
-ExperimentRunner.o: ../../../CellViewer/ExperimentRunner.cpp ../../../CellViewer/ExperimentRunner.h \
+ExperimentRunner.o: ../../ExperimentRunner.cpp ../../ExperimentRunner.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QObject \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobject.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs.h \
@@ -5987,9 +6129,9 @@ ExperimentRunner.o: ../../../CellViewer/ExperimentRunner.cpp ../../../CellViewer
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariant.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q23utility.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20utility.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ExperimentRunner.o ../../../CellViewer/ExperimentRunner.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ExperimentRunner.o ../../ExperimentRunner.cpp
 
-uiCellGraph.o: ../../../CellViewer/uiCellGraph.cpp ../../../CellViewer/uiCellGraph.h \
+uiCellGraph.o: ../../uiCellGraph.cpp ../../uiCellGraph.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qwidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -6240,7 +6382,7 @@ uiCellGraph.o: ../../../CellViewer/uiCellGraph.cpp ../../../CellViewer/uiCellGra
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		ui_uiCellGraph.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiCellGraph.o ../../../CellViewer/uiCellGraph.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiCellGraph.o ../../uiCellGraph.cpp
 
 main.o: ../../main.cpp ../../uiTSMainWindow.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QMainWindow \
@@ -6445,38 +6587,6 @@ main.o: ../../main.cpp ../../uiTSMainWindow.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtoolbar.h \
 		../../uiLoginWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
-		../../uiExperimentManagerWidget.h \
-		../../uiExperimentListWidget.h \
-		../../uiExperimentCreateWidget.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlineedit.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextcursor.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextformat.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpen.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextoption.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
-		../../uiExperimentGraph.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis_id.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_dict.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_item.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_curve.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_seriesitem.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_store.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_data.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_samples.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_interval.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_point_3d.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
-		../../../experimentmanagerservice/src/common/Experiment.h \
 		../../../experimentmanagerservice/src/common/User.h \
 		../../../experimentmanagerservice/src/common/rapidjson/document.h \
 		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
@@ -6504,10 +6614,59 @@ main.o: ../../main.cpp ../../uiTSMainWindow.h \
 		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
 		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
 		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		../../uiExperimentManagerWidget.h \
+		../../uiExperimentListWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QTableWidgetItem \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtablewidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtableview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvalidator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qregularexpression.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyle.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qrubberband.h \
+		../../../experimentmanagerservice/src/common/Experiment.h \
 		../../../experimentmanagerservice/src/common/Profile.h \
 		../../../experimentmanagerservice/src/common/TempArc.h \
 		../../../experimentmanagerservice/src/common/Arc.h \
 		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../uiExperimentCreateWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlineedit.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextcursor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextformat.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpen.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
+		../../uiExperimentGraph.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis_id.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_dict.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_item.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_curve.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_seriesitem.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_store.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_data.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_samples.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_interval.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_point_3d.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		../../uiOptionsWidget.h \
@@ -6516,6 +6675,7 @@ main.o: ../../main.cpp ../../uiTSMainWindow.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimer.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVector \
 		../../uiCellOverviewWidget.h \
+		../../../experimentmanagerservice/src/common/FlowStatus.h \
 		../../uiUserManagementWidget.h \
 		../../uiHomeWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
@@ -6957,7 +7117,7 @@ uiCellWidget.o: ../../uiCellWidget.cpp ../../uiCellWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputmethod.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
-		../../../CellViewer/ExperimentRunner.h \
+		../../ExperimentRunner.h \
 		../../../experimentmanagerservice/src/common/Experiment.h \
 		../../../experimentmanagerservice/src/common/User.h \
 		../../../experimentmanagerservice/src/common/rapidjson/document.h \
@@ -6992,7 +7152,7 @@ uiCellWidget.o: ../../uiCellWidget.cpp ../../uiCellWidget.h \
 		../../../experimentmanagerservice/src/common/RPMArc.h \
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
-		../../../CellViewer/uiCellGraph.h \
+		../../uiCellGraph.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
@@ -7428,10 +7588,197 @@ uiExperimentCreateWidget.o: ../../uiExperimentCreateWidget.cpp ../../uiExperimen
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qdialog.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qdialogbuttonbox.h \
 		ui_uiExperimentCreateWidget.h \
+		../../../experimentmanagerservice/src/common/RedisDBManager.h \
+		../../../experimentmanagerservice/src/common/CellTarget.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
+		../../../experimentmanagerservice/src/common/FlowStatus.h \
+		../../ExperimentRunner.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QButtonGroup \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qbuttongroup.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QDialog \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QDialogButtonBox \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QHeaderView \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qheaderview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvalidator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qregularexpression.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyle.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qrubberband.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QComboBox \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qcombobox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QInputDialog \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qinputdialog.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QJsonDocument \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qjsondocument.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qjsonparseerror.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qjsonvalue.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcborvalue.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcborcommon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatetime.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcalendar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/quuid.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QJsonObject \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qjsonobject.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QRadioButton \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qradiobutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QTableWidget \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtablewidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtableview.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QTimer \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimer.h
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QVBoxLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QUuid \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/QtConcurrent \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/QtConcurrentDepends \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QtCore \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QtCoreDepends \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20algorithm.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20chrono.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20map.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20vector.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q23functional.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q26numeric.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractanimation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractnativeeventfilter.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractproxymodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qanimationgroup.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qapplicationstatic.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QMutex \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qassociativeiterable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qatomicscopedvaluerollback.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbitarray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbuffer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qbytearraymatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcache.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcborarray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcbormap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcborstream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcborstreamreader.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcborstreamwriter.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qchronotimer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qproperty.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpropertyprivate.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcollator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcommandlineoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcommandlineparser.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qconcatenatetablesproxymodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcryptographichash.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdir.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdirlisting.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfiledevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfile.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfileinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimezone.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdiriterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qeasingcurve.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfactoryinterface.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfileselector.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QStringList \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfilesystemwatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuturesynchronizer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfuturewatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qidentityproxymodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qjsonarray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlatin1stringmatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlibrary.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlibraryinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qversionnumber.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtyperevision.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlockfile.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qloggingcategory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmessageauthenticationcode.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmetaobject.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmimedata.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmimedatabase.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qmimetype.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectcleanuphandler.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qoperatingsystemversion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qparallelanimationgroup.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpauseanimation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpermissions.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qplugin.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpointer.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpluginloader.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qprocess.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qpropertyanimation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariantanimation.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qqueue.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qrandom.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qreadwritelock.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qresource.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsavefile.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qscopedvaluerollback.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsemaphore.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsequentialanimationgroup.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsequentialiterable.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsettings.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsharedmemory.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtipccommon.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsignalmapper.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsimd.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsocketnotifier.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsortfilterproxymodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstack.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstandardpaths.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstaticlatin1stringmatcher.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstorageinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qstringlistmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qsystemsemaphore.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtcoreversion.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtemporarydir.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtemporaryfile.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtextboundaryfinder.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qthreadstorage.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimeline.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtmocconstants.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtranslator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtransposeproxymodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtsymbolmacros.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qurlquery.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarianthash.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QHash \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QString \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariantlist.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariantmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QMap \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qwaitcondition.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDeadlineTimer \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qwineventnotifier.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qxmlstream.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qxpfunctional.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtaskbuilder.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentstoredfunctioncall.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrent_global.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentrunbase.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentcompilertest.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentfilter.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentfilterkernel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentiteratekernel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentmedian.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentthreadengine.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentmapkernel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentreducekernel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentfunctionwrappers.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentmap.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentrun.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrenttask.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent/qtconcurrentversion.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiExperimentCreateWidget.o ../../uiExperimentCreateWidget.cpp
 
 uiExperimentGraph.o: ../../uiExperimentGraph.cpp ../../uiExperimentGraph.h \
@@ -7688,8 +8035,9 @@ uiExperimentGraph.o: ../../uiExperimentGraph.cpp ../../uiExperimentGraph.h \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiExperimentGraph.o ../../uiExperimentGraph.cpp
 
 uiExperimentListWidget.o: ../../uiExperimentListWidget.cpp ../../uiExperimentListWidget.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QTableWidgetItem \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtablewidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtableview.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiglobal.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qglobal.h \
@@ -7742,6 +8090,10 @@ uiExperimentListWidget.o: ../../uiExperimentListWidget.cpp ../../uiExperimentLis
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtguiexports.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgets-config.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtwidgetsexports.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qwidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qwindowdefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qobjectdefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnamespace.h \
@@ -7884,8 +8236,53 @@ uiExperimentListWidget.o: ../../uiExperimentListWidget.cpp ../../uiExperimentLis
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputmethod.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvalidator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qregularexpression.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyle.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qrubberband.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
+		../../../experimentmanagerservice/src/common/Experiment.h \
+		../../../experimentmanagerservice/src/common/User.h \
+		../../../experimentmanagerservice/src/common/rapidjson/document.h \
+		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
+		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
+		../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodings.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/memorystream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h \
+		../../../experimentmanagerservice/src/common/rapidjson/error/error.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h \
+		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		../../../experimentmanagerservice/src/common/Profile.h \
+		../../../experimentmanagerservice/src/common/TempArc.h \
+		../../../experimentmanagerservice/src/common/Arc.h \
+		../../../experimentmanagerservice/src/common/RPMArc.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlabel.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpicture.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlineedit.h \
@@ -7895,7 +8292,18 @@ uiExperimentListWidget.o: ../../uiExperimentListWidget.cpp ../../uiExperimentLis
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextoption.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
-		ui_uiExperimentListWidget.h
+		ui_uiExperimentListWidget.h \
+		../../../experimentmanagerservice/src/common/RedisDBManager.h \
+		../../../experimentmanagerservice/src/common/Cell.h \
+		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		../../../experimentmanagerservice/src/common/CellTarget.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
+		../../../experimentmanagerservice/src/common/FlowStatus.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDateTime \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatetime.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcalendar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QHeaderView \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qheaderview.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiExperimentListWidget.o ../../uiExperimentListWidget.cpp
 
 uiExperimentManagerWidget.o: ../../uiExperimentManagerWidget.cpp ../../uiExperimentManagerWidget.h \
@@ -8096,35 +8504,25 @@ uiExperimentManagerWidget.o: ../../uiExperimentManagerWidget.cpp ../../uiExperim
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
 		../../uiExperimentListWidget.h \
-		../../uiExperimentCreateWidget.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlineedit.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QTableWidgetItem \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtablewidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtableview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextcursor.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextformat.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpen.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextoption.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
-		../../uiExperimentGraph.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis_id.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_dict.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_item.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_curve.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_seriesitem.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_store.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_data.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_samples.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_interval.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_point_3d.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvalidator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qregularexpression.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyle.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qrubberband.h \
 		../../../experimentmanagerservice/src/common/Experiment.h \
 		../../../experimentmanagerservice/src/common/User.h \
 		../../../experimentmanagerservice/src/common/rapidjson/document.h \
@@ -8157,9 +8555,45 @@ uiExperimentManagerWidget.o: ../../uiExperimentManagerWidget.cpp ../../uiExperim
 		../../../experimentmanagerservice/src/common/TempArc.h \
 		../../../experimentmanagerservice/src/common/Arc.h \
 		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../uiExperimentCreateWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlineedit.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextcursor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextformat.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpen.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
+		../../uiExperimentGraph.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis_id.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_dict.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_item.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_curve.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_seriesitem.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_store.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_data.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_samples.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_interval.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_point_3d.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
-		ui_uiExperimentManagerWidget.h
+		ui_uiExperimentManagerWidget.h \
+		../../../experimentmanagerservice/src/common/RedisDBManager.h \
+		../../../experimentmanagerservice/src/common/CellTarget.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
+		../../../experimentmanagerservice/src/common/FlowStatus.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QMessageBox \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qmessagebox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qdialog.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qdialogbuttonbox.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiExperimentManagerWidget.o ../../uiExperimentManagerWidget.cpp
 
 uiHomeWidget.o: ../../uiHomeWidget.cpp ../../uiHomeWidget.h \
@@ -8563,7 +8997,45 @@ uiLoginWidget.o: ../../uiLoginWidget.cpp ../../uiLoginWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputmethod.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
-		ui_uiLoginWidget.h
+		../../../experimentmanagerservice/src/common/User.h \
+		../../../experimentmanagerservice/src/common/rapidjson/document.h \
+		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
+		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
+		../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodings.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/memorystream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h \
+		../../../experimentmanagerservice/src/common/rapidjson/error/error.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h \
+		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		ui_uiLoginWidget.h \
+		../../../experimentmanagerservice/src/common/RedisDBManager.h \
+		../../../experimentmanagerservice/src/common/Cell.h \
+		../../../experimentmanagerservice/src/common/Experiment.h \
+		../../../experimentmanagerservice/src/common/Profile.h \
+		../../../experimentmanagerservice/src/common/TempArc.h \
+		../../../experimentmanagerservice/src/common/Arc.h \
+		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		../../../experimentmanagerservice/src/common/CellTarget.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
+		../../../experimentmanagerservice/src/common/FlowStatus.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiLoginWidget.o ../../uiLoginWidget.cpp
 
 uiOptionsWidget.o: ../../uiOptionsWidget.cpp ../../uiOptionsWidget.h \
@@ -9011,14 +9483,14 @@ uiReactorViewWidget.o: ../../uiReactorViewWidget.cpp ../../uiReactorViewWidget.h
 		../../../experimentmanagerservice/src/common/Arc.h \
 		../../../experimentmanagerservice/src/common/RPMArc.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		../../../experimentmanagerservice/src/common/FlowStatus.h \
 		ui_uiReactorViewWidget.h \
 		../../../experimentmanagerservice/src/common/RedisDBManager.h \
 		../../../experimentmanagerservice/src/common/CellTarget.h \
 		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
-		../../../experimentmanagerservice/src/common/FlowStatus.h \
 		../../uiCellWidget.h \
-		../../../CellViewer/ExperimentRunner.h \
-		../../../CellViewer/uiCellGraph.h \
+		../../ExperimentRunner.h \
+		../../uiCellGraph.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
@@ -9250,38 +9722,6 @@ uiTSMainWindow.o: ../../uiTSMainWindow.cpp ../../uiTSMainWindow.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtoolbar.h \
 		../../uiLoginWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QWidget \
-		../../uiExperimentManagerWidget.h \
-		../../uiExperimentListWidget.h \
-		../../uiExperimentCreateWidget.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlineedit.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextcursor.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextformat.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpen.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextoption.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
-		../../uiExperimentGraph.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis_id.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_dict.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_item.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_curve.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_seriesitem.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_store.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_data.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_samples.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_interval.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_point_3d.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
-		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
-		../../../experimentmanagerservice/src/common/Experiment.h \
 		../../../experimentmanagerservice/src/common/User.h \
 		../../../experimentmanagerservice/src/common/rapidjson/document.h \
 		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
@@ -9309,10 +9749,59 @@ uiTSMainWindow.o: ../../uiTSMainWindow.cpp ../../uiTSMainWindow.h \
 		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
 		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
 		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		../../uiExperimentManagerWidget.h \
+		../../uiExperimentListWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QTableWidgetItem \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtablewidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtableview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvalidator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qregularexpression.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyle.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qrubberband.h \
+		../../../experimentmanagerservice/src/common/Experiment.h \
 		../../../experimentmanagerservice/src/common/Profile.h \
 		../../../experimentmanagerservice/src/common/TempArc.h \
 		../../../experimentmanagerservice/src/common/Arc.h \
 		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../uiExperimentCreateWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlineedit.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextcursor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextformat.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpen.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
+		../../uiExperimentGraph.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_global.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis_id.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_axis.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_dict.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_item.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_curve.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_plot_seriesitem.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_store.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_series_data.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_samples.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_interval.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_point_3d.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
+		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		../../uiOptionsWidget.h \
@@ -9321,6 +9810,7 @@ uiTSMainWindow.o: ../../uiTSMainWindow.cpp ../../uiTSMainWindow.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimer.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVector \
 		../../uiCellOverviewWidget.h \
+		../../../experimentmanagerservice/src/common/FlowStatus.h \
 		../../uiUserManagementWidget.h \
 		../../uiHomeWidget.h \
 		ui_uiTSMainWindow.h
@@ -9523,7 +10013,67 @@ uiUserManagementWidget.o: ../../uiUserManagementWidget.cpp ../../uiUserManagemen
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputmethod.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
-		ui_uiUserManagementWidget.h
+		../../../experimentmanagerservice/src/common/User.h \
+		../../../experimentmanagerservice/src/common/rapidjson/document.h \
+		../../../experimentmanagerservice/src/common/rapidjson/reader.h \
+		../../../experimentmanagerservice/src/common/rapidjson/allocators.h \
+		../../../experimentmanagerservice/src/common/rapidjson/rapidjson.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/stdint.h \
+		../../../experimentmanagerservice/src/common/rapidjson/msinttypes/inttypes.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/meta.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodings.h \
+		../../../experimentmanagerservice/src/common/rapidjson/encodedstream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/memorystream.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/clzll.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/stack.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/swap.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strtod.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/ieee754.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/biginteger.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/diyfp.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/pow10.h \
+		../../../experimentmanagerservice/src/common/rapidjson/error/error.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/strfunc.h \
+		../../../experimentmanagerservice/src/common/rapidjson/writer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/dtoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/internal/itoa.h \
+		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
+		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
+		ui_uiUserManagementWidget.h \
+		../../../experimentmanagerservice/src/common/RedisDBManager.h \
+		../../../experimentmanagerservice/src/common/Cell.h \
+		../../../experimentmanagerservice/src/common/Experiment.h \
+		../../../experimentmanagerservice/src/common/Profile.h \
+		../../../experimentmanagerservice/src/common/TempArc.h \
+		../../../experimentmanagerservice/src/common/Arc.h \
+		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		../../../experimentmanagerservice/src/common/CellTarget.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
+		../../../experimentmanagerservice/src/common/FlowStatus.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QHeaderView \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qheaderview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvalidator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qregularexpression.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyle.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qrubberband.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QMessageBox \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qmessagebox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qdialog.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qdialogbuttonbox.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiUserManagementWidget.o ../../uiUserManagementWidget.cpp
 
 qrc_resources.o: qrc_resources.cpp 
