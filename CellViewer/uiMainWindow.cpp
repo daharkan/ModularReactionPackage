@@ -1,22 +1,32 @@
 #include "uiMainWindow.h"
 #include "ui_uiMainWindow.h"
 
+#define DEFAULT_REDIS_HOST "127.0.0.1"
+#define DEFAULT_REDIS_PORT 6379
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    OnlyCellSerialManager::getInstance()->connectAndAssignThePort();
-
     m_cellWidget = new CellWidget;
     ui->cellLayout->addWidget(m_cellWidget);
-    connect(OnlyCellSerialManager::getInstance(), &OnlyCellSerialManager::sgn_updatePIDParameters, this, &MainWindow::updatePIDParametersView);
-    connect(OnlyCellSerialManager::getInstance(), &OnlyCellSerialManager::sgn_updateCell, m_cellWidget, &CellWidget::updateCell);
 
     connect(ui->assignExp1Button, &QPushButton::clicked, this, &MainWindow::assignExp1Clicked);
     connect(ui->updatePIDParametersButton, &QPushButton::clicked, this, &MainWindow::updatePIDParametersOnBoardClicked);
 
+    bool connected = RedisDBManager::getInstance()->connectToDB(DEFAULT_REDIS_HOST, DEFAULT_REDIS_PORT);
+    if (!connected) {
+        qDebug() << "Redis connection failed.";
+    }
+
+    m_pollTimer = new QTimer(this);
+    connect(m_pollTimer, &QTimer::timeout, this, &MainWindow::pollCellStatus);
+    m_pollTimer->start(200);
+
+    ui->updatePIDParametersButton->setEnabled(false);
+    ui->updatePIDParametersButton->setToolTip("PID updates are handled by ExperimentManagerService.");
 }
 
 MainWindow::~MainWindow()
@@ -176,11 +186,37 @@ void MainWindow::updatePIDParametersView(int heaterPerc, int peltierPerc)
 
 void MainWindow::updatePIDParametersOnBoardClicked()
 {
-    float kP = ui->pidKpLineEdit->text().toFloat();
-    float ki = ui->pidKiLineEdit->text().toFloat();
-    float kD = ui->pidKdLineEdit->text().toFloat();
+    qDebug() << "PID updates are managed by ExperimentManagerService.";
+}
 
-    QString command = "pid#" + QString::number(kP) + "#" + QString::number(ki) + "#" + QString::number(kD);
+void MainWindow::pollCellStatus()
+{
+    if (!RedisDBManager::getInstance()->isConnected()) {
+        return;
+    }
 
-    OnlyCellSerialManager::getInstance()->writeString2Queue(command);
+    if (m_busboardId.empty()) {
+        std::vector<std::string> busboardIds = RedisDBManager::getInstance()->getBusboardIds();
+        if (busboardIds.empty()) {
+            return;
+        }
+        m_busboardId = busboardIds.front();
+    }
+
+    if (m_firstCellId.empty()) {
+        std::vector<std::string> cellIds = RedisDBManager::getInstance()->getBusboardCellIds(m_busboardId);
+        if (cellIds.empty()) {
+            return;
+        }
+        m_firstCellId = cellIds.front();
+        m_cellWidget->setCellId(m_firstCellId);
+    }
+
+    std::vector<std::string> cellIds = {m_firstCellId};
+    std::vector<Cell> cells = RedisDBManager::getInstance()->getCellList(cellIds);
+    if (cells.empty()) {
+        return;
+    }
+
+    m_cellWidget->updateCell(cells.front());
 }

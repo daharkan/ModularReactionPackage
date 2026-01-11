@@ -1,5 +1,6 @@
 #include "ExperimentRunner.h"
-#include "OnlyCellSerialManager.h"
+#include "RedisDBManager.h"
+#include "CellTarget.h"
 
 #include <QCoreApplication>
 #include <thread>
@@ -69,15 +70,33 @@ void ExperimentRunner::assignExperiment(Experiment exp)
     m_state = STATE_INITILIZED;
 }
 
+void ExperimentRunner::setCellId(const std::string &cellId)
+{
+    m_cellId = cellId;
+}
+
 void ExperimentRunner::run()
 {
-    m_cell = OnlyCellSerialManager::getInstance()->cell();
+    if (m_cellId.empty()) {
+        return;
+    }
+
+    std::vector<std::string> cellIds = {m_cellId};
+    std::vector<Cell> cells = RedisDBManager::getInstance()->getCellList(cellIds);
+    if (cells.empty()) {
+        return;
+    }
+    m_cell = cells.front();
 
     float startTemp = m_experiment.profile().tempArcsInSeq().at(0).startTemp();
     qDebug() << "ExperimentRunner    runinit...";
 
     while(abs(startTemp - m_cell.currentTempExt()) > EPSILON_TEMP){
-        m_cell = OnlyCellSerialManager::getInstance()->cell();
+        cells = RedisDBManager::getInstance()->getCellList(cellIds);
+        if (cells.empty()) {
+            return;
+        }
+        m_cell = cells.front();
         m_state = STATE_PREHEAT;
 
         if(m_temperatureData.size() < 1){
@@ -86,8 +105,13 @@ void ExperimentRunner::run()
         float targetTemp =  m_temperatureData.at(0);
         qDebug() << "ExperimentRunner    STATE_PREHEAT targetTemp: " << targetTemp;
 
-        std::string updateString = m_cell.generateUpdateDataStringToBoard(targetTemp, 555);
-        OnlyCellSerialManager::getInstance()->writeCellUpdateString(QString::fromStdString(updateString));
+        CellTarget celltarget;
+        celltarget.setCellID(m_cellId);
+        celltarget.setTargetTemp(targetTemp);
+        celltarget.setTargetRPM(555);
+        celltarget.setMotorSelect(0);
+        celltarget.setTimestamp(Cell::getCurrentTimeMillis());
+        RedisDBManager::getInstance()->pushCellTarget(celltarget);
 
         emit sgn_updateExperimentState(m_state);
         delay(LOOP_TIME_INTERVAL_MSECS);
@@ -96,23 +120,39 @@ void ExperimentRunner::run()
 
     m_startingTimestampMsec = Cell::getCurrentTimeMillis();
 
-    m_cell = OnlyCellSerialManager::getInstance()->cell();
+    cells = RedisDBManager::getInstance()->getCellList(cellIds);
+    if (cells.empty()) {
+        return;
+    }
+    m_cell = cells.front();
     m_state = STATE_RUNNING;
 
     for(int i = 0; i < m_tempTimeData.size(); i++){
-        m_cell = OnlyCellSerialManager::getInstance()->cell();
+        cells = RedisDBManager::getInstance()->getCellList(cellIds);
+        if (cells.empty()) {
+            return;
+        }
+        m_cell = cells.front();
 
         float targetTemp =  m_temperatureData.at(i);
         qDebug() << "ExperimentRunner    STATE_RUNNING targetTemp: " << targetTemp << "  time: " << m_tempTimeData.at(i);
 
-
-        std::string updateString = m_cell.generateUpdateDataStringToBoard(targetTemp, 555);
-        OnlyCellSerialManager::getInstance()->writeCellUpdateString(QString::fromStdString(updateString));
+        CellTarget celltarget;
+        celltarget.setCellID(m_cellId);
+        celltarget.setTargetTemp(targetTemp);
+        celltarget.setTargetRPM(555);
+        celltarget.setMotorSelect(0);
+        celltarget.setTimestamp(Cell::getCurrentTimeMillis());
+        RedisDBManager::getInstance()->pushCellTarget(celltarget);
         emit sgn_updateExperimentState(m_state);
         delay(LOOP_TIME_INTERVAL_MSECS);
     }
 
-    m_cell = OnlyCellSerialManager::getInstance()->cell();
+    cells = RedisDBManager::getInstance()->getCellList(cellIds);
+    if (cells.empty()) {
+        return;
+    }
+    m_cell = cells.front();
     m_state = STATE_COMPLETED;
     emit sgn_updateExperimentState(m_state);
 
