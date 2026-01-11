@@ -21,8 +21,8 @@ SOURCES += \
     ../experimentmanagerservice/src/common/RedisDBManager.cpp \
     ../experimentmanagerservice/src/common/TempArc.cpp \
     ../experimentmanagerservice/src/common/User.cpp \
-    ../CellViewer/ExperimentRunner.cpp \
-    ../CellViewer/uiCellGraph.cpp \
+    ExperimentRunner.cpp \
+    uiCellGraph.cpp \
     main.cpp \
     uiCellOverviewWidget.cpp \
     uiCellWidget.cpp \
@@ -49,8 +49,8 @@ HEADERS += \
     ../experimentmanagerservice/src/common/RedisDBManager.h \
     ../experimentmanagerservice/src/common/TempArc.h \
     ../experimentmanagerservice/src/common/User.h \
-    ../CellViewer/ExperimentRunner.h \
-    ../CellViewer/uiCellGraph.h \
+    ExperimentRunner.h \
+    uiCellGraph.h \
     ../experimentmanagerservice/src/common/rapidjson/allocators.h \
     ../experimentmanagerservice/src/common/rapidjson/cursorstreamwrapper.h \
     ../experimentmanagerservice/src/common/rapidjson/document.h \
@@ -103,7 +103,7 @@ HEADERS += \
     uiUserManagementWidget.h
 
 FORMS += \
-    ../CellViewer/uiCellGraph.ui \
+    uiCellGraph.ui \
     uiCellOverviewWidget.ui \
     uiCellWidget.ui \
     uiExperimentCreateWidget.ui \
@@ -123,7 +123,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 INCLUDEPATH += ../experimentmanagerservice/src/common/
-INCLUDEPATH += ../CellViewer
 INCLUDEPATH += $$(DEV_EXTERNALS_PATH)/qwt-6.2.0/src
 DEPENDPATH +=  $$(DEV_EXTERNALS_PATH)/qwt-6.2.0/lib/
 LIBS += -L$$(DEV_EXTERNALS_PATH)/qwt-6.2.0/lib/

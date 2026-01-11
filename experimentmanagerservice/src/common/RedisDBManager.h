@@ -6,6 +6,8 @@
 #include "CellTarget.h"
 #include "CellVisualsHistory.h"
 #include "FlowStatus.h"
+#include "Experiment.h"
+#include <optional>
 
 #define DB_SCHEMA_VERSION_KEY "mr10:schema_version"
 #define DB_SCHEMA_VERSION_VALUE "2"
@@ -20,6 +22,7 @@
 #define DB_CELLJSON_KEY "cell"
 #define DB_TARGETJSON_KEY "celltarget"
 #define DB_BUSBOARDJSON_KEY "busboard"
+#define DB_EXPERIMENTJSON_KEY "experiment"
 #define DB_BUSBOARD_FLOW_KEY "flowStatus"
 #define DB_BUSBOARD_CELLIDS_KEY "cellIDs"
 #define DB_BUSBOARD_LAST_UPDATED_KEY "lastUpdatedTimestamp"
@@ -39,6 +42,11 @@ public:
 
     bool pushCellTarget(CellTarget celltarget);
     bool pushCellTargets(std::vector<CellTarget> celltargets);
+
+    bool pushExperiment(const Experiment& experiment);
+    std::optional<Experiment> getExperiment(const std::string& experimentId);
+    std::vector<Experiment> getExperiments();
+    bool deleteExperiment(const std::string& experimentId);
 
     bool pushBusboardCellIds(std::string busboardID, std::vector<std::string> cellIDs);
     bool pushCellList(std::vector<Cell> cells);
