@@ -1,10 +1,7 @@
 #include "uiReactorViewWidget.h"
 #include "ui_uiReactorViewWidget.h"
 #include "RedisDBManager.h"
-#include "uiCellWidget.h"
-#include <QDialog>
 #include <QMap>
-#include <QVBoxLayout>
 
 ReactorViewWidget::ReactorViewWidget(QWidget *parent)
     : QWidget(parent)
@@ -55,39 +52,7 @@ void ReactorViewWidget::handleCellClicked(const std::string &cellId)
     if (cellId.empty()) {
         return;
     }
-    CellWidget *cellWidget = new CellWidget;
-    cellWidget->setCellId(cellId);
-
-    QDialog *dialog = new QDialog(this);
-    dialog->setWindowTitle(QString::fromStdString(cellId));
-    dialog->setAttribute(Qt::WA_DeleteOnClose, true);
-    QVBoxLayout *layout = new QVBoxLayout(dialog);
-    layout->addWidget(cellWidget);
-
-    if (RedisDBManager::getInstance()->isConnected()) {
-        std::vector<std::string> ids = {cellId};
-        std::vector<Cell> cells = RedisDBManager::getInstance()->getCellList(ids);
-        if (!cells.empty()) {
-            cellWidget->updateCell(cells.front());
-        }
-    }
-
-    QTimer *timer = new QTimer(dialog);
-    connect(timer, &QTimer::timeout, dialog, [cellWidget, cellId]() {
-        if (!RedisDBManager::getInstance()->isConnected()) {
-            return;
-        }
-        std::vector<std::string> ids = {cellId};
-        std::vector<Cell> cells = RedisDBManager::getInstance()->getCellList(ids);
-        if (cells.empty()) {
-            return;
-        }
-        cellWidget->updateCell(cells.front());
-    });
-    timer->start(500);
-
-    dialog->resize(960, 600);
-    dialog->show();
+    emit sgn_openCellView(cellId);
 }
 
 void ReactorViewWidget::setupCellOverviewWidgets()

@@ -98,9 +98,12 @@ void CellWidget::setExperimentAndInit(Experiment experiment)
 {
     m_firstStartedRunning = false;
     m_assignedExperiment = experiment;
-    m_cellGraph = new CellGraph(m_assignedExperiment);
-
-    ui->graphLayput->addWidget(m_cellGraph);
+    if (m_cellGraph == nullptr) {
+        m_cellGraph = new CellGraph(m_assignedExperiment, this);
+        ui->graphLayput->addWidget(m_cellGraph);
+    } else {
+        m_cellGraph->updateTheExperiment(m_assignedExperiment);
+    }
 
     m_expRunner->assignExperiment(m_assignedExperiment);
     QtConcurrent::run([this]() {
@@ -125,7 +128,9 @@ void CellWidget::updateExpState(ExperimentRunState state)
     }else if(state == STATE_RUNNING){
         if(!m_firstStartedRunning){
             m_firstStartedRunning = true;
-            m_cellGraph->initilizeExperimentGraph();
+            if (m_cellGraph != nullptr) {
+                m_cellGraph->initilizeExperimentGraph();
+            }
         }
         expState = "RUNNING";
     }else if(state == STATE_COMPLETED){
@@ -157,6 +162,11 @@ void CellWidget::updateCell(Cell &cell)
     pushTempAndRPMToCellGraph(currentTempExt, currentRPM);
 
     Experiment experiment = cell.asignedExperiment();
+    if (hasExperimentAssigned(experiment)) {
+        ensureExperimentGraph(experiment);
+    } else {
+        clearExperimentGraph();
+    }
     QString expName = QString::fromStdString(experiment.name());
     if (expName.isEmpty()) {
         expName = "--";
@@ -214,4 +224,42 @@ void CellWidget::updateCell(Cell &cell)
     ui->expStateLabel->setText(stateText);
     ui->experimentProgressValueLabel->setText(progressText);
 
+    if (stateText == "RUNNING" && m_cellGraph != nullptr && !m_cellGraph->isDataPushStarted()) {
+        m_cellGraph->initilizeExperimentGraph();
+    }
+
+}
+
+void CellWidget::ensureExperimentGraph(const Experiment &experiment)
+{
+    bool experimentChanged = experiment.experimentId() != m_assignedExperiment.experimentId()
+        || experiment.name() != m_assignedExperiment.name();
+
+    if (m_cellGraph == nullptr || experimentChanged) {
+        m_assignedExperiment = experiment;
+        m_firstStartedRunning = false;
+        if (m_cellGraph != nullptr) {
+            ui->graphLayput->removeWidget(m_cellGraph);
+            m_cellGraph->deleteLater();
+            m_cellGraph = nullptr;
+        }
+        m_cellGraph = new CellGraph(m_assignedExperiment, this);
+        ui->graphLayput->addWidget(m_cellGraph);
+    }
+}
+
+void CellWidget::clearExperimentGraph()
+{
+    if (m_cellGraph != nullptr) {
+        ui->graphLayput->removeWidget(m_cellGraph);
+        m_cellGraph->deleteLater();
+        m_cellGraph = nullptr;
+    }
+    m_firstStartedRunning = false;
+    m_assignedExperiment = Experiment();
+}
+
+bool CellWidget::hasExperimentAssigned(const Experiment &experiment) const
+{
+    return !(experiment.experimentId().empty() && experiment.name().empty());
 }
