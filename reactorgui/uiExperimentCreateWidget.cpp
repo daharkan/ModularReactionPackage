@@ -2,7 +2,6 @@
 #include "qmessagebox.h"
 #include "ui_uiExperimentCreateWidget.h"
 #include "RedisDBManager.h"
-#include "ExperimentRunnerPool.h"
 
 #include <QButtonGroup>
 #include <QDialog>
@@ -17,7 +16,6 @@
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QUuid>
-#include <QtConcurrent>
 #include <algorithm>
 #include <cmath>
 #include <unordered_set>
@@ -958,20 +956,6 @@ void ExperimentCreateWidget::assignExperimentToCells()
         cell.setAsignedExperiment(assignedExperiment);
         updatedCells.push_back(cell);
 
-        int positionIndex = item->data(Qt::UserRole + 1).toInt();
-        if (positionIndex <= 0) {
-            QString upperId = QString::fromStdString(cell.cellID()).toUpper();
-            positionIndex = upperId.contains("RHS") ? 5 + cell.positionIdx() : cell.positionIdx();
-        }
-
-        ExperimentRunner *runner = ExperimentRunnerPool::instance().runnerForPosition(positionIndex);
-        if (runner != nullptr) {
-            runner->assignExperiment(assignedExperiment);
-            runner->setCellId(cell.cellID());
-            QtConcurrent::run([runner]() {
-                runner->run();
-            });
-        }
     }
 
     if (!updatedCells.empty()) {
