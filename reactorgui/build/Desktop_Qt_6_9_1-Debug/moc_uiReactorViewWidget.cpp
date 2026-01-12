@@ -43,20 +43,21 @@ template <> constexpr inline auto ReactorViewWidget::qt_create_metaobjectdata<qt
         "",
         "std::string",
         "cellId",
+        "positionIndex",
         "updateFlowStatus",
         "handleCellClicked"
     };
 
     QtMocHelpers::UintData qt_methods {
         // Signal 'sgn_openCellView'
-        QtMocHelpers::SignalData<void(const std::string &)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { 0x80000000 | 3, 4 },
+        QtMocHelpers::SignalData<void(const std::string &, int)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { 0x80000000 | 3, 4 }, { QMetaType::Int, 5 },
         }}),
         // Slot 'updateFlowStatus'
-        QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(6, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'handleCellClicked'
-        QtMocHelpers::SlotData<void(const std::string &)>(6, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { 0x80000000 | 3, 4 },
+        QtMocHelpers::SlotData<void(const std::string &, int)>(7, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 3, 4 }, { QMetaType::Int, 5 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -81,14 +82,14 @@ void ReactorViewWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
     auto *_t = static_cast<ReactorViewWidget *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->sgn_openCellView((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1]))); break;
+        case 0: _t->sgn_openCellView((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
         case 1: _t->updateFlowStatus(); break;
-        case 2: _t->handleCellClicked((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1]))); break;
+        case 2: _t->handleCellClicked((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
         default: ;
         }
     }
     if (_c == QMetaObject::IndexOfMethod) {
-        if (QtMocHelpers::indexOfMethod<void (ReactorViewWidget::*)(const std::string & )>(_a, &ReactorViewWidget::sgn_openCellView, 0))
+        if (QtMocHelpers::indexOfMethod<void (ReactorViewWidget::*)(const std::string & , int )>(_a, &ReactorViewWidget::sgn_openCellView, 0))
             return;
     }
 }
@@ -125,8 +126,8 @@ int ReactorViewWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void ReactorViewWidget::sgn_openCellView(const std::string & _t1)
+void ReactorViewWidget::sgn_openCellView(const std::string & _t1, int _t2)
 {
-    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1);
+    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1, _t2);
 }
 QT_WARNING_POP

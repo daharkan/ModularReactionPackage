@@ -294,11 +294,11 @@ void BusboardSerialManager::writeString(QString str, QSerialPort *port)
     str.append("\n");
     QByteArray ba = str.toUtf8();
     port->write(ba);
-   // qDebug() << "outgoing: " << str;
+    qDebug() << "outgoing: " << str;
 
 
-    port->flush();
-    port->clear(QSerialPort::Output);
+    //port->flush();
+    //port->clear(QSerialPort::Output);
     m_writing = false;
 
 }

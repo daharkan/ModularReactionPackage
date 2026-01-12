@@ -51,6 +51,7 @@ template <> constexpr inline auto TSMainWindow::qt_create_metaobjectdata<qt_meta
         "showCellViewWidget",
         "std::string",
         "cellId",
+        "positionIndex",
         "closeApp",
         "showPreviousPage",
         "mainPageChanged",
@@ -73,16 +74,16 @@ template <> constexpr inline auto TSMainWindow::qt_create_metaobjectdata<qt_meta
         // Slot 'showOptionsWidget'
         QtMocHelpers::SlotData<void()>(8, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'showCellViewWidget'
-        QtMocHelpers::SlotData<void(const std::string &)>(9, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { 0x80000000 | 10, 11 },
+        QtMocHelpers::SlotData<void(const std::string &, int)>(9, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 10, 11 }, { QMetaType::Int, 12 },
         }}),
         // Slot 'closeApp'
-        QtMocHelpers::SlotData<void()>(12, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'showPreviousPage'
         QtMocHelpers::SlotData<void()>(13, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'showPreviousPage'
+        QtMocHelpers::SlotData<void()>(14, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'mainPageChanged'
-        QtMocHelpers::SlotData<void(int)>(14, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Int, 15 },
+        QtMocHelpers::SlotData<void(int)>(15, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 16 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -114,7 +115,7 @@ void TSMainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         case 4: _t->showExpManagerWidget(); break;
         case 5: _t->showUserManagementWidget(); break;
         case 6: _t->showOptionsWidget(); break;
-        case 7: _t->showCellViewWidget((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1]))); break;
+        case 7: _t->showCellViewWidget((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
         case 8: _t->closeApp(); break;
         case 9: _t->showPreviousPage(); break;
         case 10: _t->mainPageChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;

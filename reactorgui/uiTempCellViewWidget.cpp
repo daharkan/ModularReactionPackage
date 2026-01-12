@@ -32,6 +32,7 @@ void TempCellViewWidget::setCellInfo(const std::string &cellId, int positionInde
     if (cellWidget == nullptr) {
         return;
     }
+    cellWidget->setPositionIndex(positionIndex);
     m_stackLayout->setCurrentWidget(cellWidget);
     refreshCellData();
 }

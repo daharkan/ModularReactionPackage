@@ -42,13 +42,14 @@ template <> constexpr inline auto CellOverviewWidget::qt_create_metaobjectdata<q
         "sgn_cellClicked",
         "",
         "std::string",
-        "cellId"
+        "cellId",
+        "positionIndex"
     };
 
     QtMocHelpers::UintData qt_methods {
         // Signal 'sgn_cellClicked'
-        QtMocHelpers::SignalData<void(const std::string &)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { 0x80000000 | 3, 4 },
+        QtMocHelpers::SignalData<void(const std::string &, int)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { 0x80000000 | 3, 4 }, { QMetaType::Int, 5 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -73,12 +74,12 @@ void CellOverviewWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, i
     auto *_t = static_cast<CellOverviewWidget *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->sgn_cellClicked((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1]))); break;
+        case 0: _t->sgn_cellClicked((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
         default: ;
         }
     }
     if (_c == QMetaObject::IndexOfMethod) {
-        if (QtMocHelpers::indexOfMethod<void (CellOverviewWidget::*)(const std::string & )>(_a, &CellOverviewWidget::sgn_cellClicked, 0))
+        if (QtMocHelpers::indexOfMethod<void (CellOverviewWidget::*)(const std::string & , int )>(_a, &CellOverviewWidget::sgn_cellClicked, 0))
             return;
     }
 }
@@ -115,8 +116,8 @@ int CellOverviewWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void CellOverviewWidget::sgn_cellClicked(const std::string & _t1)
+void CellOverviewWidget::sgn_cellClicked(const std::string & _t1, int _t2)
 {
-    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1);
+    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1, _t2);
 }
 QT_WARNING_POP

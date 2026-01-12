@@ -131,7 +131,7 @@ void ExperimentRunner::run()
         CellTarget celltarget;
         celltarget.setCellID(m_cellId);
         celltarget.setTargetTemp(targetTemp);
-        celltarget.setTargetRPM(555);
+        celltarget.setTargetRPM(0);
         celltarget.setMotorSelect(0);
         celltarget.setTimestamp(Cell::getCurrentTimeMillis());
         RedisDBManager::getInstance()->pushCellTarget(celltarget);
@@ -157,10 +157,15 @@ void ExperimentRunner::run()
         float targetTemp =  m_temperatureData.at(i);
         qDebug() << "ExperimentRunner    STATE_RUNNING targetTemp: " << targetTemp << "  time: " << m_tempTimeData.at(i);
 
+        float targetRpm =  m_rpmData.at(0);
+        if(i < m_rpmData.size()){
+            targetRpm = m_rpmData.at(i);
+        }
+
         CellTarget celltarget;
         celltarget.setCellID(m_cellId);
         celltarget.setTargetTemp(targetTemp);
-        celltarget.setTargetRPM(555);
+        celltarget.setTargetRPM(targetRpm);
         celltarget.setMotorSelect(0);
         celltarget.setTimestamp(Cell::getCurrentTimeMillis());
         RedisDBManager::getInstance()->pushCellTarget(celltarget);

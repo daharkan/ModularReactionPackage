@@ -142,6 +142,8 @@ void CellWidget::setCellId(const std::string &cellId)
 
 void CellWidget::updateExpState(ExperimentRunState state)
 {
+    qDebug() << ">>>> updateExpState: ";
+
     QString expState = "";
     if(state == STATE_INITILIZED){
         expState = "INITILIZED";
@@ -158,6 +160,7 @@ void CellWidget::updateExpState(ExperimentRunState state)
     }else if(state == STATE_COMPLETED){
         expState = "COMPLETED";
     }
+    qDebug() << ">>>> updateExpState expState: " << expState;
 
     ui->expStateLabel->setText(expState);
 
