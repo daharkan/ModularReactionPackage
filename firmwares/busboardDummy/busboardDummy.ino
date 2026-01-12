@@ -25,11 +25,11 @@ struct CellState {
 
 static CellState cells[SLOT_COUNT];
 static const char* CELL_IDS[SLOT_COUNT] = {
-  "s25_111",
-  "s25_222",
-  "s25_333",
-  "s25_444",
-  "s25_555"
+  "s25_011",
+  "s25_022",
+  "s25_033",
+  "s25_044",
+  "s25_055"
 };
 
 static uint32_t lastStatusMs = 0;
@@ -170,7 +170,7 @@ static void sendStatus() {
     dtostrf(flowLpm, 4, 3, flowStr);
     dtostrf(flowTempMv, 4, 1, flowTempStr);
 
-    Serial.print(F("bbb_RHS_000#"));
+    Serial.print(F("bbb_LHS_000#"));
     Serial.print(CELL_IDS[i]);
     Serial.print('#');
     Serial.print(i + 1);

@@ -97,11 +97,7 @@ void ExperimentRunner::run()
     float startTemp = m_experiment.profile().tempArcsInSeq().at(0).startTemp();
     qDebug() << "ExperimentRunner    runinit...";
 
-    auto currentTemp = [&]() {
-        return m_cell.isExtTempPlugged() ? m_cell.currentTempExt() : m_cell.currentTempInner();
-    };
-
-    while(std::abs(startTemp - currentTemp()) > EPSILON_TEMP){
+    while(abs(startTemp - m_cell.currentTempExt()) > EPSILON_TEMP){
         cells = RedisDBManager::getInstance()->getCellList(cellIds);
         if (cells.empty()) {
             return;
@@ -128,12 +124,12 @@ void ExperimentRunner::run()
     }
 
     m_startingTimestampMsec = Cell::getCurrentTimeMillis();
-    if (m_experiment.startSystemTimeMSecs() == 0) {
+   /* if (m_experiment.startSystemTimeMSecs() == 0) {
         m_experiment.setStartSystemTimeMSecs(m_startingTimestampMsec);
         m_cell.setAsignedExperiment(m_experiment);
         RedisDBManager::getInstance()->pushCellList({m_cell});
     }
-
+*/
     cells = RedisDBManager::getInstance()->getCellList(cellIds);
     if (cells.empty()) {
         return;
