@@ -41,6 +41,7 @@ public:
     void setBusboardID(const std::string &newBusboardID);
 
     unsigned long totalProfileDurationMSecs() const;
+    void setTotalProfileDurationMSecs(unsigned long newTotalProfileDurationMSecs);
 
     static Experiment fromJSon(std::string jsonString);
     std::string toJSon(Experiment exp);
