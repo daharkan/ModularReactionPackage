@@ -27,9 +27,47 @@ unsigned long long totalExperimentDurationMs(Experiment& experiment)
     return totalDurationMs;
 }
 
-bool hasExperimentAssigned(const Experiment& experiment)
+bool hasExperimentAssigned(Experiment& experiment)
 {
     return !(experiment.experimentId().empty() && experiment.name().empty());
+}
+
+bool updateExperimentStartIfReady(Experiment &experiment, const Cell &cell, unsigned long long nowMs)
+{
+    if (experiment.startSystemTimeMSecs() > 0) {
+        return true;
+    }
+
+    const auto &tempArcs = experiment.profile().tempArcsInSeq();
+    if (tempArcs.empty()) {
+        return false;
+    }
+
+    float startTemp = tempArcs.front().startTemp();
+    float currentTemp = cell.isExtTempPlugged() ? cell.currentTempExt() : cell.currentTempInner();
+    if (std::abs(currentTemp - startTemp) <= TEMP_EPSILON) {
+        experiment.setStartSystemTimeMSecs(nowMs);
+        return true;
+    }
+    return false;
+}
+
+double preheatTargetTemp(Experiment &experiment)
+{
+    const auto &tempArcs = experiment.profile().tempArcsInSeq();
+    if (tempArcs.empty()) {
+        return 0.0;
+    }
+    return tempArcs.front().startTemp();
+}
+
+void calculateExperimentTargets(Experiment &experiment,
+                                unsigned long long elapsedMs,
+                                double *targetTemp,
+                                int *targetRpm)
+{
+    *targetTemp = experiment.profile().calculateTemp(elapsedMs);
+    *targetRpm = experiment.profile().calculateRPM(elapsedMs);
 }
 } // namespace
 
@@ -165,12 +203,78 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
 
 
     for(int i = 0; i < activeCellIDs.size(); i++){
-        if(cellTargetsMap.size() < 1){
-            continue;
-        }
         std::string cellID = activeCellIDs.at(i);
 
         if(cellID.empty()){
+            continue;
+        }
+
+        Cell &dbCell = dbCellMap[cellID];
+        if (dbCell.cellID().empty()) {
+            dbCell.setCellID(cellID);
+        }
+
+        Experiment experiment = dbCell.asignedExperiment();
+        bool hasExperiment = hasExperimentAssigned(experiment);
+        if (hasExperiment) {
+            bool forceUpdate = false;
+            const std::string &experimentId = experiment.experimentId();
+            auto lastExpIt = m_lastExperimentId.find(cellID);
+            if (lastExpIt == m_lastExperimentId.end() || lastExpIt->second != experimentId) {
+                m_lastExperimentId[cellID] = experimentId;
+                m_lastVisualTimestamp.erase(cellID);
+                RedisDBManager::getInstance()->pushCellVisuals(cellID, CellVisualsHistory());
+                forceUpdate = true;
+            }
+
+            const auto &tempArcs = experiment.profile().tempArcsInSeq();
+            if (tempArcs.empty()) {
+                continue;
+            }
+
+            unsigned long long nowMs = Cell::getCurrentTimeMillis();
+            bool startReady = updateExperimentStartIfReady(experiment, dbCell, nowMs);
+            double targetTemp = preheatTargetTemp(experiment);
+            int targetRpm = 0;
+            unsigned long long totalDurationMs = totalExperimentDurationMs(experiment);
+            unsigned long long startMs = experiment.startSystemTimeMSecs();
+            unsigned long long elapsedMs = startMs > 0 && nowMs > startMs ? nowMs - startMs : 0;
+
+            if (startReady && startMs > 0) {
+                unsigned long long effectiveElapsed = elapsedMs;
+                if (totalDurationMs > 0 && effectiveElapsed > totalDurationMs) {
+                    effectiveElapsed = totalDurationMs;
+                }
+                calculateExperimentTargets(experiment, effectiveElapsed, &targetTemp, &targetRpm);
+            }
+
+            dbCell.setAsignedExperiment(experiment);
+            dbCell.setAssignedRPM(targetRpm);
+            dbCell.setAssignedTemp(targetTemp);
+
+            unsigned int motorSelect = 0;
+            bool motorSelectChanged = false;
+            auto motorSelectIt = m_lastMotorSelect.find(cellID);
+            if (motorSelectIt == m_lastMotorSelect.end() || motorSelectIt->second != motorSelect) {
+                motorSelectChanged = true;
+            }
+
+            if(forceUpdate
+                || targetRpm != boardCellMap[cellID].assignedRPM()
+                || abs(targetTemp - boardCellMap[cellID].assignedTemp()) > TEMP_EPSILON
+                || motorSelectChanged){
+                std::string updateString = boardCellMap[cellID].generateUpdateDataStringToBoard(targetTemp, targetRpm, motorSelect);
+                QCoreApplication::processEvents();
+
+                QString str = QString::fromStdString(updateString);
+                busboard->sendUpdateString(str);
+                m_lastMotorSelect[cellID] = motorSelect;
+            }
+            QCoreApplication::processEvents();
+            continue;
+        }
+
+        if(cellTargetsMap.size() < 1){
             continue;
         }
 
@@ -178,10 +282,6 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
 
         if (it != cellTargetsMap.end()) {
             CellTarget celltarget = cellTargetsMap[cellID];
-            Cell &dbCell = dbCellMap[cellID];
-            if (dbCell.cellID().empty()) {
-                dbCell.setCellID(cellID);
-            }
             dbCell.setAssignedRPM(celltarget.targetRPM());
             dbCell.setAssignedTemp(celltarget.targetTemp());
 
@@ -224,44 +324,16 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
         Experiment experiment = cell.asignedExperiment();
         if (!hasExperimentAssigned(experiment)) {
             m_lastExperimentId.erase(cellID);
-            m_experimentRunning.erase(cellID);
             m_lastVisualTimestamp.erase(cellID);
-            continue;
-        }
-
-        const std::string& experimentId = experiment.experimentId();
-        auto lastExpIt = m_lastExperimentId.find(cellID);
-        if (lastExpIt == m_lastExperimentId.end() || lastExpIt->second != experimentId) {
-            m_lastExperimentId[cellID] = experimentId;
-            m_experimentRunning[cellID] = false;
-            m_lastVisualTimestamp.erase(cellID);
-            RedisDBManager::getInstance()->pushCellVisuals(cellID, CellVisualsHistory());
-        }
-
-        unsigned long long totalDurationMs = totalExperimentDurationMs(experiment);
-        unsigned long long startMs = experiment.startSystemTimeMSecs();
-        if (startMs == 0 || totalDurationMs == 0) {
             continue;
         }
 
         unsigned long long nowMs = Cell::getCurrentTimeMillis();
-        unsigned long long elapsedMs = nowMs > startMs ? nowMs - startMs : 0;
-        if (elapsedMs >= totalDurationMs) {
-            continue;
-        }
-
-        auto &runningStarted = m_experimentRunning[cellID];
-        if (!runningStarted) {
-            const auto &tempArcs = experiment.profile().tempArcsInSeq();
-            if (tempArcs.empty()) {
-                continue;
-            }
-
-            float startTemp = tempArcs.front().startTemp();
-            float currentTemp = cell.isExtTempPlugged() ? cell.currentTempExt() : cell.currentTempInner();
-            if (std::abs(currentTemp - startTemp) <= TEMP_EPSILON) {
-                runningStarted = true;
-            } else {
+        unsigned long long totalDurationMs = totalExperimentDurationMs(experiment);
+        unsigned long long startMs = experiment.startSystemTimeMSecs();
+        if (startMs > 0 && totalDurationMs > 0) {
+            unsigned long long elapsedMs = nowMs > startMs ? nowMs - startMs : 0;
+            if (elapsedMs >= totalDurationMs) {
                 continue;
             }
         }

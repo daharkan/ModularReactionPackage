@@ -28,6 +28,7 @@ TempCellViewWidget::~TempCellViewWidget()
 void TempCellViewWidget::setCellInfo(const std::string &cellId, int positionIndex)
 {
     m_cellId = cellId;
+    m_positionIndex = positionIndex;
     CellWidget *cellWidget = ensureCellWidget(cellId);
     if (cellWidget == nullptr) {
         return;
@@ -94,7 +95,6 @@ CellWidget *TempCellViewWidget::ensureCellWidget(const std::string &cellId)
     }
 
     auto *cellWidget = new CellWidget(this);
-    cellWidget->setCellId(cellId);
     m_stackLayout->addWidget(cellWidget);
     m_cellWidgets.insert(key, cellWidget);
     return cellWidget;

@@ -1,9 +1,7 @@
 #include "uiCellWidget.h"
 #include "ui_uiCellWidget.h"
 #include "RedisDBManager.h"
-#include "ExperimentRunnerPool.h"
 #include <QDateTime>
-#include <QtConcurrent>
 
 namespace {
 constexpr unsigned long long kPreheatWindowMs = 2ULL * 60ULL * 1000ULL;
@@ -105,73 +103,16 @@ void CellWidget::setExperimentAndInit(Experiment experiment)
         m_cellGraph->updateTheExperiment(m_assignedExperiment);
     }
 
-    if (m_expRunner == nullptr) {
-        return;
-    }
-    m_expRunner->assignExperiment(m_assignedExperiment);
-    QtConcurrent::run([this]() {
-        m_expRunner->run();  // Sınıf üyesi fonksiyonunu çağırıyoruz
-    });
 }
 
 void CellWidget::setPositionIndex(int positionIndex)
 {
     m_positionIndex = positionIndex;
-    ExperimentRunner *runner = ExperimentRunnerPool::instance().runnerForPosition(positionIndex);
-    if (runner == m_expRunner) {
-        return;
-    }
-    if (m_expRunner != nullptr) {
-        disconnect(m_expRunner, &ExperimentRunner::sgn_updateExperimentState, this, &CellWidget::updateExpState);
-    }
-    m_expRunner = runner;
-    if (m_expRunner != nullptr) {
-        connect(m_expRunner, &ExperimentRunner::sgn_updateExperimentState, this, &CellWidget::updateExpState);
-    }
-}
-
-void CellWidget::setCellId(const std::string &cellId)
-{
-    if (m_expRunner == nullptr) {
-        return;
-    }
-    m_expRunner->setCellId(cellId);
-}
-
-
-
-void CellWidget::updateExpState(ExperimentRunState state)
-{
-    qDebug() << ">>>> updateExpState: ";
-
-    QString expState = "";
-    if(state == STATE_INITILIZED){
-        expState = "INITILIZED";
-    }else if(state == STATE_PREHEAT){
-        expState = "PREHEAT";
-    }else if(state == STATE_RUNNING){
-        if(!m_firstStartedRunning){
-            m_firstStartedRunning = true;
-            if (m_cellGraph != nullptr) {
-                m_cellGraph->initilizeExperimentGraph();
-            }
-        }
-        expState = "RUNNING";
-    }else if(state == STATE_COMPLETED){
-        expState = "COMPLETED";
-    }
-    qDebug() << ">>>> updateExpState expState: " << expState;
-
-    ui->expStateLabel->setText(expState);
-
 }
 
 void CellWidget::updateCell(Cell &cell)
 {
     m_cell = cell;
-    if (m_expRunner != nullptr) {
-        m_expRunner->setCellId(cell.cellID());
-    }
 
     float currentTempExt = cell.currentTempExt();
     float currentTempInner = cell.currentTempInner();
