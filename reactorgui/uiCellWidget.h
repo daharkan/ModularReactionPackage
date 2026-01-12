@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include <string>
-#include "ExperimentRunner.h"
 #include "uiCellGraph.h"
 
 namespace Ui {
@@ -20,7 +19,6 @@ public:
 
     void setPositionIndex(int positionIndex);
     void setExperimentAndInit(Experiment experiment);
-    void setCellId(const std::string &cellId);
     void pushTempAndRPMToCellGraph(float temp, int rpm);
 
 
@@ -36,14 +34,12 @@ public:
 
 public slots:
     void updateCell(Cell &cell);
-    void updateExpState(ExperimentRunState state);
 
 private:
     Ui::CellWidget *ui;
     Experiment m_assignedExperiment;
     CellGraph *m_cellGraph = nullptr;
     Cell m_cell;
-    ExperimentRunner *m_expRunner = nullptr;
     int m_positionIndex = 0;
 
     bool m_firstStartedRunning = false;
