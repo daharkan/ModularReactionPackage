@@ -224,7 +224,7 @@ void BusboardSerialManager::serialRecieved()
                     QString incoming(data);
                     QString dataString = incoming.remove("\r").remove(" ").remove("\u0000");
 
-                    qDebug() << "dataString:" << dataString;
+                    //qDebug() << "dataString:" << dataString;
                     QCoreApplication::processEvents();
 
                     if(dataString.startsWith("presence#")){
@@ -255,7 +255,7 @@ void BusboardSerialManager::serialRecieved()
                     Cell cell;
                     cell.updateStatusFromBoard(dataString.toStdString());
                     cell.setIsPlugged(true);
-                    qDebug() << "cell id: " << cell.cellID();
+                    //qDebug() << "cell id: " << cell.cellID();
                     QCoreApplication::processEvents();
 
                     emit sgn_updateCell(cell);
@@ -294,7 +294,7 @@ void BusboardSerialManager::writeString(QString str, QSerialPort *port)
     str.append("\n");
     QByteArray ba = str.toUtf8();
     port->write(ba);
-    qDebug() << "outgoing: " << str;
+   // qDebug() << "outgoing: " << str;
 
 
     port->flush();

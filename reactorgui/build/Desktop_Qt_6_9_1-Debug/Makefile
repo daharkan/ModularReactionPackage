@@ -2502,6 +2502,7 @@ moc_uiCellGraph.cpp: ../../uiCellGraph.h \
 		../../../experimentmanagerservice/src/common/RPMArc.h \
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
 	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiCellGraph.h -o moc_uiCellGraph.cpp
@@ -2993,6 +2994,7 @@ moc_uiCellWidget.cpp: ../../uiCellWidget.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
 	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiCellWidget.h -o moc_uiCellWidget.cpp
@@ -5175,6 +5177,7 @@ moc_uiTempCellViewWidget.cpp: ../../uiTempCellViewWidget.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
 	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiTempCellViewWidget.h -o moc_uiTempCellViewWidget.cpp
@@ -5477,6 +5480,7 @@ moc_uiTSMainWindow.cpp: ../../uiTSMainWindow.h \
 		../../uiCellWidget.h \
 		../../ExperimentRunner.h \
 		../../uiCellGraph.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
 	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/reactorgui -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/src/common -I/home/dev/perdev/Externals/qwt-6.2.0/src -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets -I/home/dev/Qt/6.9.1/gcc_64/include/QtGui -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../uiTSMainWindow.h -o moc_uiTSMainWindow.cpp
@@ -6650,6 +6654,7 @@ uiCellGraph.o: ../../uiCellGraph.cpp ../../uiCellGraph.h \
 		../../../experimentmanagerservice/src/common/RPMArc.h \
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		ui_uiCellGraph.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiCellGraph.o ../../uiCellGraph.cpp
 
@@ -6951,6 +6956,7 @@ main.o: ../../main.cpp ../../uiTSMainWindow.h \
 		../../uiCellWidget.h \
 		../../ExperimentRunner.h \
 		../../uiCellGraph.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../../main.cpp
@@ -7445,7 +7451,11 @@ uiCellWidget.o: ../../uiCellWidget.cpp ../../uiCellWidget.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		ui_uiCellWidget.h \
+		../../../experimentmanagerservice/src/common/RedisDBManager.h \
+		../../../experimentmanagerservice/src/common/CellTarget.h \
+		../../../experimentmanagerservice/src/common/FlowStatus.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDateTime \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatetime.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcalendar.h \
@@ -10021,6 +10031,7 @@ uiTempCellViewWidget.o: ../../uiTempCellViewWidget.cpp ../../uiTempCellViewWidge
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_abstract_legend.h \
 		/home/dev/perdev/Externals/qwt-6.2.0/src/qwt_legend_data.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QVBoxLayout \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
@@ -10028,7 +10039,6 @@ uiTempCellViewWidget.o: ../../uiTempCellViewWidget.cpp ../../uiTempCellViewWidge
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h \
 		../../../experimentmanagerservice/src/common/RedisDBManager.h \
 		../../../experimentmanagerservice/src/common/CellTarget.h \
-		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		../../../experimentmanagerservice/src/common/FlowStatus.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiTempCellViewWidget.o ../../uiTempCellViewWidget.cpp
 
@@ -10330,6 +10340,7 @@ uiTSMainWindow.o: ../../uiTSMainWindow.cpp ../../uiTSMainWindow.h \
 		../../uiCellWidget.h \
 		../../ExperimentRunner.h \
 		../../uiCellGraph.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		ui_uiTSMainWindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiTSMainWindow.o ../../uiTSMainWindow.cpp
 

@@ -9,7 +9,6 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    ExperimentRunner.cpp \
     main.cpp \
     ../experimentmanagerservice/src/common/Arc.cpp \
     ../experimentmanagerservice/src/common/Cell.cpp \
@@ -39,7 +38,6 @@ HEADERS += \
     ../experimentmanagerservice/src/common/RedisDBManager.h \
     ../experimentmanagerservice/src/common/User.h \
     ../experimentmanagerservice/src/common/TempArc.h \
-    ExperimentRunner.h \
     uiCellGraph.h \
     ../reactorgui/uiCellWidget.h \
     uiMainWindow.h

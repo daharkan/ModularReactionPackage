@@ -215,7 +215,7 @@ void setup() {
   flowLpm = 1.2f;
   flowTempMv = 250.0f;
 
-  Serial.println(F("bb_000#HELLO"));
+  Serial.println(F("bbb_LHS_000#HELLO"));
   sendPresenceStatus();
   lastStatusMs = millis();
   lastGoMs = millis();
