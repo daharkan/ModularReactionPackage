@@ -52,7 +52,7 @@ bool updateExperimentStartIfReady(Experiment &experiment, const Cell &cell, unsi
     return false;
 }
 
-double preheatTargetTemp(Experiment &experiment)
+double preheatTargetTemp(const Experiment &experiment)
 {
     const auto &tempArcs = experiment.profile().tempArcsInSeq();
     if (tempArcs.empty()) {
@@ -61,7 +61,7 @@ double preheatTargetTemp(Experiment &experiment)
     return tempArcs.front().startTemp();
 }
 
-void calculateExperimentTargets(Experiment &experiment,
+void calculateExperimentTargets(const Experiment &experiment,
                                 unsigned long long elapsedMs,
                                 double *targetTemp,
                                 int *targetRpm)
