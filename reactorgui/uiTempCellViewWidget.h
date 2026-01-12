@@ -2,8 +2,8 @@
 #define UITEMPCELLVIEWWIDGET_H
 
 #include <QWidget>
+#include <QHash>
 #include <QStackedLayout>
-#include <QVector>
 #include <QTimer>
 #include <string>
 
@@ -26,13 +26,13 @@ private slots:
 
 private:
     QStackedLayout *m_stackLayout = nullptr;
-    QVector<CellWidget*> m_cellWidgets;
+    QHash<QString, CellWidget*> m_cellWidgets;
     QTimer *m_updateTimer = nullptr;
     std::string m_cellId;
     int m_positionIndex = 0;
 
     void ensureRedisConnection();
-    CellWidget *cellWidgetForPosition(int positionIndex) const;
+    CellWidget *ensureCellWidget(const std::string &cellId);
 };
 
 #endif // UITEMPCELLVIEWWIDGET_H

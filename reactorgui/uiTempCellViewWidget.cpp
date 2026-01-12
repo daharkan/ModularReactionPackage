@@ -14,14 +14,6 @@ TempCellViewWidget::TempCellViewWidget(QWidget *parent)
     m_stackLayout->setContentsMargins(0, 0, 0, 0);
     layout->addLayout(m_stackLayout);
 
-    m_cellWidgets.reserve(10);
-    for (int positionIndex = 1; positionIndex <= 10; ++positionIndex) {
-        auto *cellWidget = new CellWidget(this);
-        cellWidget->setPositionIndex(positionIndex);
-        m_stackLayout->addWidget(cellWidget);
-        m_cellWidgets.push_back(cellWidget);
-    }
-
     m_updateTimer = new QTimer(this);
     connect(m_updateTimer, &QTimer::timeout, this, &TempCellViewWidget::refreshCellData);
     m_updateTimer->start(500);
@@ -36,12 +28,10 @@ TempCellViewWidget::~TempCellViewWidget()
 void TempCellViewWidget::setCellInfo(const std::string &cellId, int positionIndex)
 {
     m_cellId = cellId;
-    m_positionIndex = positionIndex;
-    CellWidget *cellWidget = cellWidgetForPosition(positionIndex);
+    CellWidget *cellWidget = ensureCellWidget(cellId);
     if (cellWidget == nullptr) {
         return;
     }
-    cellWidget->setCellId(cellId);
     m_stackLayout->setCurrentWidget(cellWidget);
     refreshCellData();
 }
@@ -62,7 +52,7 @@ void TempCellViewWidget::refreshCellData()
         return;
     }
 
-    CellWidget *cellWidget = cellWidgetForPosition(m_positionIndex);
+    CellWidget *cellWidget = ensureCellWidget(m_cellId);
     if (cellWidget == nullptr) {
         return;
     }
@@ -90,10 +80,21 @@ void TempCellViewWidget::ensureRedisConnection()
     }
 }
 
-CellWidget *TempCellViewWidget::cellWidgetForPosition(int positionIndex) const
+CellWidget *TempCellViewWidget::ensureCellWidget(const std::string &cellId)
 {
-    if (positionIndex < 1 || positionIndex > m_cellWidgets.size()) {
+    if (cellId.empty()) {
         return nullptr;
     }
-    return m_cellWidgets.at(positionIndex - 1);
+
+    const QString key = QString::fromStdString(cellId);
+    auto it = m_cellWidgets.find(key);
+    if (it != m_cellWidgets.end()) {
+        return it.value();
+    }
+
+    auto *cellWidget = new CellWidget(this);
+    cellWidget->setCellId(cellId);
+    m_stackLayout->addWidget(cellWidget);
+    m_cellWidgets.insert(key, cellWidget);
+    return cellWidget;
 }
