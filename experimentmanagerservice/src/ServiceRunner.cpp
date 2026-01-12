@@ -27,7 +27,7 @@ unsigned long long totalExperimentDurationMs(Experiment& experiment)
     return totalDurationMs;
 }
 
-bool hasExperimentAssigned(const Experiment& experiment)
+bool hasExperimentAssigned(Experiment& experiment)
 {
     return !(experiment.experimentId().empty() && experiment.name().empty());
 }
@@ -313,7 +313,6 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
         Experiment experiment = cell.asignedExperiment();
         if (!hasExperimentAssigned(experiment)) {
             m_lastExperimentId.erase(cellID);
-            m_experimentRunning.erase(cellID);
             m_lastVisualTimestamp.erase(cellID);
             continue;
         }
@@ -322,35 +321,16 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
         auto lastExpIt = m_lastExperimentId.find(cellID);
         if (lastExpIt == m_lastExperimentId.end() || lastExpIt->second != experimentId) {
             m_lastExperimentId[cellID] = experimentId;
-            m_experimentRunning[cellID] = false;
             m_lastVisualTimestamp.erase(cellID);
             RedisDBManager::getInstance()->pushCellVisuals(cellID, CellVisualsHistory());
         }
 
+        unsigned long long nowMs = Cell::getCurrentTimeMillis();
         unsigned long long totalDurationMs = totalExperimentDurationMs(experiment);
         unsigned long long startMs = experiment.startSystemTimeMSecs();
-        if (startMs == 0 || totalDurationMs == 0) {
-            continue;
-        }
-
-        unsigned long long nowMs = Cell::getCurrentTimeMillis();
-        unsigned long long elapsedMs = nowMs > startMs ? nowMs - startMs : 0;
-        if (elapsedMs >= totalDurationMs) {
-            continue;
-        }
-
-        auto &runningStarted = m_experimentRunning[cellID];
-        if (!runningStarted) {
-            const auto &tempArcs = experiment.profile().tempArcsInSeq();
-            if (tempArcs.empty()) {
-                continue;
-            }
-
-            float startTemp = tempArcs.front().startTemp();
-            float currentTemp = cell.isExtTempPlugged() ? cell.currentTempExt() : cell.currentTempInner();
-            if (std::abs(currentTemp - startTemp) <= TEMP_EPSILON) {
-                runningStarted = true;
-            } else {
+        if (startMs > 0 && totalDurationMs > 0) {
+            unsigned long long elapsedMs = nowMs > startMs ? nowMs - startMs : 0;
+            if (elapsedMs >= totalDurationMs) {
                 continue;
             }
         }
