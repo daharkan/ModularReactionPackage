@@ -338,6 +338,7 @@ bool Cell::updateBoardRelatedAttributes(Cell other)
     }
     m_positionIdx = other.m_positionIdx;
     m_isExtTempPlugged = other.m_isExtTempPlugged;
+    m_isPlugged = other.m_isPlugged;
     m_assignedRPM = other.m_assignedRPM;
     m_assignedTemp = other.m_assignedTemp;
     m_currentRPM = other.m_currentRPM;

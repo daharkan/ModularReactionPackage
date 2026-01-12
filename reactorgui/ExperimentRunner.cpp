@@ -79,6 +79,8 @@ void ExperimentRunner::setCellId(const std::string &cellId)
 
 void ExperimentRunner::run()
 {
+    qDebug() << "ExperimentRunner    run...";
+
     if (m_cellId.empty()) {
         return;
     }
@@ -89,6 +91,8 @@ void ExperimentRunner::run()
 
     std::vector<std::string> cellIds = {m_cellId};
     std::vector<Cell> cells = RedisDBManager::getInstance()->getCellList(cellIds);
+    qDebug() << "ExperimentRunner    cells size: " << cells.size();
+
     if (cells.empty()) {
         return;
     }
@@ -124,12 +128,12 @@ void ExperimentRunner::run()
     }
 
     m_startingTimestampMsec = Cell::getCurrentTimeMillis();
-   /* if (m_experiment.startSystemTimeMSecs() == 0) {
+    if (m_experiment.startSystemTimeMSecs() == 0) {
         m_experiment.setStartSystemTimeMSecs(m_startingTimestampMsec);
         m_cell.setAsignedExperiment(m_experiment);
         RedisDBManager::getInstance()->pushCellList({m_cell});
     }
-*/
+
     cells = RedisDBManager::getInstance()->getCellList(cellIds);
     if (cells.empty()) {
         return;
