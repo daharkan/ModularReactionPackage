@@ -22,7 +22,7 @@ public:
     std::string cellId() const;
 
 signals:
-    void sgn_cellClicked(const std::string &cellId);
+    void sgn_cellClicked(const std::string &cellId, int positionIndex);
 
 protected:
     void mouseDoubleClickEvent(QMouseEvent *event) override;

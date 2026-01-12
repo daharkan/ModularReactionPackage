@@ -34,6 +34,12 @@ void ExperimentRunner::delay(int msec)
 void ExperimentRunner::assignExperiment(Experiment exp)
 {
     m_experiment = exp;
+    m_state = STATE_UNDEFINED;
+    m_startingTimestampMsec = 0;
+    m_tempTimeData.clear();
+    m_rpmTimeData.clear();
+    m_temperatureData.clear();
+    m_rpmData.clear();
 
 
     Profile profile = m_experiment.profile();
@@ -170,6 +176,18 @@ void ExperimentRunner::run()
     m_state = STATE_COMPLETED;
     emit sgn_updateExperimentState(m_state);
 
+}
+
+void ExperimentRunner::reset()
+{
+    m_experiment = Experiment();
+    m_state = STATE_UNDEFINED;
+    m_cell = Cell();
+    m_startingTimestampMsec = 0;
+    m_tempTimeData.clear();
+    m_rpmTimeData.clear();
+    m_temperatureData.clear();
+    m_rpmData.clear();
 }
 
 ExperimentRunState ExperimentRunner::state() const

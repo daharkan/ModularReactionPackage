@@ -104,12 +104,12 @@ void TSMainWindow::showOptionsWidget()
     ui->mainStackedWidget->setCurrentIndex(WIDGET_IDX_OPTIONS);
 }
 
-void TSMainWindow::showCellViewWidget(const std::string &cellId)
+void TSMainWindow::showCellViewWidget(const std::string &cellId, int positionIndex)
 {
     clearOlderHistory();
     m_currentPageType = PAGE_TYPE_CELLVIEW;
     m_pageTypeHistory.push_back(m_currentPageType);
-    m_tempCellViewWidget->setCellId(cellId);
+    m_tempCellViewWidget->setCellInfo(cellId, positionIndex);
     ui->mainStackedWidget->setCurrentIndex(WIDGET_IDX_CELLVIEW);
 }
 

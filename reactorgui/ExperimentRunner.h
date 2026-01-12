@@ -24,6 +24,7 @@ public:
     void assignExperiment(Experiment exp);
     void setCellId(const std::string &cellId);
     void run();
+    void reset();
 
     ExperimentRunState state() const;
 

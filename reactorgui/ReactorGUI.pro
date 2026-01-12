@@ -22,6 +22,7 @@ SOURCES += \
     ../experimentmanagerservice/src/common/TempArc.cpp \
     ../experimentmanagerservice/src/common/User.cpp \
     ExperimentRunner.cpp \
+    ExperimentRunnerPool.cpp \
     uiCellGraph.cpp \
     main.cpp \
     uiCellOverviewWidget.cpp \
@@ -51,6 +52,7 @@ HEADERS += \
     ../experimentmanagerservice/src/common/TempArc.h \
     ../experimentmanagerservice/src/common/User.h \
     ExperimentRunner.h \
+    ExperimentRunnerPool.h \
     uiCellGraph.h \
     ../experimentmanagerservice/src/common/rapidjson/allocators.h \
     ../experimentmanagerservice/src/common/rapidjson/cursorstreamwrapper.h \
