@@ -52,7 +52,7 @@ bool updateExperimentStartIfReady(Experiment &experiment, const Cell &cell, unsi
     return false;
 }
 
-double preheatTargetTemp(Experiment &experiment)
+double preheatTargetTemp(const Experiment &experiment)
 {
     const auto &tempArcs = experiment.profile().tempArcsInSeq();
     if (tempArcs.empty()) {
@@ -61,7 +61,7 @@ double preheatTargetTemp(Experiment &experiment)
     return tempArcs.front().startTemp();
 }
 
-void calculateExperimentTargets(Experiment &experiment,
+void calculateExperimentTargets(const Experiment &experiment,
                                 unsigned long long elapsedMs,
                                 double *targetTemp,
                                 int *targetRpm)
@@ -217,16 +217,6 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
         Experiment experiment = dbCell.asignedExperiment();
         bool hasExperiment = hasExperimentAssigned(experiment);
         if (hasExperiment) {
-            bool forceUpdate = false;
-            const std::string &experimentId = experiment.experimentId();
-            auto lastExpIt = m_lastExperimentId.find(cellID);
-            if (lastExpIt == m_lastExperimentId.end() || lastExpIt->second != experimentId) {
-                m_lastExperimentId[cellID] = experimentId;
-                m_lastVisualTimestamp.erase(cellID);
-                RedisDBManager::getInstance()->pushCellVisuals(cellID, CellVisualsHistory());
-                forceUpdate = true;
-            }
-
             const auto &tempArcs = experiment.profile().tempArcsInSeq();
             if (tempArcs.empty()) {
                 continue;
@@ -259,8 +249,7 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
                 motorSelectChanged = true;
             }
 
-            if(forceUpdate
-                || targetRpm != boardCellMap[cellID].assignedRPM()
+            if(targetRpm != boardCellMap[cellID].assignedRPM()
                 || abs(targetTemp - boardCellMap[cellID].assignedTemp()) > TEMP_EPSILON
                 || motorSelectChanged){
                 std::string updateString = boardCellMap[cellID].generateUpdateDataStringToBoard(targetTemp, targetRpm, motorSelect);
@@ -326,6 +315,14 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
             m_lastExperimentId.erase(cellID);
             m_lastVisualTimestamp.erase(cellID);
             continue;
+        }
+
+        const std::string& experimentId = experiment.experimentId();
+        auto lastExpIt = m_lastExperimentId.find(cellID);
+        if (lastExpIt == m_lastExperimentId.end() || lastExpIt->second != experimentId) {
+            m_lastExperimentId[cellID] = experimentId;
+            m_lastVisualTimestamp.erase(cellID);
+            RedisDBManager::getInstance()->pushCellVisuals(cellID, CellVisualsHistory());
         }
 
         unsigned long long nowMs = Cell::getCurrentTimeMillis();
