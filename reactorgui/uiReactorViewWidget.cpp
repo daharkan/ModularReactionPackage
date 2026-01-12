@@ -47,12 +47,12 @@ void ReactorViewWidget::updateFlowStatus()
     ui->flowTempValueLabel->setText(QString::number(flowStatus.flowTemp(), 'f', 1));
 }
 
-void ReactorViewWidget::handleCellClicked(const std::string &cellId)
+void ReactorViewWidget::handleCellClicked(const std::string &cellId, int positionIndex)
 {
     if (cellId.empty()) {
         return;
     }
-    emit sgn_openCellView(cellId);
+    emit sgn_openCellView(cellId, positionIndex);
 }
 
 void ReactorViewWidget::setupCellOverviewWidgets()

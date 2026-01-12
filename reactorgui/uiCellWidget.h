@@ -18,6 +18,7 @@ public:
     explicit CellWidget(QWidget *parent = nullptr);
     ~CellWidget();
 
+    void setPositionIndex(int positionIndex);
     void setExperimentAndInit(Experiment experiment);
     void setCellId(const std::string &cellId);
     void pushTempAndRPMToCellGraph(float temp, int rpm);
@@ -42,7 +43,8 @@ private:
     Experiment m_assignedExperiment;
     CellGraph *m_cellGraph = nullptr;
     Cell m_cell;
-    ExperimentRunner *m_expRunner;
+    ExperimentRunner *m_expRunner = nullptr;
+    int m_positionIndex = 0;
 
     bool m_firstStartedRunning = false;
     std::string m_loadedHistoryExperimentId;

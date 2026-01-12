@@ -83,7 +83,7 @@ private slots:
     void showExpManagerWidget();
     void showUserManagementWidget();
     void showOptionsWidget();
-    void showCellViewWidget(const std::string &cellId);
+    void showCellViewWidget(const std::string &cellId, int positionIndex);
     void closeApp();
 
     void showPreviousPage();

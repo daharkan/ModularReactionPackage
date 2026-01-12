@@ -17,8 +17,9 @@ public:
     explicit TempCellViewWidget(QWidget *parent = nullptr);
     ~TempCellViewWidget();
 
-    void setCellId(const std::string &cellId);
+    void setCellInfo(const std::string &cellId, int positionIndex);
     std::string cellId() const;
+    int positionIndex() const;
 
 private slots:
     void refreshCellData();
@@ -28,6 +29,7 @@ private:
     QHash<QString, CellWidget*> m_cellWidgets;
     QTimer *m_updateTimer = nullptr;
     std::string m_cellId;
+    int m_positionIndex = 0;
 
     void ensureRedisConnection();
     CellWidget *ensureCellWidget(const std::string &cellId);

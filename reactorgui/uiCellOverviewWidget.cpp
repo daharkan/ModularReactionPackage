@@ -121,7 +121,7 @@ void CellOverviewWidget::mouseDoubleClickEvent(QMouseEvent *event)
     if (!m_isActive) {
         return;
     }
-    emit sgn_cellClicked(m_cellId);
+    emit sgn_cellClicked(m_cellId, m_slotIndex);
     QWidget::mouseDoubleClickEvent(event);
 }
 

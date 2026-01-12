@@ -25,7 +25,7 @@ TempCellViewWidget::~TempCellViewWidget()
 {
 }
 
-void TempCellViewWidget::setCellId(const std::string &cellId)
+void TempCellViewWidget::setCellInfo(const std::string &cellId, int positionIndex)
 {
     m_cellId = cellId;
     CellWidget *cellWidget = ensureCellWidget(cellId);
@@ -39,6 +39,11 @@ void TempCellViewWidget::setCellId(const std::string &cellId)
 std::string TempCellViewWidget::cellId() const
 {
     return m_cellId;
+}
+
+int TempCellViewWidget::positionIndex() const
+{
+    return m_positionIndex;
 }
 
 void TempCellViewWidget::refreshCellData()

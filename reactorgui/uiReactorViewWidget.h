@@ -21,11 +21,11 @@ public:
     ~ReactorViewWidget();
 
 signals:
-    void sgn_openCellView(const std::string &cellId);
+    void sgn_openCellView(const std::string &cellId, int positionIndex);
 
 private slots:
     void updateFlowStatus();
-    void handleCellClicked(const std::string &cellId);
+    void handleCellClicked(const std::string &cellId, int positionIndex);
 
 private:
     Ui::ReactorViewWidget *ui;

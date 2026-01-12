@@ -2,7 +2,7 @@
 #include "qmessagebox.h"
 #include "ui_uiExperimentCreateWidget.h"
 #include "RedisDBManager.h"
-#include "ExperimentRunner.h"
+#include "ExperimentRunnerPool.h"
 
 #include <QButtonGroup>
 #include <QDialog>
@@ -889,6 +889,7 @@ void ExperimentCreateWidget::assignExperimentToCells()
     auto addCellItem = [&](QListWidget *targetList, const Cell &cell, int displayIndex) {
         QListWidgetItem *item = new QListWidgetItem(targetList);
         item->setData(Qt::UserRole, QString::fromStdString(cell.cellID()));
+        item->setData(Qt::UserRole + 1, displayIndex);
 
         CellOverviewWidget *cellWidget = new CellOverviewWidget(targetList);
         cellWidget->setSlotInfo(tr("Cell"), displayIndex);
@@ -957,12 +958,20 @@ void ExperimentCreateWidget::assignExperimentToCells()
         cell.setAsignedExperiment(assignedExperiment);
         updatedCells.push_back(cell);
 
-        ExperimentRunner *runner = new ExperimentRunner(this);
-        runner->assignExperiment(assignedExperiment);
-        runner->setCellId(cell.cellID());
-        QtConcurrent::run([runner]() {
-            runner->run();
-        });
+        int positionIndex = item->data(Qt::UserRole + 1).toInt();
+        if (positionIndex <= 0) {
+            QString upperId = QString::fromStdString(cell.cellID()).toUpper();
+            positionIndex = upperId.contains("RHS") ? 5 + cell.positionIdx() : cell.positionIdx();
+        }
+
+        ExperimentRunner *runner = ExperimentRunnerPool::instance().runnerForPosition(positionIndex);
+        if (runner != nullptr) {
+            runner->assignExperiment(assignedExperiment);
+            runner->setCellId(cell.cellID());
+            QtConcurrent::run([runner]() {
+                runner->run();
+            });
+        }
     }
 
     if (!updatedCells.empty()) {
