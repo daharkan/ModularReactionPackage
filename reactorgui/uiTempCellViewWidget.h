@@ -21,6 +21,9 @@ public:
     std::string cellId() const;
     int positionIndex() const;
 
+signals:
+    void sgn_assignExperimentRequested(const std::string &cellId);
+
 private slots:
     void refreshCellData();
 

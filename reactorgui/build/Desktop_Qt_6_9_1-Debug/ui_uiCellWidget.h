@@ -10,11 +10,16 @@
 #define UI_UICELLWIDGET_H
 
 #include <QtCore/QVariant>
+#include <QtGui/QIcon>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -26,32 +31,35 @@ public:
     QSpacerItem *verticalSpacer;
     QFrame *line_2;
     QGridLayout *graphLayput;
-    QGridLayout *gridLayout;
-    QLabel *label_11;
-    QLabel *label_5;
-    QFrame *line;
-    QLabel *currentInnerTempLabel;
-    QLabel *currentExtTempLabel;
-    QLabel *motorAmpLabel;
-    QLabel *label_8;
-    QSpacerItem *horizontalSpacer;
-    QLabel *targetRPMLabel;
-    QLabel *label;
-    QLabel *targetTempLabel;
-    QLabel *label_7;
-    QLabel *label_3;
-    QLabel *label_2;
-    QLabel *currentRPMLabel;
-    QLabel *label_4;
+    QHBoxLayout *gridLayout;
+    QGroupBox *stateGroupBox;
+    QVBoxLayout *stateLayout;
     QLabel *expStateLabel;
+    QGroupBox *experimentInfoGroupBox;
+    QGridLayout *experimentInfoLayout;
     QLabel *experimentNameLabel;
     QLabel *experimentNameValueLabel;
-    QLabel *experimentProgressLabel;
-    QLabel *experimentProgressValueLabel;
     QLabel *assignedByLabel;
     QLabel *assignedByValueLabel;
     QLabel *assignedAtLabel;
     QLabel *assignedAtValueLabel;
+    QLabel *experimentProgressLabel;
+    QLabel *experimentProgressValueLabel;
+    QPushButton *assignExperimentButton;
+    QGroupBox *metricsGroupBox;
+    QGridLayout *metricsLayout;
+    QLabel *label_2;
+    QLabel *currentExtTempLabel;
+    QLabel *label_3;
+    QLabel *currentInnerTempLabel;
+    QLabel *label;
+    QLabel *targetTempLabel;
+    QLabel *label_5;
+    QLabel *currentRPMLabel;
+    QLabel *label_8;
+    QLabel *targetRPMLabel;
+    QLabel *label_11;
+    QLabel *motorAmpLabel;
 
     void setupUi(QWidget *CellWidget)
     {
@@ -77,175 +85,183 @@ public:
 
         gridLayout_2->addLayout(graphLayput, 2, 1, 1, 2);
 
-        gridLayout = new QGridLayout();
+        gridLayout = new QHBoxLayout();
+        gridLayout->setSpacing(12);
         gridLayout->setObjectName("gridLayout");
-        label_11 = new QLabel(CellWidget);
-        label_11->setObjectName("label_11");
+        stateGroupBox = new QGroupBox(CellWidget);
+        stateGroupBox->setObjectName("stateGroupBox");
+        stateLayout = new QVBoxLayout(stateGroupBox);
+        stateLayout->setObjectName("stateLayout");
+        expStateLabel = new QLabel(stateGroupBox);
+        expStateLabel->setObjectName("expStateLabel");
+        QFont font;
+        font.setPointSize(12);
+        font.setBold(true);
+        expStateLabel->setFont(font);
+        expStateLabel->setStyleSheet(QString::fromUtf8("color: #213268;"));
+        expStateLabel->setAlignment(Qt::AlignmentFlag::AlignCenter);
+
+        stateLayout->addWidget(expStateLabel);
+
+
+        gridLayout->addWidget(stateGroupBox);
+
+        experimentInfoGroupBox = new QGroupBox(CellWidget);
+        experimentInfoGroupBox->setObjectName("experimentInfoGroupBox");
+        experimentInfoLayout = new QGridLayout(experimentInfoGroupBox);
+        experimentInfoLayout->setObjectName("experimentInfoLayout");
+        experimentNameLabel = new QLabel(experimentInfoGroupBox);
+        experimentNameLabel->setObjectName("experimentNameLabel");
+
+        experimentInfoLayout->addWidget(experimentNameLabel, 0, 0, 1, 1);
+
+        experimentNameValueLabel = new QLabel(experimentInfoGroupBox);
+        experimentNameValueLabel->setObjectName("experimentNameValueLabel");
+        QFont font1;
+        font1.setBold(true);
+        experimentNameValueLabel->setFont(font1);
+
+        experimentInfoLayout->addWidget(experimentNameValueLabel, 0, 1, 1, 1);
+
+        assignedByLabel = new QLabel(experimentInfoGroupBox);
+        assignedByLabel->setObjectName("assignedByLabel");
+
+        experimentInfoLayout->addWidget(assignedByLabel, 1, 0, 1, 1);
+
+        assignedByValueLabel = new QLabel(experimentInfoGroupBox);
+        assignedByValueLabel->setObjectName("assignedByValueLabel");
+        assignedByValueLabel->setFont(font1);
+
+        experimentInfoLayout->addWidget(assignedByValueLabel, 1, 1, 1, 1);
+
+        assignedAtLabel = new QLabel(experimentInfoGroupBox);
+        assignedAtLabel->setObjectName("assignedAtLabel");
+
+        experimentInfoLayout->addWidget(assignedAtLabel, 2, 0, 1, 1);
+
+        assignedAtValueLabel = new QLabel(experimentInfoGroupBox);
+        assignedAtValueLabel->setObjectName("assignedAtValueLabel");
+
+        experimentInfoLayout->addWidget(assignedAtValueLabel, 2, 1, 1, 1);
+
+        experimentProgressLabel = new QLabel(experimentInfoGroupBox);
+        experimentProgressLabel->setObjectName("experimentProgressLabel");
+
+        experimentInfoLayout->addWidget(experimentProgressLabel, 3, 0, 1, 1);
+
+        experimentProgressValueLabel = new QLabel(experimentInfoGroupBox);
+        experimentProgressValueLabel->setObjectName("experimentProgressValueLabel");
+
+        experimentInfoLayout->addWidget(experimentProgressValueLabel, 3, 1, 1, 1);
+
+        assignExperimentButton = new QPushButton(experimentInfoGroupBox);
+        assignExperimentButton->setObjectName("assignExperimentButton");
+        assignExperimentButton->setMinimumSize(QSize(0, 40));
+        QIcon icon;
+        icon.addFile(QString::fromUtf8(":/resources/icons/plus.svg"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
+        assignExperimentButton->setIcon(icon);
+        assignExperimentButton->setIconSize(QSize(22, 22));
+
+        experimentInfoLayout->addWidget(assignExperimentButton, 4, 0, 1, 2);
+
+
+        gridLayout->addWidget(experimentInfoGroupBox);
+
+        metricsGroupBox = new QGroupBox(CellWidget);
+        metricsGroupBox->setObjectName("metricsGroupBox");
+        metricsLayout = new QGridLayout(metricsGroupBox);
+        metricsLayout->setObjectName("metricsLayout");
+        label_2 = new QLabel(metricsGroupBox);
+        label_2->setObjectName("label_2");
         QSizePolicy sizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Minimum);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(label_11->sizePolicy().hasHeightForWidth());
-        label_11->setSizePolicy(sizePolicy);
+        sizePolicy.setHeightForWidth(label_2->sizePolicy().hasHeightForWidth());
+        label_2->setSizePolicy(sizePolicy);
 
-        gridLayout->addWidget(label_11, 3, 5, 1, 1);
+        metricsLayout->addWidget(label_2, 0, 0, 1, 1);
 
-        label_5 = new QLabel(CellWidget);
-        label_5->setObjectName("label_5");
-        sizePolicy.setHeightForWidth(label_5->sizePolicy().hasHeightForWidth());
-        label_5->setSizePolicy(sizePolicy);
-
-        gridLayout->addWidget(label_5, 1, 5, 1, 1);
-
-        line = new QFrame(CellWidget);
-        line->setObjectName("line");
-        line->setFrameShape(QFrame::Shape::VLine);
-        line->setFrameShadow(QFrame::Shadow::Sunken);
-
-        gridLayout->addWidget(line, 1, 4, 4, 1);
-
-        currentInnerTempLabel = new QLabel(CellWidget);
-        currentInnerTempLabel->setObjectName("currentInnerTempLabel");
-
-        gridLayout->addWidget(currentInnerTempLabel, 2, 3, 1, 1);
-
-        currentExtTempLabel = new QLabel(CellWidget);
+        currentExtTempLabel = new QLabel(metricsGroupBox);
         currentExtTempLabel->setObjectName("currentExtTempLabel");
         sizePolicy.setHeightForWidth(currentExtTempLabel->sizePolicy().hasHeightForWidth());
         currentExtTempLabel->setSizePolicy(sizePolicy);
-        QFont font;
-        font.setBold(true);
-        currentExtTempLabel->setFont(font);
+        currentExtTempLabel->setFont(font1);
 
-        gridLayout->addWidget(currentExtTempLabel, 1, 3, 1, 1);
+        metricsLayout->addWidget(currentExtTempLabel, 0, 1, 1, 1);
 
-        motorAmpLabel = new QLabel(CellWidget);
-        motorAmpLabel->setObjectName("motorAmpLabel");
-        sizePolicy.setHeightForWidth(motorAmpLabel->sizePolicy().hasHeightForWidth());
-        motorAmpLabel->setSizePolicy(sizePolicy);
-        motorAmpLabel->setFont(font);
+        label_3 = new QLabel(metricsGroupBox);
+        label_3->setObjectName("label_3");
 
-        gridLayout->addWidget(motorAmpLabel, 3, 6, 1, 1);
+        metricsLayout->addWidget(label_3, 1, 0, 1, 1);
 
-        label_8 = new QLabel(CellWidget);
-        label_8->setObjectName("label_8");
-        sizePolicy.setHeightForWidth(label_8->sizePolicy().hasHeightForWidth());
-        label_8->setSizePolicy(sizePolicy);
+        currentInnerTempLabel = new QLabel(metricsGroupBox);
+        currentInnerTempLabel->setObjectName("currentInnerTempLabel");
+        currentInnerTempLabel->setFont(font1);
 
-        gridLayout->addWidget(label_8, 2, 5, 1, 1);
+        metricsLayout->addWidget(currentInnerTempLabel, 1, 1, 1, 1);
 
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
-
-        gridLayout->addItem(horizontalSpacer, 1, 1, 1, 1);
-
-        targetRPMLabel = new QLabel(CellWidget);
-        targetRPMLabel->setObjectName("targetRPMLabel");
-        sizePolicy.setHeightForWidth(targetRPMLabel->sizePolicy().hasHeightForWidth());
-        targetRPMLabel->setSizePolicy(sizePolicy);
-        targetRPMLabel->setFont(font);
-
-        gridLayout->addWidget(targetRPMLabel, 2, 6, 1, 1);
-
-        label = new QLabel(CellWidget);
+        label = new QLabel(metricsGroupBox);
         label->setObjectName("label");
         sizePolicy.setHeightForWidth(label->sizePolicy().hasHeightForWidth());
         label->setSizePolicy(sizePolicy);
 
-        gridLayout->addWidget(label, 3, 2, 1, 1);
+        metricsLayout->addWidget(label, 2, 0, 1, 1);
 
-        targetTempLabel = new QLabel(CellWidget);
+        targetTempLabel = new QLabel(metricsGroupBox);
         targetTempLabel->setObjectName("targetTempLabel");
         sizePolicy.setHeightForWidth(targetTempLabel->sizePolicy().hasHeightForWidth());
         targetTempLabel->setSizePolicy(sizePolicy);
-        targetTempLabel->setFont(font);
+        targetTempLabel->setFont(font1);
 
-        gridLayout->addWidget(targetTempLabel, 3, 3, 1, 1);
+        metricsLayout->addWidget(targetTempLabel, 2, 1, 1, 1);
 
-        label_7 = new QLabel(CellWidget);
-        label_7->setObjectName("label_7");
-        sizePolicy.setHeightForWidth(label_7->sizePolicy().hasHeightForWidth());
-        label_7->setSizePolicy(sizePolicy);
-        label_7->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+        label_5 = new QLabel(metricsGroupBox);
+        label_5->setObjectName("label_5");
+        sizePolicy.setHeightForWidth(label_5->sizePolicy().hasHeightForWidth());
+        label_5->setSizePolicy(sizePolicy);
 
-        gridLayout->addWidget(label_7, 0, 2, 1, 5);
+        metricsLayout->addWidget(label_5, 3, 0, 1, 1);
 
-        label_3 = new QLabel(CellWidget);
-        label_3->setObjectName("label_3");
-
-        gridLayout->addWidget(label_3, 2, 2, 1, 1);
-
-        label_2 = new QLabel(CellWidget);
-        label_2->setObjectName("label_2");
-        sizePolicy.setHeightForWidth(label_2->sizePolicy().hasHeightForWidth());
-        label_2->setSizePolicy(sizePolicy);
-
-        gridLayout->addWidget(label_2, 1, 2, 1, 1);
-
-        currentRPMLabel = new QLabel(CellWidget);
+        currentRPMLabel = new QLabel(metricsGroupBox);
         currentRPMLabel->setObjectName("currentRPMLabel");
         sizePolicy.setHeightForWidth(currentRPMLabel->sizePolicy().hasHeightForWidth());
         currentRPMLabel->setSizePolicy(sizePolicy);
-        currentRPMLabel->setFont(font);
+        currentRPMLabel->setFont(font1);
 
-        gridLayout->addWidget(currentRPMLabel, 1, 6, 1, 1);
+        metricsLayout->addWidget(currentRPMLabel, 3, 1, 1, 1);
 
-        label_4 = new QLabel(CellWidget);
-        label_4->setObjectName("label_4");
-        label_4->setAlignment(Qt::AlignCenter);
+        label_8 = new QLabel(metricsGroupBox);
+        label_8->setObjectName("label_8");
+        sizePolicy.setHeightForWidth(label_8->sizePolicy().hasHeightForWidth());
+        label_8->setSizePolicy(sizePolicy);
 
-        gridLayout->addWidget(label_4, 0, 0, 1, 1);
+        metricsLayout->addWidget(label_8, 4, 0, 1, 1);
 
-        expStateLabel = new QLabel(CellWidget);
-        expStateLabel->setObjectName("expStateLabel");
-        QFont font1;
-        font1.setPointSize(12);
-        font1.setBold(true);
-        expStateLabel->setFont(font1);
-        expStateLabel->setStyleSheet(QString::fromUtf8("color: rgb(26, 95, 180);"));
-        expStateLabel->setAlignment(Qt::AlignCenter);
+        targetRPMLabel = new QLabel(metricsGroupBox);
+        targetRPMLabel->setObjectName("targetRPMLabel");
+        sizePolicy.setHeightForWidth(targetRPMLabel->sizePolicy().hasHeightForWidth());
+        targetRPMLabel->setSizePolicy(sizePolicy);
+        targetRPMLabel->setFont(font1);
 
-        gridLayout->addWidget(expStateLabel, 1, 0, 3, 1);
+        metricsLayout->addWidget(targetRPMLabel, 4, 1, 1, 1);
 
-        experimentNameLabel = new QLabel(CellWidget);
-        experimentNameLabel->setObjectName("experimentNameLabel");
+        label_11 = new QLabel(metricsGroupBox);
+        label_11->setObjectName("label_11");
+        sizePolicy.setHeightForWidth(label_11->sizePolicy().hasHeightForWidth());
+        label_11->setSizePolicy(sizePolicy);
 
-        gridLayout->addWidget(experimentNameLabel, 4, 0, 1, 1);
+        metricsLayout->addWidget(label_11, 5, 0, 1, 1);
 
-        experimentNameValueLabel = new QLabel(CellWidget);
-        experimentNameValueLabel->setObjectName("experimentNameValueLabel");
-        experimentNameValueLabel->setFont(font);
+        motorAmpLabel = new QLabel(metricsGroupBox);
+        motorAmpLabel->setObjectName("motorAmpLabel");
+        sizePolicy.setHeightForWidth(motorAmpLabel->sizePolicy().hasHeightForWidth());
+        motorAmpLabel->setSizePolicy(sizePolicy);
+        motorAmpLabel->setFont(font1);
 
-        gridLayout->addWidget(experimentNameValueLabel, 4, 2, 1, 2);
+        metricsLayout->addWidget(motorAmpLabel, 5, 1, 1, 1);
 
-        experimentProgressLabel = new QLabel(CellWidget);
-        experimentProgressLabel->setObjectName("experimentProgressLabel");
 
-        gridLayout->addWidget(experimentProgressLabel, 4, 5, 1, 1);
-
-        experimentProgressValueLabel = new QLabel(CellWidget);
-        experimentProgressValueLabel->setObjectName("experimentProgressValueLabel");
-
-        gridLayout->addWidget(experimentProgressValueLabel, 4, 6, 1, 1);
-
-        assignedByLabel = new QLabel(CellWidget);
-        assignedByLabel->setObjectName("assignedByLabel");
-
-        gridLayout->addWidget(assignedByLabel, 5, 0, 1, 1);
-
-        assignedByValueLabel = new QLabel(CellWidget);
-        assignedByValueLabel->setObjectName("assignedByValueLabel");
-        assignedByValueLabel->setFont(font);
-
-        gridLayout->addWidget(assignedByValueLabel, 5, 2, 1, 2);
-
-        assignedAtLabel = new QLabel(CellWidget);
-        assignedAtLabel->setObjectName("assignedAtLabel");
-
-        gridLayout->addWidget(assignedAtLabel, 5, 5, 1, 1);
-
-        assignedAtValueLabel = new QLabel(CellWidget);
-        assignedAtValueLabel->setObjectName("assignedAtValueLabel");
-
-        gridLayout->addWidget(assignedAtValueLabel, 5, 6, 1, 1);
+        gridLayout->addWidget(metricsGroupBox);
 
 
         gridLayout_2->addLayout(gridLayout, 1, 1, 1, 2);
@@ -259,29 +275,31 @@ public:
     void retranslateUi(QWidget *CellWidget)
     {
         CellWidget->setWindowTitle(QCoreApplication::translate("CellWidget", "Form", nullptr));
-        label_11->setText(QCoreApplication::translate("CellWidget", "Motor Amp.:", nullptr));
-        label_5->setText(QCoreApplication::translate("CellWidget", "Current RPM:", nullptr));
-        currentInnerTempLabel->setText(QString());
-        currentExtTempLabel->setText(QString());
-        motorAmpLabel->setText(QString());
-        label_8->setText(QCoreApplication::translate("CellWidget", "Target RPM:", nullptr));
-        targetRPMLabel->setText(QString());
-        label->setText(QCoreApplication::translate("CellWidget", "Target Temperature:", nullptr));
-        targetTempLabel->setText(QString());
-        label_7->setText(QCoreApplication::translate("CellWidget", "<html><head/><body><p><span style=\" font-size:18pt; font-weight:700; color:#a51d2d;\">Cell Status</span></p></body></html>", nullptr));
-        label_3->setText(QCoreApplication::translate("CellWidget", "Current InnerTemperature:", nullptr));
-        label_2->setText(QCoreApplication::translate("CellWidget", "Current Ext. Temperature:", nullptr));
-        currentRPMLabel->setText(QString());
-        label_4->setText(QCoreApplication::translate("CellWidget", "Experiment State", nullptr));
+        stateGroupBox->setTitle(QCoreApplication::translate("CellWidget", "Experiment State", nullptr));
         expStateLabel->setText(QString());
+        experimentInfoGroupBox->setTitle(QCoreApplication::translate("CellWidget", "Experiment Info", nullptr));
         experimentNameLabel->setText(QCoreApplication::translate("CellWidget", "Experiment:", nullptr));
         experimentNameValueLabel->setText(QCoreApplication::translate("CellWidget", "--", nullptr));
-        experimentProgressLabel->setText(QCoreApplication::translate("CellWidget", "Progress:", nullptr));
-        experimentProgressValueLabel->setText(QCoreApplication::translate("CellWidget", "--", nullptr));
         assignedByLabel->setText(QCoreApplication::translate("CellWidget", "Assigned By:", nullptr));
         assignedByValueLabel->setText(QCoreApplication::translate("CellWidget", "--", nullptr));
         assignedAtLabel->setText(QCoreApplication::translate("CellWidget", "Assigned At:", nullptr));
         assignedAtValueLabel->setText(QCoreApplication::translate("CellWidget", "--", nullptr));
+        experimentProgressLabel->setText(QCoreApplication::translate("CellWidget", "Progress:", nullptr));
+        experimentProgressValueLabel->setText(QCoreApplication::translate("CellWidget", "--", nullptr));
+        assignExperimentButton->setText(QCoreApplication::translate("CellWidget", "Assign Experiment", nullptr));
+        metricsGroupBox->setTitle(QCoreApplication::translate("CellWidget", "Live Readings", nullptr));
+        label_2->setText(QCoreApplication::translate("CellWidget", "Current Ext. Temperature:", nullptr));
+        currentExtTempLabel->setText(QString());
+        label_3->setText(QCoreApplication::translate("CellWidget", "Current Inner Temperature:", nullptr));
+        currentInnerTempLabel->setText(QString());
+        label->setText(QCoreApplication::translate("CellWidget", "Target Temperature:", nullptr));
+        targetTempLabel->setText(QString());
+        label_5->setText(QCoreApplication::translate("CellWidget", "Current RPM:", nullptr));
+        currentRPMLabel->setText(QString());
+        label_8->setText(QCoreApplication::translate("CellWidget", "Target RPM:", nullptr));
+        targetRPMLabel->setText(QString());
+        label_11->setText(QCoreApplication::translate("CellWidget", "Motor Amp.:", nullptr));
+        motorAmpLabel->setText(QString());
     } // retranslateUi
 
 };

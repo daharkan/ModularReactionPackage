@@ -1,6 +1,5 @@
 #include "ServiceRunner.h"
 #include "src/BusboardV1.h"
-#include "src/common/CellTarget.h"
 #include "src/common/CellVisualsHistory.h"
 #include <QCoreApplication>
 #include <QSerialPortInfo>
@@ -17,6 +16,12 @@
 #define TEMP_EPSILON 0.5
 
 namespace {
+constexpr const char *kStateUnplugged = "UNPLUGGED";
+constexpr const char *kStateIdle = "IDLE";
+constexpr const char *kStatePreheat = "PREHEAT";
+constexpr const char *kStateRunning = "RUNNING";
+constexpr const char *kStateCompleted = "COMPLETED";
+
 unsigned long long totalExperimentDurationMs(Experiment& experiment)
 {
     unsigned long long totalDurationMs = 0;
@@ -30,6 +35,29 @@ unsigned long long totalExperimentDurationMs(Experiment& experiment)
 bool hasExperimentAssigned(Experiment& experiment)
 {
     return !(experiment.experimentId().empty() && experiment.name().empty());
+}
+
+std::string determineExperimentState(Cell &cell, Experiment &experiment, unsigned long long nowMs)
+{
+    if (!cell.isPlugged() || cell.cellID().empty()) {
+        return kStateUnplugged;
+    }
+
+    if (!hasExperimentAssigned(experiment)) {
+        return kStateIdle;
+    }
+
+    unsigned long long totalDurationMs = totalExperimentDurationMs(experiment);
+    unsigned long long startMs = experiment.startSystemTimeMSecs();
+    if (startMs == 0 || totalDurationMs == 0) {
+        return kStatePreheat;
+    }
+
+    unsigned long long elapsedMs = nowMs > startMs ? nowMs - startMs : 0;
+    if (elapsedMs < totalDurationMs) {
+        return kStateRunning;
+    }
+    return kStateCompleted;
 }
 
 bool updateExperimentStartIfReady(Experiment &experiment, const Cell &cell, unsigned long long nowMs)
@@ -52,7 +80,7 @@ bool updateExperimentStartIfReady(Experiment &experiment, const Cell &cell, unsi
     return false;
 }
 
-double preheatTargetTemp(const Experiment &experiment)
+double preheatTargetTemp(Experiment &experiment)
 {
     const auto &tempArcs = experiment.profile().tempArcsInSeq();
     if (tempArcs.empty()) {
@@ -61,7 +89,7 @@ double preheatTargetTemp(const Experiment &experiment)
     return tempArcs.front().startTemp();
 }
 
-void calculateExperimentTargets(const Experiment &experiment,
+void calculateExperimentTargets(Experiment &experiment,
                                 unsigned long long elapsedMs,
                                 double *targetTemp,
                                 int *targetRpm)
@@ -163,7 +191,6 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
         return;
     }
     std::vector<Cell> cellsFromDB = RedisDBManager::getInstance()->getCellList(activeCellIDs);
-    std::vector<CellTarget> celltargets = RedisDBManager::getInstance()->getCellTargets(activeCellIDs);
 
     std::map<std::string, Cell> boardCellMap;
     for(int i = 0; i < cellsFromBoard.size(); i++){
@@ -180,15 +207,6 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
             continue;
         }
         dbCellMap[cellsFromDB.at(i).cellID()] = cellsFromDB.at(i);
-    }
-    QCoreApplication::processEvents();
-
-    std::map<std::string, CellTarget> cellTargetsMap;
-    for(int i = 0; i < celltargets.size(); i++){
-        if(celltargets.at(i).cellID().empty()){
-            continue;
-        }
-        cellTargetsMap[celltargets.at(i).cellID()] = celltargets.at(i);
     }
     QCoreApplication::processEvents();
 
@@ -216,13 +234,15 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
 
         Experiment experiment = dbCell.asignedExperiment();
         bool hasExperiment = hasExperimentAssigned(experiment);
+        unsigned long long nowMs = Cell::getCurrentTimeMillis();
         if (hasExperiment) {
             const auto &tempArcs = experiment.profile().tempArcsInSeq();
             if (tempArcs.empty()) {
+                experiment.setState(determineExperimentState(dbCell, experiment, nowMs));
+                dbCell.setAsignedExperiment(experiment);
                 continue;
             }
 
-            unsigned long long nowMs = Cell::getCurrentTimeMillis();
             bool startReady = updateExperimentStartIfReady(experiment, dbCell, nowMs);
             double targetTemp = preheatTargetTemp(experiment);
             int targetRpm = 0;
@@ -230,7 +250,9 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
             unsigned long long startMs = experiment.startSystemTimeMSecs();
             unsigned long long elapsedMs = startMs > 0 && nowMs > startMs ? nowMs - startMs : 0;
 
-            if (startReady && startMs > 0) {
+            std::string experimentState = determineExperimentState(dbCell, experiment, nowMs);
+            if (startReady && startMs > 0
+                && (experimentState == kStateRunning || experimentState == kStateCompleted)) {
                 unsigned long long effectiveElapsed = elapsedMs;
                 if (totalDurationMs > 0 && effectiveElapsed > totalDurationMs) {
                     effectiveElapsed = totalDurationMs;
@@ -238,7 +260,6 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
                 calculateExperimentTargets(experiment, effectiveElapsed, &targetTemp, &targetRpm);
             }
 
-            dbCell.setAsignedExperiment(experiment);
             dbCell.setAssignedRPM(targetRpm);
             dbCell.setAssignedTemp(targetTemp);
 
@@ -248,6 +269,9 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
             if (motorSelectIt == m_lastMotorSelect.end() || motorSelectIt->second != motorSelect) {
                 motorSelectChanged = true;
             }
+
+            experiment.setState(experimentState);
+            dbCell.setAsignedExperiment(experiment);
 
             if(targetRpm != boardCellMap[cellID].assignedRPM()
                 || abs(targetTemp - boardCellMap[cellID].assignedTemp()) > TEMP_EPSILON
@@ -263,38 +287,8 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
             continue;
         }
 
-        if(cellTargetsMap.size() < 1){
-            continue;
-        }
-
-        auto it = cellTargetsMap.find(cellID);
-
-        if (it != cellTargetsMap.end()) {
-            CellTarget celltarget = cellTargetsMap[cellID];
-            dbCell.setAssignedRPM(celltarget.targetRPM());
-            dbCell.setAssignedTemp(celltarget.targetTemp());
-
-            unsigned int motorSelect = celltarget.motorSelect();
-            bool motorSelectChanged = false;
-            auto motorSelectIt = m_lastMotorSelect.find(cellID);
-            if (motorSelectIt == m_lastMotorSelect.end() || motorSelectIt->second != motorSelect) {
-                motorSelectChanged = true;
-            }
-
-            if(celltarget.targetRPM() != boardCellMap[cellID].assignedRPM()
-                || abs( celltarget.targetTemp() - boardCellMap[cellID].assignedTemp() ) > TEMP_EPSILON
-                || motorSelectChanged){
-                int targetRPM = celltarget.targetRPM();
-                double targetTemp = celltarget.targetTemp();
-                std::string updateString = boardCellMap[cellID].generateUpdateDataStringToBoard(targetTemp, targetRPM, motorSelect);
-                QCoreApplication::processEvents();
-
-                QString str = QString::fromStdString(updateString);
-                busboard->sendUpdateString(str);
-                m_lastMotorSelect[cellID] = motorSelect;
-            }
-            QCoreApplication::processEvents();
-        }//
+        experiment.setState(determineExperimentState(dbCell, experiment, nowMs));
+        dbCell.setAsignedExperiment(experiment);
     }
 
     std::vector<Cell> cellsToDB;
@@ -314,6 +308,10 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
         if (!hasExperimentAssigned(experiment)) {
             m_lastExperimentId.erase(cellID);
             m_lastVisualTimestamp.erase(cellID);
+            continue;
+        }
+
+        if (experiment.state() != kStateRunning) {
             continue;
         }
 

@@ -264,7 +264,7 @@ static char* trimLine(char* line) {
   return line;
 }
 
-static bool parseUpdateCommand(char* line, int* positionIdx) {
+static bool parseUpdateCommand(char* line, int* positionIdx, float* targetTemp, int* targetRpm, int* motorSelect, int* checksumRec) {
   if (!line || line[0] == '\0') return false;
   line = trimLine(line);
   if (line[0] == '\0') return false;
@@ -283,24 +283,28 @@ static bool parseUpdateCommand(char* line, int* positionIdx) {
 
   token = strtok(nullptr, "#");
   if (!token) return false;
-  float targetTemp = atof(token);
+  float tTemp = atof(token);
 
   token = strtok(nullptr, "#");
   if (!token) return false;
-  int targetRpm = atoi(token);
+  int tRpm = atoi(token);
 
   token = strtok(nullptr, "#");
   if (!token) return false;
-  int motorSelect = atoi(token);
+  int tMotorSelect = atoi(token);
 
   token = strtok(nullptr, "#");
   if (!token) return false;
-  int checksumRec = atoi(token);
+  int checksum = atoi(token);
 
-  int checksumCalc = pos + (int)targetTemp + targetRpm + motorSelect;
-  if (checksumRec != checksumCalc) return false;
+  int checksumCalc = pos + (int)tTemp + tRpm + tMotorSelect;
+  if (checksum != checksumCalc) return false;
 
   *positionIdx = pos;
+  *targetTemp = tTemp;
+  *targetRpm = tRpm;
+  *motorSelect = tMotorSelect;
+  *checksumRec = checksum;
   return true;
 }
 
@@ -352,9 +356,17 @@ void loop() {
   char line[128];
   if (readLineFromPC(line, sizeof(line))) {
     int positionIdx = -1;
-    if (parseUpdateCommand(line, &positionIdx)) {
+    float targetTemp = 0.0f;
+    int targetRpm = 0;
+    int motorSelect = 0;
+    int checksumRec = 0;
+    if (parseUpdateCommand(line, &positionIdx, &targetTemp, &targetRpm, &motorSelect, &checksumRec)) {
       if (positionIdx >= 1 && positionIdx <= SLOT_COUNT) {
         sendUpdateToSlot((uint8_t)(positionIdx - 1), line);
+        Serial.print(F("ACK#"));
+        Serial.print(positionIdx);
+        Serial.print(F("#"));
+        Serial.println(checksumRec);
       }
     }
   }

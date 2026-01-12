@@ -39,22 +39,22 @@ template <> constexpr inline auto CellWidget::qt_create_metaobjectdata<qt_meta_t
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
         "CellWidget",
-        "updateCell",
+        "sgn_assignExperimentRequested",
         "",
+        "std::string",
+        "cellId",
+        "updateCell",
         "Cell&",
-        "cell",
-        "updateExpState",
-        "ExperimentRunState",
-        "state"
+        "cell"
     };
 
     QtMocHelpers::UintData qt_methods {
-        // Slot 'updateCell'
-        QtMocHelpers::SlotData<void(Cell &)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+        // Signal 'sgn_assignExperimentRequested'
+        QtMocHelpers::SignalData<void(const std::string &)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
             { 0x80000000 | 3, 4 },
         }}),
-        // Slot 'updateExpState'
-        QtMocHelpers::SlotData<void(ExperimentRunState)>(5, 2, QMC::AccessPublic, QMetaType::Void, {{
+        // Slot 'updateCell'
+        QtMocHelpers::SlotData<void(Cell &)>(5, 2, QMC::AccessPublic, QMetaType::Void, {{
             { 0x80000000 | 6, 7 },
         }}),
     };
@@ -80,10 +80,14 @@ void CellWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
     auto *_t = static_cast<CellWidget *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->updateCell((*reinterpret_cast< std::add_pointer_t<Cell&>>(_a[1]))); break;
-        case 1: _t->updateExpState((*reinterpret_cast< std::add_pointer_t<ExperimentRunState>>(_a[1]))); break;
+        case 0: _t->sgn_assignExperimentRequested((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1]))); break;
+        case 1: _t->updateCell((*reinterpret_cast< std::add_pointer_t<Cell&>>(_a[1]))); break;
         default: ;
         }
+    }
+    if (_c == QMetaObject::IndexOfMethod) {
+        if (QtMocHelpers::indexOfMethod<void (CellWidget::*)(const std::string & )>(_a, &CellWidget::sgn_assignExperimentRequested, 0))
+            return;
     }
 }
 
@@ -116,5 +120,11 @@ int CellWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         _id -= 2;
     }
     return _id;
+}
+
+// SIGNAL 0
+void CellWidget::sgn_assignExperimentRequested(const std::string & _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1);
 }
 QT_WARNING_POP

@@ -55,7 +55,10 @@ template <> constexpr inline auto TSMainWindow::qt_create_metaobjectdata<qt_meta
         "closeApp",
         "showPreviousPage",
         "mainPageChanged",
-        "idx"
+        "idx",
+        "handleMenuPositionChanged",
+        "isTop",
+        "handleAssignExperimentRequested"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -84,6 +87,14 @@ template <> constexpr inline auto TSMainWindow::qt_create_metaobjectdata<qt_meta
         // Slot 'mainPageChanged'
         QtMocHelpers::SlotData<void(int)>(15, 2, QMC::AccessPrivate, QMetaType::Void, {{
             { QMetaType::Int, 16 },
+        }}),
+        // Slot 'handleMenuPositionChanged'
+        QtMocHelpers::SlotData<void(bool)>(17, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Bool, 18 },
+        }}),
+        // Slot 'handleAssignExperimentRequested'
+        QtMocHelpers::SlotData<void(const std::string &, int)>(19, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 10, 11 }, { QMetaType::Int, 12 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -119,6 +130,8 @@ void TSMainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         case 8: _t->closeApp(); break;
         case 9: _t->showPreviousPage(); break;
         case 10: _t->mainPageChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 11: _t->handleMenuPositionChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 12: _t->handleAssignExperimentRequested((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
         default: ;
         }
     }
@@ -143,14 +156,14 @@ int TSMainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 11)
+        if (_id < 13)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 11;
+        _id -= 13;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 11)
+        if (_id < 13)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 11;
+        _id -= 13;
     }
     return _id;
 }

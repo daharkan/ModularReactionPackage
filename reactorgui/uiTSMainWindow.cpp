@@ -1,6 +1,17 @@
 #include "uiTSMainWindow.h"
 #include "ui_uiTSMainWindow.h"
 
+#include "RedisDBManager.h"
+#include "uiExperimentListWidget.h"
+
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QFile>
+#include <QLocale>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QVBoxLayout>
+
 #define IS_MACHINE_CONNECTED false
 
 #define MAX_HISTORY_SIZE 200
@@ -13,13 +24,18 @@ TSMainWindow::TSMainWindow(QWidget *parent)
 
     QLocale::setDefault(QLocale::C);
 
-    connect(ui->homePushButton, &QPushButton::clicked, this, &TSMainWindow::showHomeWidget);
-    connect(ui->backPushButton, &QPushButton::clicked, this, &TSMainWindow::showPreviousPage);
     connect(ui->mainStackedWidget, &QStackedWidget::currentChanged, this, &TSMainWindow::mainPageChanged);
 
+    m_menuWidget = new MenuWidget(this);
+    ui->menuContainerLayout->addWidget(m_menuWidget);
+    connect(m_menuWidget, &MenuWidget::sgn_backClicked, this, &TSMainWindow::showPreviousPage);
+    connect(m_menuWidget, &MenuWidget::sgn_reactorClicked, this, &TSMainWindow::showReactorWidget);
+    connect(m_menuWidget, &MenuWidget::sgn_experimentClicked, this, &TSMainWindow::showExpManagerWidget);
+    connect(m_menuWidget, &MenuWidget::sgn_userClicked, this, &TSMainWindow::showUserManagementWidget);
+    connect(m_menuWidget, &MenuWidget::sgn_optionsClicked, this, &TSMainWindow::showOptionsWidget);
+    connect(m_menuWidget, &MenuWidget::sgn_homeClicked, this, &TSMainWindow::showHomeWidget);
 
     m_loginWidget = new LoginWidget(IS_MACHINE_CONNECTED, this);
-    m_homeWidget = new HomeWidget(this);
     m_optionsWidget = new OptionsWidget(this);
     m_userManagementWidget = new UserManagementWidget(this);
     m_reactorViewWidget = new ReactorViewWidget(this);
@@ -27,7 +43,6 @@ TSMainWindow::TSMainWindow(QWidget *parent)
     m_tempCellViewWidget = new TempCellViewWidget(this);
 
     ui->mainStackedWidget->addWidget(m_loginWidget);
-    ui->mainStackedWidget->addWidget(m_homeWidget);
     ui->mainStackedWidget->addWidget(m_optionsWidget);
     ui->mainStackedWidget->addWidget(m_userManagementWidget);
     ui->mainStackedWidget->addWidget(m_reactorViewWidget);
@@ -37,17 +52,20 @@ TSMainWindow::TSMainWindow(QWidget *parent)
     connect(m_loginWidget, &LoginWidget::sgn_loginSucceed, this, &TSMainWindow::loginSucceed);
     connect(m_loginWidget, &LoginWidget::sgn_loginFailed, this, &TSMainWindow::loginFailed);
 
-    connect(m_homeWidget, &HomeWidget::sgn_openReactorWidget, this, &TSMainWindow::showReactorWidget);
-    connect(m_homeWidget, &HomeWidget::sgn_openExpManagerWidget, this, &TSMainWindow::showExpManagerWidget);
-    connect(m_homeWidget, &HomeWidget::sgn_openUserManagerWidget, this, &TSMainWindow::showUserManagementWidget);
-    connect(m_homeWidget, &HomeWidget::sgn_openOptionsWidget, this, &TSMainWindow::showOptionsWidget);
-    connect(m_homeWidget, &HomeWidget::sgn_closeApp, this, &TSMainWindow::closeApp);
     connect(m_reactorViewWidget, &ReactorViewWidget::sgn_openCellView, this, &TSMainWindow::showCellViewWidget);
+    connect(m_reactorViewWidget, &ReactorViewWidget::sgn_assignExperimentRequested,
+            this, &TSMainWindow::handleAssignExperimentRequested);
+    connect(m_tempCellViewWidget, &TempCellViewWidget::sgn_assignExperimentRequested,
+            this, [this](const std::string &cellId) {
+                handleAssignExperimentRequested(cellId, 0);
+            });
+    connect(m_optionsWidget, &OptionsWidget::sgn_menuPositionChanged, this, &TSMainWindow::handleMenuPositionChanged);
 
 
-    ui->backPushButton->setVisible(false);
-    ui->homePushButton->setVisible(false);
+    ui->menuContainer->setVisible(false);
     ui->mainStackedWidget->setCurrentIndex(WIDGET_IDX_LOGIN);
+    m_currentPageType = PAGE_TYPE_LOGIN;
+    loadMenuPosition();
 
 
 }
@@ -66,10 +84,8 @@ void TSMainWindow::clearOlderHistory() {
 
 void TSMainWindow::showHomeWidget()
 {
-    clearOlderHistory();
-    m_currentPageType = PAGE_TYPE_HOME;
-    m_pageTypeHistory.push_back(m_currentPageType);
-    ui->mainStackedWidget->setCurrentIndex(WIDGET_IDX_HOME);
+    m_pageTypeHistory.clear();
+    showReactorWidget();
 }
 
 void TSMainWindow::showReactorWidget()
@@ -120,16 +136,17 @@ void TSMainWindow::closeApp()
 
 void TSMainWindow::showPreviousPage()
 {
-    if(m_pageTypeHistory.size() > 0 ){
+    if(m_pageTypeHistory.size() > 1 ){
         m_pageTypeHistory.pop_back();
         m_currentPageType = m_pageTypeHistory.last();
+    } else {
+        if (m_menuWidget != nullptr) {
+            m_menuWidget->setBackEnabled(false);
+        }
+        return;
     }
 
     switch (m_currentPageType) {
-    case PAGE_TYPE_HOME:
-        ui->mainStackedWidget->setCurrentIndex(WIDGET_IDX_HOME);
-        break;
-
     case PAGE_TYPE_EXPERIMENTMANAGER:
         ui->mainStackedWidget->setCurrentIndex(WIDGET_IDX_EXPMANAGER);
         break;
@@ -158,33 +175,37 @@ void TSMainWindow::showPreviousPage()
 void TSMainWindow::mainPageChanged(int idx)
 {
     switch(idx){
-    case WIDGET_IDX_HOME:
-        ui->pageHeadlineLabel->setText("HOME");
-        break;
-
     case WIDGET_IDX_EXPMANAGER:
-        ui->pageHeadlineLabel->setText("EXPERIMENT MANAGER");
+        m_menuWidget->setTitle("Experiment Manager");
         break;
 
     case WIDGET_IDX_OPTIONS:
-        ui->pageHeadlineLabel->setText("OPTIONS");
+        m_menuWidget->setTitle("Options");
         break;
 
     case WIDGET_IDX_REACTOR:
-        ui->pageHeadlineLabel->setText("REACTOR");
+        m_menuWidget->setTitle("Reactor");
         break;
 
     case WIDGET_IDX_USERMANAGEMENT:
-        ui->pageHeadlineLabel->setText("USER MANAGEMENT");
+        m_menuWidget->setTitle("User Management");
         break;
 
     case WIDGET_IDX_CELLVIEW:
-        ui->pageHeadlineLabel->setText("CELL DETAIL");
+        m_menuWidget->setTitle("Cell Detail");
+        break;
+
+    case WIDGET_IDX_LOGIN:
+        m_menuWidget->setTitle("Login");
         break;
 
 
     default:
+        m_menuWidget->setTitle(QString());
         break;
+    }
+    if (m_menuWidget != nullptr) {
+        m_menuWidget->setBackEnabled(m_pageTypeHistory.size() > 1);
     }
 }
 
@@ -193,12 +214,129 @@ void TSMainWindow::loginSucceed()
     m_currentUser = m_loginWidget->currentUser();
     m_experimentManagerWidget->setCurrentUser(m_currentUser);
     m_userManagementWidget->setCurrentUser(m_currentUser);
-    ui->backPushButton->setVisible(true);
-    ui->homePushButton->setVisible(true);
+    ui->menuContainer->setVisible(true);
     showHomeWidget();
 }
 
 void TSMainWindow::loginFailed()
 {
 
+}
+
+void TSMainWindow::applyMenuPosition(bool isTop)
+{
+    if (m_menuTop == isTop) {
+        return;
+    }
+    m_menuTop = isTop;
+    ui->mainLayout->removeWidget(ui->menuContainer);
+    if (m_menuTop) {
+        ui->mainLayout->insertWidget(0, ui->menuContainer);
+    } else {
+        ui->mainLayout->addWidget(ui->menuContainer);
+    }
+}
+
+void TSMainWindow::loadMenuPosition()
+{
+    QFile file("conf/menu.conf");
+    if (!file.open(QIODevice::ReadOnly)) {
+        applyMenuPosition(true);
+        return;
+    }
+    QString line = QString::fromUtf8(file.readLine()).trimmed().toLower();
+    applyMenuPosition(line == "top" || line.isEmpty());
+}
+
+void TSMainWindow::handleMenuPositionChanged(bool isTop)
+{
+    applyMenuPosition(isTop);
+}
+
+void TSMainWindow::handleAssignExperimentRequested(const std::string &cellId, int positionIndex)
+{
+    Q_UNUSED(positionIndex);
+    assignExperimentToCell(cellId);
+}
+
+void TSMainWindow::assignExperimentToCell(const std::string &cellId)
+{
+    if (cellId.empty()) {
+        return;
+    }
+
+    if (!RedisDBManager::getInstance()->isConnected()) {
+        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+    }
+    if (!RedisDBManager::getInstance()->isConnected()) {
+        return;
+    }
+
+    QDialog dialog(this);
+    dialog.setWindowTitle(tr("Assign Experiment"));
+    QVBoxLayout *layout = new QVBoxLayout(&dialog);
+
+    auto *listWidget = new ExperimentListWidget(&dialog);
+    layout->addWidget(listWidget);
+
+    QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    QPushButton *assignButton = buttons->button(QDialogButtonBox::Ok);
+    if (assignButton != nullptr) {
+        assignButton->setText(tr("Assign"));
+        assignButton->setEnabled(listWidget->hasSelection());
+    }
+    layout->addWidget(buttons);
+
+    connect(listWidget, &ExperimentListWidget::sgn_selectionChanged, &dialog, [listWidget, assignButton]() {
+        if (assignButton != nullptr) {
+            assignButton->setEnabled(listWidget->hasSelection());
+        }
+    });
+    connect(listWidget, &ExperimentListWidget::sgn_experimentActivated, &dialog, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    if (!listWidget->hasSelection()) {
+        return;
+    }
+
+    Experiment selectedExperiment = listWidget->selectedExperiment();
+    if (selectedExperiment.experimentId().empty()) {
+        return;
+    }
+
+    std::vector<std::string> ids = {cellId};
+    std::vector<Cell> cells = RedisDBManager::getInstance()->getCellList(ids);
+    if (cells.empty()) {
+        return;
+    }
+
+    Cell cell = cells.front();
+    bool isRunning = QString::fromStdString(cell.asignedExperiment().state())
+        .compare("running", Qt::CaseInsensitive) == 0;
+    QString confirmText = tr("Assign \"%1\" to this cell?")
+                              .arg(QString::fromStdString(selectedExperiment.name()));
+    confirmText.append(tr("\n\nThis will overwrite any existing assignment."));
+    if (isRunning) {
+        confirmText.append(tr("\n\nWarning: This cell is currently running an experiment."));
+    }
+
+    QMessageBox::StandardButton confirm = QMessageBox::question(
+        this,
+        tr("Assign Experiment"),
+        confirmText,
+        QMessageBox::Yes | QMessageBox::No);
+    if (confirm != QMessageBox::Yes) {
+        return;
+    }
+
+    Experiment assignedExperiment = selectedExperiment;
+    assignedExperiment.setOwner(m_currentUser);
+    assignedExperiment.setStartSystemTimeMSecs(0);
+    cell.setAsignedExperiment(assignedExperiment);
+    RedisDBManager::getInstance()->pushCellList({cell});
 }

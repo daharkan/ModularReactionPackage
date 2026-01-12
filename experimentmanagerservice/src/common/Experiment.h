@@ -31,6 +31,9 @@ public:
     std::string settingsJson() const;
     void setSettingsJson(const std::string &newSettingsJson);
 
+    std::string state() const;
+    void setState(const std::string &newState);
+
     Profile& profile();
     void setProfile(const Profile &newProfile);
 
@@ -59,6 +62,7 @@ public:
         experiment.AddMember("experimentType", m_experimentType, allocator);
         experiment.AddMember("createdAtMSecs", m_createdAtMSecs, allocator);
         experiment.AddMember("settingsJson", Value().SetString(m_settingsJson.c_str(), static_cast<SizeType>(m_settingsJson.length()), allocator), allocator);
+        experiment.AddMember("state", Value().SetString(m_state.c_str(), static_cast<SizeType>(m_state.length()), allocator), allocator);
 
         return experiment;
     }
@@ -97,6 +101,9 @@ public:
         if (json.HasMember("settingsJson") && json["settingsJson"].IsString()) {
             m_settingsJson = json["settingsJson"].GetString();
         }
+        if (json.HasMember("state") && json["state"].IsString()) {
+            m_state = json["state"].GetString();
+        }
     }
 
 
@@ -116,6 +123,7 @@ private:
     int m_experimentType = 0;
     unsigned long m_createdAtMSecs = 0;
     std::string m_settingsJson;
+    std::string m_state;
 
 };
 

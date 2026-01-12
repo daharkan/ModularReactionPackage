@@ -6,6 +6,7 @@
 #include <QButtonGroup>
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QGuiApplication>
 #include <QHeaderView>
 #include <QComboBox>
 #include <QInputDialog>
@@ -13,6 +14,7 @@
 #include <QJsonObject>
 #include <QListWidget>
 #include <QRadioButton>
+#include <QScreen>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QUuid>
@@ -817,14 +819,6 @@ void ExperimentCreateWidget::assignExperimentToCells()
     }
 
     bool isAdmin = m_currentUser.role() == ROLE_ADMIN || m_currentUser.role() == ROLE_ROOT;
-    if (!isAdmin && !m_currentExperiment.owner().username().empty()
-        && m_currentExperiment.owner().username() != m_currentUser.username()) {
-        QMessageBox::warning(
-            this,
-            tr("Assign Experiment"),
-            tr("You can only assign experiments that you own."));
-        return;
-    }
 
     std::vector<std::string> cellIds = RedisDBManager::getInstance()->getCellIds();
     std::vector<Cell> cells = RedisDBManager::getInstance()->getCellList(cellIds);
@@ -851,6 +845,14 @@ void ExperimentCreateWidget::assignExperimentToCells()
 
     QDialog dialog(this);
     dialog.setWindowTitle(tr("Assign Experiment"));
+    if (QScreen *screen = QGuiApplication::primaryScreen()) {
+        QRect available = screen->availableGeometry();
+        dialog.resize(static_cast<int>(available.width() * 0.9),
+                      static_cast<int>(available.height() * 0.85));
+    } else {
+        dialog.resize(900, 700);
+    }
+    dialog.setSizeGripEnabled(true);
     QVBoxLayout *layout = new QVBoxLayout(&dialog);
     QHBoxLayout *listLayout = new QHBoxLayout();
 
@@ -932,11 +934,31 @@ void ExperimentCreateWidget::assignExperimentToCells()
         return;
     }
 
+    int runningCount = 0;
+    for (QListWidgetItem *item : selectedItems) {
+        std::string cellId = item->data(Qt::UserRole).toString().toStdString();
+        auto it = cellById.find(cellId);
+        if (it == cellById.end()) {
+            continue;
+        }
+        QString state = QString::fromStdString(it->second.asignedExperiment().state());
+        if (state.compare("running", Qt::CaseInsensitive) == 0) {
+            runningCount++;
+        }
+    }
+
+    QString confirmMessage = tr("Assign this experiment to %1 cell(s)?\n"
+                                "Existing assignments on those cells will be overwritten.")
+                                 .arg(selectedItems.size());
+    if (runningCount > 0) {
+        confirmMessage.append(tr("\n\nWarning: %1 selected cell(s) are currently running an experiment.")
+                                  .arg(runningCount));
+    }
+
     QMessageBox::StandardButton reply = QMessageBox::question(
         this,
         tr("Assign Experiment"),
-        tr("Assign this experiment to %1 cell(s)?\nExisting assignments on those cells will be overwritten.")
-            .arg(selectedItems.size()),
+        confirmMessage,
         QMessageBox::Yes | QMessageBox::No);
     if (reply != QMessageBox::Yes) {
         return;

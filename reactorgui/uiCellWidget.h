@@ -35,6 +35,9 @@ public:
 public slots:
     void updateCell(Cell &cell);
 
+signals:
+    void sgn_assignExperimentRequested(const std::string &cellId);
+
 private:
     Ui::CellWidget *ui;
     Experiment m_assignedExperiment;
@@ -44,6 +47,7 @@ private:
 
     bool m_firstStartedRunning = false;
     std::string m_loadedHistoryExperimentId;
+    unsigned long long m_lastHistorySyncMs = 0;
 
     void ensureExperimentGraph(const Experiment &experiment);
     void loadVisualHistoryIfNeeded(const Experiment &experiment);

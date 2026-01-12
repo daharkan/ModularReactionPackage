@@ -2,7 +2,6 @@
 #define TSMAINWINDOW_H
 
 #include <QMainWindow>
-#include <QToolBar>
 #include <QObject>
 
 #include "uiLoginWidget.h"
@@ -10,16 +9,15 @@
 #include "uiOptionsWidget.h"
 #include "uiReactorViewWidget.h"
 #include "uiUserManagementWidget.h"
-#include "uiHomeWidget.h"
 #include "uiTempCellViewWidget.h"
+#include "uiMenuWidget.h"
 
 #define WIDGET_IDX_LOGIN                0
-#define WIDGET_IDX_HOME                 1
-#define WIDGET_IDX_OPTIONS              2
-#define WIDGET_IDX_USERMANAGEMENT       3
-#define WIDGET_IDX_REACTOR              4
-#define WIDGET_IDX_EXPMANAGER           5
-#define WIDGET_IDX_CELLVIEW             6
+#define WIDGET_IDX_OPTIONS              1
+#define WIDGET_IDX_USERMANAGEMENT       2
+#define WIDGET_IDX_REACTOR              3
+#define WIDGET_IDX_EXPMANAGER           4
+#define WIDGET_IDX_CELLVIEW             5
 
 
 QT_BEGIN_NAMESPACE
@@ -31,7 +29,6 @@ QT_END_NAMESPACE
 
 enum PageType{
     PAGE_TYPE_UNKNOWN,
-    PAGE_TYPE_HOME,
     PAGE_TYPE_LOGIN,
     PAGE_TYPE_OPTIONS,
     PAGE_TYPE_REACTORVIEW,
@@ -57,8 +54,8 @@ public:
 private:
     Ui::TSMainWindow *ui;
     
+    MenuWidget *m_menuWidget = nullptr;
     LoginWidget *m_loginWidget = nullptr;
-    HomeWidget *m_homeWidget = nullptr;
     OptionsWidget *m_optionsWidget = nullptr;
     UserManagementWidget *m_userManagementWidget = nullptr;
     ReactorViewWidget *m_reactorViewWidget = nullptr;
@@ -69,9 +66,13 @@ private:
 
     PageType m_currentPageType = PAGE_TYPE_UNKNOWN;
     QList<PageType> m_pageTypeHistory;
+    bool m_menuTop = true;
 
 
     void clearOlderHistory();
+    void applyMenuPosition(bool isTop);
+    void loadMenuPosition();
+    void assignExperimentToCell(const std::string &cellId);
 
 
 private slots:
@@ -88,6 +89,8 @@ private slots:
 
     void showPreviousPage();
     void mainPageChanged(int idx);
+    void handleMenuPositionChanged(bool isTop);
+    void handleAssignExperimentRequested(const std::string &cellId, int positionIndex);
 
 
 };

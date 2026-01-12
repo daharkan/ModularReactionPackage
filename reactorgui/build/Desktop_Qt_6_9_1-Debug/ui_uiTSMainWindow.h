@@ -10,16 +10,12 @@
 #define UI_UITSMAINWINDOW_H
 
 #include <QtCore/QVariant>
-#include <QtGui/QIcon>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QStatusBar>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -28,12 +24,9 @@ class Ui_TSMainWindow
 {
 public:
     QWidget *centralwidget;
-    QGridLayout *gridLayout;
-    QHBoxLayout *upperHorizontalLayout;
-    QLabel *pageHeadlineLabel;
-    QSpacerItem *horizontalSpacer;
-    QPushButton *backPushButton;
-    QPushButton *homePushButton;
+    QVBoxLayout *mainLayout;
+    QWidget *menuContainer;
+    QHBoxLayout *menuContainerLayout;
     QStackedWidget *mainStackedWidget;
     QStatusBar *statusbar;
 
@@ -49,50 +42,32 @@ public:
         TSMainWindow->setSizePolicy(sizePolicy);
         centralwidget = new QWidget(TSMainWindow);
         centralwidget->setObjectName("centralwidget");
-        gridLayout = new QGridLayout(centralwidget);
-        gridLayout->setObjectName("gridLayout");
-        upperHorizontalLayout = new QHBoxLayout();
-        upperHorizontalLayout->setObjectName("upperHorizontalLayout");
-        upperHorizontalLayout->setContentsMargins(-1, 0, -1, -1);
-        pageHeadlineLabel = new QLabel(centralwidget);
-        pageHeadlineLabel->setObjectName("pageHeadlineLabel");
+        mainLayout = new QVBoxLayout(centralwidget);
+        mainLayout->setSpacing(0);
+        mainLayout->setObjectName("mainLayout");
+        mainLayout->setContentsMargins(0, 0, 0, 0);
+        menuContainer = new QWidget(centralwidget);
+        menuContainer->setObjectName("menuContainer");
+        QSizePolicy sizePolicy1(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Fixed);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(menuContainer->sizePolicy().hasHeightForWidth());
+        menuContainer->setSizePolicy(sizePolicy1);
+        menuContainerLayout = new QHBoxLayout(menuContainer);
+        menuContainerLayout->setObjectName("menuContainerLayout");
+        menuContainerLayout->setContentsMargins(0, 0, 0, 0);
 
-        upperHorizontalLayout->addWidget(pageHeadlineLabel);
-
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
-
-        upperHorizontalLayout->addItem(horizontalSpacer);
-
-        backPushButton = new QPushButton(centralwidget);
-        backPushButton->setObjectName("backPushButton");
-        QIcon icon;
-        icon.addFile(QString::fromUtf8(":/resources/icons/undo.svg"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
-        backPushButton->setIcon(icon);
-        backPushButton->setIconSize(QSize(32, 32));
-
-        upperHorizontalLayout->addWidget(backPushButton);
-
-        homePushButton = new QPushButton(centralwidget);
-        homePushButton->setObjectName("homePushButton");
-        QIcon icon1;
-        icon1.addFile(QString::fromUtf8(":/resources/icons/home.svg"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
-        homePushButton->setIcon(icon1);
-        homePushButton->setIconSize(QSize(32, 32));
-
-        upperHorizontalLayout->addWidget(homePushButton);
-
-
-        gridLayout->addLayout(upperHorizontalLayout, 0, 0, 1, 2);
+        mainLayout->addWidget(menuContainer);
 
         mainStackedWidget = new QStackedWidget(centralwidget);
         mainStackedWidget->setObjectName("mainStackedWidget");
-        QSizePolicy sizePolicy1(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
-        sizePolicy1.setHorizontalStretch(0);
-        sizePolicy1.setVerticalStretch(0);
-        sizePolicy1.setHeightForWidth(mainStackedWidget->sizePolicy().hasHeightForWidth());
-        mainStackedWidget->setSizePolicy(sizePolicy1);
+        QSizePolicy sizePolicy2(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
+        sizePolicy2.setHorizontalStretch(0);
+        sizePolicy2.setVerticalStretch(0);
+        sizePolicy2.setHeightForWidth(mainStackedWidget->sizePolicy().hasHeightForWidth());
+        mainStackedWidget->setSizePolicy(sizePolicy2);
 
-        gridLayout->addWidget(mainStackedWidget, 1, 0, 1, 2);
+        mainLayout->addWidget(mainStackedWidget);
 
         TSMainWindow->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(TSMainWindow);
@@ -110,9 +85,6 @@ public:
     void retranslateUi(QMainWindow *TSMainWindow)
     {
         TSMainWindow->setWindowTitle(QCoreApplication::translate("TSMainWindow", "TSMainWindow", nullptr));
-        pageHeadlineLabel->setText(QString());
-        backPushButton->setText(QString());
-        homePushButton->setText(QString());
     } // retranslateUi
 
 };

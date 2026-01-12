@@ -12,10 +12,13 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
-#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QFormLayout>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -23,58 +26,79 @@ QT_BEGIN_NAMESPACE
 class Ui_OptionsWidget
 {
 public:
-    QGridLayout *gridLayout;
+    QVBoxLayout *mainLayout;
+    QLabel *titleLabel;
+    QGroupBox *appearanceGroupBox;
+    QFormLayout *appearanceFormLayout;
+    QLabel *menuPositionLabel;
+    QComboBox *menuPositionComboBox;
+    QLabel *themeLabel;
+    QComboBox *themesComboBox;
+    QHBoxLayout *actionLayout;
     QSpacerItem *horizontalSpacer;
     QPushButton *applyPrefsPushButton;
     QSpacerItem *verticalSpacer;
-    QLabel *label_2;
-    QLabel *label_3;
-    QLabel *label;
-    QComboBox *themesComboBox;
 
     void setupUi(QWidget *OptionsWidget)
     {
         if (OptionsWidget->objectName().isEmpty())
             OptionsWidget->setObjectName("OptionsWidget");
         OptionsWidget->resize(448, 332);
-        gridLayout = new QGridLayout(OptionsWidget);
-        gridLayout->setObjectName("gridLayout");
+        mainLayout = new QVBoxLayout(OptionsWidget);
+        mainLayout->setObjectName("mainLayout");
+        titleLabel = new QLabel(OptionsWidget);
+        titleLabel->setObjectName("titleLabel");
+        QFont font;
+        font.setPointSize(22);
+        font.setBold(true);
+        titleLabel->setFont(font);
+
+        mainLayout->addWidget(titleLabel);
+
+        appearanceGroupBox = new QGroupBox(OptionsWidget);
+        appearanceGroupBox->setObjectName("appearanceGroupBox");
+        appearanceFormLayout = new QFormLayout(appearanceGroupBox);
+        appearanceFormLayout->setObjectName("appearanceFormLayout");
+        menuPositionLabel = new QLabel(appearanceGroupBox);
+        menuPositionLabel->setObjectName("menuPositionLabel");
+
+        appearanceFormLayout->setWidget(0, QFormLayout::ItemRole::LabelRole, menuPositionLabel);
+
+        menuPositionComboBox = new QComboBox(appearanceGroupBox);
+        menuPositionComboBox->setObjectName("menuPositionComboBox");
+
+        appearanceFormLayout->setWidget(0, QFormLayout::ItemRole::FieldRole, menuPositionComboBox);
+
+        themeLabel = new QLabel(appearanceGroupBox);
+        themeLabel->setObjectName("themeLabel");
+
+        appearanceFormLayout->setWidget(1, QFormLayout::ItemRole::LabelRole, themeLabel);
+
+        themesComboBox = new QComboBox(appearanceGroupBox);
+        themesComboBox->setObjectName("themesComboBox");
+
+        appearanceFormLayout->setWidget(1, QFormLayout::ItemRole::FieldRole, themesComboBox);
+
+
+        mainLayout->addWidget(appearanceGroupBox);
+
+        actionLayout = new QHBoxLayout();
+        actionLayout->setObjectName("actionLayout");
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
 
-        gridLayout->addItem(horizontalSpacer, 3, 3, 1, 1);
+        actionLayout->addItem(horizontalSpacer);
 
         applyPrefsPushButton = new QPushButton(OptionsWidget);
         applyPrefsPushButton->setObjectName("applyPrefsPushButton");
 
-        gridLayout->addWidget(applyPrefsPushButton, 3, 2, 1, 1);
+        actionLayout->addWidget(applyPrefsPushButton);
+
+
+        mainLayout->addLayout(actionLayout);
 
         verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
 
-        gridLayout->addItem(verticalSpacer, 5, 2, 1, 1);
-
-        label_2 = new QLabel(OptionsWidget);
-        label_2->setObjectName("label_2");
-        QFont font;
-        font.setPointSize(22);
-        font.setBold(true);
-        label_2->setFont(font);
-
-        gridLayout->addWidget(label_2, 0, 0, 1, 3);
-
-        label_3 = new QLabel(OptionsWidget);
-        label_3->setObjectName("label_3");
-
-        gridLayout->addWidget(label_3, 1, 0, 1, 1);
-
-        label = new QLabel(OptionsWidget);
-        label->setObjectName("label");
-
-        gridLayout->addWidget(label, 2, 0, 1, 1);
-
-        themesComboBox = new QComboBox(OptionsWidget);
-        themesComboBox->setObjectName("themesComboBox");
-
-        gridLayout->addWidget(themesComboBox, 2, 1, 1, 2);
+        mainLayout->addItem(verticalSpacer);
 
 
         retranslateUi(OptionsWidget);
@@ -85,10 +109,11 @@ public:
     void retranslateUi(QWidget *OptionsWidget)
     {
         OptionsWidget->setWindowTitle(QCoreApplication::translate("OptionsWidget", "Form", nullptr));
+        titleLabel->setText(QCoreApplication::translate("OptionsWidget", "Options", nullptr));
+        appearanceGroupBox->setTitle(QCoreApplication::translate("OptionsWidget", "Appearance", nullptr));
+        menuPositionLabel->setText(QCoreApplication::translate("OptionsWidget", "Menu Position:", nullptr));
+        themeLabel->setText(QCoreApplication::translate("OptionsWidget", "Theme:", nullptr));
         applyPrefsPushButton->setText(QCoreApplication::translate("OptionsWidget", "Apply", nullptr));
-        label_2->setText(QString());
-        label_3->setText(QString());
-        label->setText(QCoreApplication::translate("OptionsWidget", "Themes:", nullptr));
     } // retranslateUi
 
 };

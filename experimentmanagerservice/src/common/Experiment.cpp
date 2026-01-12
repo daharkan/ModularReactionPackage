@@ -14,7 +14,8 @@ Experiment::Experiment(const Experiment& other) :
     m_experimentId(other.m_experimentId),
     m_experimentType(other.m_experimentType),
     m_createdAtMSecs(other.m_createdAtMSecs),
-    m_settingsJson(other.m_settingsJson)
+    m_settingsJson(other.m_settingsJson),
+    m_state(other.m_state)
 {
     // Copy constructor implementation
 }
@@ -33,6 +34,7 @@ Experiment& Experiment::operator=(const Experiment& other) {
         m_experimentType = other.m_experimentType;
         m_createdAtMSecs = other.m_createdAtMSecs;
         m_settingsJson = other.m_settingsJson;
+        m_state = other.m_state;
     }
 
     return *this;
@@ -95,6 +97,16 @@ std::string Experiment::settingsJson() const
 void Experiment::setSettingsJson(const std::string &newSettingsJson)
 {
     m_settingsJson = newSettingsJson;
+}
+
+std::string Experiment::state() const
+{
+    return m_state;
+}
+
+void Experiment::setState(const std::string &newState)
+{
+    m_state = newState;
 }
 
 Profile& Experiment::profile() {

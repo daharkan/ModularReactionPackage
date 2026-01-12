@@ -44,8 +44,11 @@ template <> constexpr inline auto ReactorViewWidget::qt_create_metaobjectdata<qt
         "std::string",
         "cellId",
         "positionIndex",
+        "sgn_assignExperimentRequested",
         "updateFlowStatus",
-        "handleCellClicked"
+        "handleCellClicked",
+        "handleAssignRequested",
+        "handleCellSelected"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -53,10 +56,22 @@ template <> constexpr inline auto ReactorViewWidget::qt_create_metaobjectdata<qt
         QtMocHelpers::SignalData<void(const std::string &, int)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
             { 0x80000000 | 3, 4 }, { QMetaType::Int, 5 },
         }}),
+        // Signal 'sgn_assignExperimentRequested'
+        QtMocHelpers::SignalData<void(const std::string &, int)>(6, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { 0x80000000 | 3, 4 }, { QMetaType::Int, 5 },
+        }}),
         // Slot 'updateFlowStatus'
-        QtMocHelpers::SlotData<void()>(6, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(7, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'handleCellClicked'
-        QtMocHelpers::SlotData<void(const std::string &, int)>(7, 2, QMC::AccessPrivate, QMetaType::Void, {{
+        QtMocHelpers::SlotData<void(const std::string &, int)>(8, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 3, 4 }, { QMetaType::Int, 5 },
+        }}),
+        // Slot 'handleAssignRequested'
+        QtMocHelpers::SlotData<void(const std::string &, int)>(9, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 3, 4 }, { QMetaType::Int, 5 },
+        }}),
+        // Slot 'handleCellSelected'
+        QtMocHelpers::SlotData<void(const std::string &, int)>(10, 2, QMC::AccessPrivate, QMetaType::Void, {{
             { 0x80000000 | 3, 4 }, { QMetaType::Int, 5 },
         }}),
     };
@@ -83,13 +98,18 @@ void ReactorViewWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: _t->sgn_openCellView((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
-        case 1: _t->updateFlowStatus(); break;
-        case 2: _t->handleCellClicked((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
+        case 1: _t->sgn_assignExperimentRequested((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
+        case 2: _t->updateFlowStatus(); break;
+        case 3: _t->handleCellClicked((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
+        case 4: _t->handleAssignRequested((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
+        case 5: _t->handleCellSelected((*reinterpret_cast< std::add_pointer_t<std::string>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
         default: ;
         }
     }
     if (_c == QMetaObject::IndexOfMethod) {
         if (QtMocHelpers::indexOfMethod<void (ReactorViewWidget::*)(const std::string & , int )>(_a, &ReactorViewWidget::sgn_openCellView, 0))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (ReactorViewWidget::*)(const std::string & , int )>(_a, &ReactorViewWidget::sgn_assignExperimentRequested, 1))
             return;
     }
 }
@@ -113,14 +133,14 @@ int ReactorViewWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 3)
+        if (_id < 6)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 6;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 3)
+        if (_id < 6)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 3;
+        _id -= 6;
     }
     return _id;
 }
@@ -129,5 +149,11 @@ int ReactorViewWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 void ReactorViewWidget::sgn_openCellView(const std::string & _t1, int _t2)
 {
     QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1, _t2);
+}
+
+// SIGNAL 1
+void ReactorViewWidget::sgn_assignExperimentRequested(const std::string & _t1, int _t2)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 1, nullptr, _t1, _t2);
 }
 QT_WARNING_POP

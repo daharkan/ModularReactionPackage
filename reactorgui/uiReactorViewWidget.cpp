@@ -55,6 +55,29 @@ void ReactorViewWidget::handleCellClicked(const std::string &cellId, int positio
     emit sgn_openCellView(cellId, positionIndex);
 }
 
+void ReactorViewWidget::handleAssignRequested(const std::string &cellId, int positionIndex)
+{
+    if (cellId.empty()) {
+        return;
+    }
+    emit sgn_assignExperimentRequested(cellId, positionIndex);
+}
+
+void ReactorViewWidget::handleCellSelected(const std::string &cellId, int positionIndex)
+{
+    Q_UNUSED(positionIndex);
+    if (cellId.empty()) {
+        return;
+    }
+    m_selectedCellId = cellId;
+    for (CellOverviewWidget *widget : m_lhsCells) {
+        widget->setSelected(widget->cellId() == m_selectedCellId);
+    }
+    for (CellOverviewWidget *widget : m_rhsCells) {
+        widget->setSelected(widget->cellId() == m_selectedCellId);
+    }
+}
+
 void ReactorViewWidget::setupCellOverviewWidgets()
 {
     m_lhsCells.clear();
@@ -64,6 +87,8 @@ void ReactorViewWidget::setupCellOverviewWidgets()
         CellOverviewWidget *lhsWidget = new CellOverviewWidget(this);
         lhsWidget->setSlotInfo("LHS", i + 1);
         connect(lhsWidget, &CellOverviewWidget::sgn_cellClicked, this, &ReactorViewWidget::handleCellClicked);
+        connect(lhsWidget, &CellOverviewWidget::sgn_assignExperimentRequested, this, &ReactorViewWidget::handleAssignRequested);
+        connect(lhsWidget, &CellOverviewWidget::sgn_cellSelected, this, &ReactorViewWidget::handleCellSelected);
         ui->lhsCellsLayout->addWidget(lhsWidget);
         m_lhsCells.push_back(lhsWidget);
 
@@ -71,6 +96,8 @@ void ReactorViewWidget::setupCellOverviewWidgets()
         int displayIndex = 10 - i;
         rhsWidget->setSlotInfo("RHS", displayIndex);
         connect(rhsWidget, &CellOverviewWidget::sgn_cellClicked, this, &ReactorViewWidget::handleCellClicked);
+        connect(rhsWidget, &CellOverviewWidget::sgn_assignExperimentRequested, this, &ReactorViewWidget::handleAssignRequested);
+        connect(rhsWidget, &CellOverviewWidget::sgn_cellSelected, this, &ReactorViewWidget::handleCellSelected);
         ui->rhsCellsLayout->addWidget(rhsWidget);
         m_rhsCells.push_back(rhsWidget);
     }
@@ -125,6 +152,7 @@ void ReactorViewWidget::updateCellGroup(const std::string &busboardId, QVector<C
         } else {
             widget->setInactive();
         }
+        widget->setSelected(!m_selectedCellId.empty() && widget->cellId() == m_selectedCellId);
     }
 }
 

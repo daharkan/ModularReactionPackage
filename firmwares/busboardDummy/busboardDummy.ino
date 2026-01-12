@@ -24,11 +24,11 @@ struct CellState {
 
 static CellState cells[SLOT_COUNT];
 static const char* CELL_IDS[SLOT_COUNT] = {
-  "s25_011",
-  "s25_022",
-  "s25_033",
-  "s25_044",
-  "s25_055"
+  "s25_111",
+  "s25_222",
+  "s25_333",
+  "s25_444",
+  "s25_555"
 };
 
 static uint32_t lastStatusMs = 0;
@@ -50,7 +50,7 @@ static char* trimLine(char* line) {
   return line;
 }
 
-static bool parseUpdateCommand(char* line, int* positionIdx, float* targetTemp, int* targetRpm, uint8_t* motorSelect) {
+static bool parseUpdateCommand(char* line, int* positionIdx, float* targetTemp, int* targetRpm, uint8_t* motorSelect, int* checksumRec) {
   if (!line || line[0] == '\0') return false;
   line = trimLine(line);
   if (line[0] == '\0') return false;
@@ -81,15 +81,16 @@ static bool parseUpdateCommand(char* line, int* positionIdx, float* targetTemp, 
 
   token = strtok(nullptr, "#");
   if (!token) return false;
-  int checksumRec = atoi(token);
+  int checksumValue = atoi(token);
 
   int checksumCalc = pos + (int)tTemp + tRpm + tMotorSelect;
-  if (checksumRec != checksumCalc) return false;
+  if (checksumValue != checksumCalc) return false;
 
   *positionIdx = pos;
   *targetTemp = tTemp;
   *targetRpm = tRpm;
   *motorSelect = (uint8_t)tMotorSelect;
+  *checksumRec = checksumValue;
   return true;
 }
 
@@ -112,13 +113,21 @@ static void handleSerialUpdates() {
   while (Serial.available()) {
     char c = (char)Serial.read();
     if (feedParser(c, frame, sizeof(frame))) {
-      int positionIdx; float targetTemp; int targetRpm; uint8_t motorSelect;
-      if (parseUpdateCommand(frame, &positionIdx, &targetTemp, &targetRpm, &motorSelect)) {
+      int positionIdx;
+      float targetTemp;
+      int targetRpm;
+      uint8_t motorSelect;
+      int checksumRec;
+      if (parseUpdateCommand(frame, &positionIdx, &targetTemp, &targetRpm, &motorSelect, &checksumRec)) {
         if (positionIdx >= 1 && positionIdx <= SLOT_COUNT) {
           int idx = positionIdx - 1;
           cells[idx].targetTemp = targetTemp;
           cells[idx].targetRpm  = targetRpm;
           cells[idx].motorSelect = motorSelect;
+          Serial.print(F("ACK#"));
+          Serial.print(positionIdx);
+          Serial.print(F("#"));
+          Serial.println(checksumRec);
         }
       }
     }
@@ -167,7 +176,7 @@ static void sendStatus() {
     dtostrf(flowLpm, 4, 3, flowStr);
     dtostrf(flowTempMv, 4, 1, flowTempStr);
 
-    Serial.print(F("bbb_LHS_000#"));
+    Serial.print(F("bbb_RHS_000#"));
     Serial.print(CELL_IDS[i]);
     Serial.print('#');
     Serial.print(i + 1);
@@ -215,7 +224,7 @@ void setup() {
   flowLpm = 1.2f;
   flowTempMv = 250.0f;
 
-  Serial.println(F("bbb_LHS_000#HELLO"));
+  Serial.println(F("bbb_RHS_000#HELLO"));
   sendPresenceStatus();
   lastStatusMs = millis();
   lastGoMs = millis();

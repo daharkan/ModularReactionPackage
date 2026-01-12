@@ -1,27 +1,16 @@
 #include "uiCellOverviewWidget.h"
 #include "ui_uiCellOverviewWidget.h"
 #include <QDateTime>
+#include <QMenu>
 #include <QMouseEvent>
-
-namespace {
-constexpr unsigned long long kPreheatWindowMs = 2ULL * 60ULL * 1000ULL;
-
-unsigned long long experimentDurationMs(Experiment &experiment)
-{
-    unsigned long long total = 0;
-    Profile profile = experiment.profile();
-    for (const auto &arc : profile.tempArcsInSeq()) {
-        total += arc.durationMSec();
-    }
-    return total;
-}
-} // namespace
+#include <QContextMenuEvent>
 
 CellOverviewWidget::CellOverviewWidget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::CellOverviewWidget)
 {
     ui->setupUi(this);
+    m_stateKey = "empty";
     applyActiveStyle(false);
 }
 
@@ -53,47 +42,61 @@ void CellOverviewWidget::setCellData(const Cell &cell)
         assignedBy = "--";
     }
 
+    QString stateKey = QString::fromStdString(experiment.state()).toLower();
+    bool isCompleted = stateKey == "completed";
+    ui->finishesAtLabel->setText(isCompleted ? tr("Finished at:") : tr("Finishes at:"));
+
     QString assignedAt = "--";
     if (experiment.startSystemTimeMSecs() > 0) {
         QDateTime assignedDate = QDateTime::fromMSecsSinceEpoch(experiment.startSystemTimeMSecs());
         assignedAt = assignedDate.toString("yyyy-MM-dd HH:mm");
     }
 
+    QString finishesAt = "--";
+    unsigned long long totalDurationMs = experiment.totalProfileDurationMSecs();
+    if (totalDurationMs == 0) {
+        const auto &arcs = experiment.profile().tempArcsInSeq();
+        for (const auto &arc : arcs) {
+            totalDurationMs += arc.durationMSec();
+        }
+    }
+    if (experiment.startSystemTimeMSecs() > 0 && totalDurationMs > 0) {
+        unsigned long long startMs = experiment.startSystemTimeMSecs();
+        unsigned long long finishMs = startMs + totalDurationMs;
+        if (isCompleted) {
+            qint64 nowMs = QDateTime::currentMSecsSinceEpoch();
+            unsigned long long adjustedDuration = totalDurationMs;
+            for (int i = 0; i < 2; ++i) {
+                if (finishMs <= static_cast<unsigned long long>(nowMs)) {
+                    break;
+                }
+                if (adjustedDuration < 1000ULL) {
+                    break;
+                }
+                adjustedDuration /= 1000ULL;
+                finishMs = startMs + adjustedDuration;
+            }
+        }
+        QDateTime finishDate = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(finishMs));
+        finishesAt = finishDate.toString("yyyy-MM-dd HH:mm");
+    }
+
     ui->experimentNameValueLabel->setText(expName);
     ui->assignedByValueLabel->setText(assignedBy);
     ui->assignedAtValueLabel->setText(assignedAt);
+    ui->finishesAtValueLabel->setText(finishesAt);
 
     float temp = cell.isExtTempPlugged() ? cell.currentTempExt() : cell.currentTempInner();
     ui->rpmValueLabel->setText(QString::number(cell.currentRPM()));
     ui->tempValueLabel->setText(QString::number(temp, 'f', 1));
 
-    if (!cell.isPlugged() || cell.cellID().empty()) {
-        applyStateStyle("unplugged");
+    if (stateKey.isEmpty()) {
+        m_stateKey = "active";
+        applyActiveStyle(true);
         return;
     }
 
-    bool hasExperiment = !experiment.experimentId().empty() || !experiment.name().empty();
-    if (!hasExperiment) {
-        applyStateStyle("idle");
-        return;
-    }
-
-    unsigned long long totalDurationMs = experimentDurationMs(experiment);
-    unsigned long long startMs = experiment.startSystemTimeMSecs();
-    if (startMs == 0 || totalDurationMs == 0) {
-        applyStateStyle("preheat");
-        return;
-    }
-
-    unsigned long long nowMs = Cell::getCurrentTimeMillis();
-    unsigned long long elapsedMs = nowMs > startMs ? nowMs - startMs : 0;
-    if (elapsedMs < kPreheatWindowMs) {
-        applyStateStyle("preheat");
-    } else if (elapsedMs < totalDurationMs) {
-        applyStateStyle("running");
-    } else {
-        applyStateStyle("completed");
-    }
+    applyStateStyle(stateKey);
 }
 
 void CellOverviewWidget::setInactive()
@@ -105,15 +108,41 @@ void CellOverviewWidget::setInactive()
     ui->experimentNameValueLabel->setText("--");
     ui->assignedByValueLabel->setText("--");
     ui->assignedAtValueLabel->setText("--");
+    ui->finishesAtLabel->setText(tr("Finishes at:"));
+    ui->finishesAtValueLabel->setText("--");
     ui->rpmValueLabel->setText("--");
     ui->tempValueLabel->setText("--");
 
+    setSelected(false);
     applyStateStyle("empty");
+}
+
+void CellOverviewWidget::setSelected(bool selected)
+{
+    if (m_isSelected == selected) {
+        return;
+    }
+    m_isSelected = selected;
+    if (m_stateKey.isEmpty()) {
+        applyActiveStyle(m_isActive);
+        return;
+    }
+    applyStateStyle(m_stateKey);
 }
 
 std::string CellOverviewWidget::cellId() const
 {
     return m_cellId;
+}
+
+void CellOverviewWidget::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton && m_isActive) {
+        emit sgn_cellSelected(m_cellId, m_slotIndex);
+        event->ignore();
+        return;
+    }
+    QWidget::mousePressEvent(event);
 }
 
 void CellOverviewWidget::mouseDoubleClickEvent(QMouseEvent *event)
@@ -123,6 +152,20 @@ void CellOverviewWidget::mouseDoubleClickEvent(QMouseEvent *event)
     }
     emit sgn_cellClicked(m_cellId, m_slotIndex);
     QWidget::mouseDoubleClickEvent(event);
+}
+
+void CellOverviewWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+    if (!m_isActive || m_cellId.empty()) {
+        return;
+    }
+
+    QMenu menu(this);
+    QAction *assignAction = menu.addAction(tr("Assign Experiment..."));
+    QAction *selectedAction = menu.exec(event->globalPos());
+    if (selectedAction == assignAction) {
+        emit sgn_assignExperimentRequested(m_cellId, m_slotIndex);
+    }
 }
 
 void CellOverviewWidget::updateHeader()
@@ -138,69 +181,69 @@ void CellOverviewWidget::updateHeader()
 
 void CellOverviewWidget::applyActiveStyle(bool active)
 {
+    const QString selectedBorder = "rgb(33, 50, 104)";
+    auto applyStyle = [&](const QString &background, const QString &text, const QString &border) {
+        QString borderColor = m_isSelected ? selectedBorder : border;
+        setStyleSheet(QString("background-color: %1;"
+                              "color: %2;"
+                              "border: 2px solid %3;"
+                              "border-radius: 6px;")
+                          .arg(background, text, borderColor));
+    };
+
     if (active) {
-        setStyleSheet("");
+        applyStyle("rgb(241, 245, 251)", "rgb(33, 50, 104)", "rgb(199, 212, 234)");
         return;
     }
 
-    setStyleSheet("background-color: rgb(46, 52, 54);"
-                  "color: rgb(180, 180, 180);"
-                  "border: 1px solid rgb(80, 80, 80);"
-                  "border-radius: 6px;");
+    applyStyle("rgb(24, 33, 59)", "rgb(168, 184, 214)", "rgb(44, 58, 94)");
 }
 
 void CellOverviewWidget::applyStateStyle(const QString &stateKey)
 {
+    m_stateKey = stateKey;
     if (stateKey == "empty") {
         applyActiveStyle(false);
         return;
     }
 
+    const QString selectedBorder = "rgb(33, 50, 104)";
+    auto applyStyle = [&](const QString &background, const QString &text, const QString &border) {
+        QString borderColor = m_isSelected ? selectedBorder : border;
+        setStyleSheet(QString("background-color: %1;"
+                              "color: %2;"
+                              "border: 2px solid %3;"
+                              "border-radius: 6px;")
+                          .arg(background, text, borderColor));
+    };
+
     if (stateKey == "unplugged") {
-        setStyleSheet("background-color: rgb(60, 60, 60);"
-                      "color: rgb(200, 200, 200);"
-                      "border: 1px solid rgb(100, 100, 100);"
-                      "border-radius: 6px;");
+        applyStyle("rgb(21, 29, 51)", "rgb(144, 164, 199)", "rgb(38, 51, 86)");
         return;
     }
 
     if (stateKey == "idle") {
-        setStyleSheet("background-color: rgb(224, 224, 224);"
-                      "color: rgb(30, 30, 30);"
-                      "border: 1px solid rgb(180, 180, 180);"
-                      "border-radius: 6px;");
+        applyStyle("rgb(246, 249, 253)", "rgb(33, 50, 104)", "rgb(214, 224, 241)");
         return;
     }
 
     if (stateKey == "assigned") {
-        setStyleSheet("background-color: rgb(186, 225, 255);"
-                      "color: rgb(20, 30, 40);"
-                      "border: 1px solid rgb(120, 170, 210);"
-                      "border-radius: 6px;");
+        applyStyle("rgb(215, 241, 232)", "rgb(31, 92, 74)", "rgb(167, 222, 200)");
         return;
     }
 
     if (stateKey == "preheat") {
-        setStyleSheet("background-color: rgb(255, 204, 128);"
-                      "color: rgb(50, 30, 0);"
-                      "border: 1px solid rgb(220, 150, 70);"
-                      "border-radius: 6px;");
+        applyStyle("rgb(225, 241, 238)", "rgb(33, 92, 82)", "rgb(182, 227, 210)");
         return;
     }
 
     if (stateKey == "running") {
-        setStyleSheet("background-color: rgb(186, 234, 190);"
-                      "color: rgb(20, 60, 20);"
-                      "border: 1px solid rgb(120, 190, 120);"
-                      "border-radius: 6px;");
+        applyStyle("rgb(189, 232, 215)", "rgb(28, 88, 71)", "rgb(125, 205, 176)");
         return;
     }
 
     if (stateKey == "completed") {
-        setStyleSheet("background-color: rgb(200, 210, 255);"
-                      "color: rgb(20, 20, 60);"
-                      "border: 1px solid rgb(130, 140, 200);"
-                      "border-radius: 6px;");
+        applyStyle("rgb(219, 229, 246)", "rgb(33, 50, 104)", "rgb(177, 195, 230)");
         return;
     }
 

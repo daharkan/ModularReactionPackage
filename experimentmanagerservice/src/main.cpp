@@ -2,7 +2,6 @@
 #include <iostream>
 #include "ServiceRunner.h"
 #include "src/common/Cell.h"
-#include "src/common/CellTarget.h"
 #include "src/common/Experiment.h"
 #include <chrono>
 #include <thread>
@@ -60,51 +59,6 @@ int main(int argc, char *argv[])
 {
     ensureRedisRunning("127.0.0.1", 6379);
 
-/*
-
-    for(int i = 0; i < 9; i++){
-        CellTarget celltarget;
-        celltarget.setCellID("s25_" + QString::number((i+1)*111).toStdString());
-        Document document;
-        document.SetObject();
-
-        // Pass the document's allocator to toJSON method to allocate memory for JSON objects
-        Document::AllocatorType& allocator = document.GetAllocator();
-
-        Value celltargetJSON = celltarget.toJSON(allocator);
-        document.AddMember(DB_TARGETJSON_KEY, celltargetJSON, allocator);
-
-        // Prepare writer and string buffer to convert JSON to string
-        StringBuffer buffer;
-        Writer<StringBuffer> writer(buffer);
-        document.Accept(writer);
-
-        // Get the JSON string
-        std::string jsonString = buffer.GetString();
-        std::future<cpp_redis::reply> reply = client.hset(DB_TARGETTABLE_KEY, celltarget.cellID(), jsonString);
-    }
-    CellTarget celltarget;
-    celltarget.setCellID("s25_101010");
-    Document document;
-    document.SetObject();
-
-    // Pass the document's allocator to toJSON method to allocate memory for JSON objects
-    Document::AllocatorType& allocator = document.GetAllocator();
-
-    Value celltargetJSON = celltarget.toJSON(allocator);
-    document.AddMember(DB_TARGETJSON_KEY, celltargetJSON, allocator);
-
-    // Prepare writer and string buffer to convert JSON to string
-    StringBuffer buffer;
-    Writer<StringBuffer> writer(buffer);
-    document.Accept(writer);
-
-    // Get the JSON string
-    std::string jsonString = buffer.GetString();
-    std::future<cpp_redis::reply> reply = client.hset(DB_TARGETTABLE_KEY, celltarget.cellID(), jsonString);
-    client.sync_commit();
-    return 0;
-*/
 /*
     for(int i = 0; i < 9; i++){
         Cell cell;

@@ -8,6 +8,8 @@
 #include <QQueue>
 #include <QMap>
 #include <QDebug>
+#include <QSet>
+#include <QByteArray>
 
 class BusboardSerialManager : public QObject
 {
@@ -28,14 +30,17 @@ private:
     bool m_sleeping = false;
     QQueue<QString> m_messageQueue;
     QMap<int, QString> m_pendingUpdates;
+    QSet<QString> m_pendingAckTokens;
     bool m_writing = false;
     QString m_portName;
+    QByteArray m_rxBuffer;
 
     void writeString(QString str, QSerialPort *port);
     void writeString2Queue(QString str);
     void clearMessageQueue();
     void flushPendingUpdates();
     bool queueUpdateCommand(const QString &command);
+    bool waitForAckToken(const QString &token, int timeoutMs);
     void delay(int msec);
 
 

@@ -11,7 +11,6 @@ CONFIG += c++17
 SOURCES += \
     ../experimentmanagerservice/src/common/Arc.cpp \
     ../experimentmanagerservice/src/common/Cell.cpp \
-    ../experimentmanagerservice/src/common/CellTarget.cpp \
     ../experimentmanagerservice/src/common/CellVisuals.cpp \
     ../experimentmanagerservice/src/common/CellVisualsHistory.cpp \
     ../experimentmanagerservice/src/common/Experiment.cpp \
@@ -29,8 +28,8 @@ SOURCES += \
     uiExperimentGraph.cpp \
     uiExperimentListWidget.cpp \
     uiExperimentManagerWidget.cpp \
-    uiHomeWidget.cpp \
     uiLoginWidget.cpp \
+    uiMenuWidget.cpp \
     uiOptionsWidget.cpp \
     uiReactorViewWidget.cpp \
     uiTempCellViewWidget.cpp \
@@ -39,7 +38,6 @@ SOURCES += \
 
 HEADERS += \
     ../experimentmanagerservice/src/common/Cell.h \
-    ../experimentmanagerservice/src/common/CellTarget.h \
     ../experimentmanagerservice/src/common/CellVisuals.h \
     ../experimentmanagerservice/src/common/CellVisualsHistory.h \
     ../experimentmanagerservice/src/common/Experiment.h \
@@ -94,8 +92,8 @@ HEADERS += \
     uiExperimentGraph.h \
     uiExperimentListWidget.h \
     uiExperimentManagerWidget.h \
-    uiHomeWidget.h \
     uiLoginWidget.h \
+    uiMenuWidget.h \
     uiOptionsWidget.h \
     uiReactorViewWidget.h \
     uiTempCellViewWidget.h \
@@ -110,8 +108,8 @@ FORMS += \
     uiExperimentGraph.ui \
     uiExperimentListWidget.ui \
     uiExperimentManagerWidget.ui \
-    uiHomeWidget.ui \
     uiLoginWidget.ui \
+    uiMenuWidget.ui \
     uiOptionsWidget.ui \
     uiReactorViewWidget.ui \
     uiTSMainWindow.ui \

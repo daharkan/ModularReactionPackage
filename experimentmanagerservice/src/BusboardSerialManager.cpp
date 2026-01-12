@@ -7,12 +7,14 @@
 #include <sstream>
 #include <thread>
 #include <QSet>
+#include <QElapsedTimer>
 
 #define BAUDRATE 115200
 #define BUSBOARD_HANDSHAKE "bbb"
 
 namespace {
 QSet<QString> s_usedPorts;
+constexpr int kAckTimeoutMs = 250;
 
 std::string cleanBusboardToken(const std::string& str) {
     std::string result;
@@ -49,6 +51,30 @@ std::string normalizeBusboardId(const std::string& token) {
     }
 
     return "bbb_" + side + "_" + digits;
+}
+
+bool buildAckTokenFromCommand(const QString &command, QString *tokenOut) {
+    QString trimmed = command.trimmed();
+    if (!trimmed.startsWith('>') || !trimmed.endsWith('<')) {
+        return false;
+    }
+
+    QString payload = trimmed.mid(1, trimmed.size() - 2);
+    QStringList parts = payload.split('#');
+    if (parts.size() < 5) {
+        return false;
+    }
+
+    bool okPos = false;
+    bool okChecksum = false;
+    int pos = parts.at(0).toInt(&okPos);
+    int checksum = parts.at(4).toInt(&okChecksum);
+    if (!okPos || !okChecksum) {
+        return false;
+    }
+
+    *tokenOut = QString("ACK#%1#%2").arg(pos).arg(checksum);
+    return true;
 }
 } // namespace
 
@@ -152,10 +178,26 @@ bool BusboardSerialManager::writeCellUpdateString(QString str)
         return false;
     }
 
-    writeString2Queue(str.trimmed());
+    QString ackToken;
+    bool expectAck = buildAckTokenFromCommand(str, &ackToken);
+    if (expectAck) {
+        m_pendingAckTokens.insert(ackToken);
+    }
+
+    writeString(str.trimmed(), m_serialPort);
+
+    if (!expectAck) {
+        return true;
+    }
+
+    bool acked = waitForAckToken(ackToken, kAckTimeoutMs);
+    if (!acked) {
+        m_pendingAckTokens.remove(ackToken);
+        qDebug() << "ACK timeout for" << ackToken;
+    }
    // qDebug() << "-BusboardSerialManager::writeCellUpdateString-----";
 
-    return true;
+    return acked;
 }
 
 bool BusboardSerialManager::queueUpdateCommand(const QString &command)
@@ -210,70 +252,67 @@ void BusboardSerialManager::flushPendingUpdates()
 
 void BusboardSerialManager::serialRecieved()
 {
-
-    if(m_writing){
+    if (!m_serialPort) {
         return;
     }
 
-    QByteArray data;
-    while (m_serialPort->isOpen() && m_serialPort->waitForReadyRead(-1)) {
-        while (m_serialPort->bytesAvailable() > 0) {
-            char ch;
-            if (m_serialPort->getChar(&ch)) {
-                if (ch == '\n') {
-                    QString incoming(data);
-                    QString dataString = incoming.remove("\r").remove(" ").remove("\u0000");
+    m_rxBuffer.append(m_serialPort->readAll());
 
-                    //qDebug() << "dataString:" << dataString;
-                    QCoreApplication::processEvents();
+    int newlineIndex = -1;
+    while ((newlineIndex = m_rxBuffer.indexOf('\n')) != -1) {
+        QByteArray line = m_rxBuffer.left(newlineIndex);
+        m_rxBuffer.remove(0, newlineIndex + 1);
 
-                    if(dataString.startsWith("presence#")){
-                        QStringList parts = dataString.split('#');
-                        if (parts.size() >= 3) {
-                            bool okSlot = false;
-                            int slotIndex = parts.at(1).toInt(&okSlot);
-                            bool okPresent = false;
-                            int presentVal = parts.at(2).toInt(&okPresent);
-                            if (okSlot && okPresent) {
-                                emit sgn_presenceUpdate(slotIndex, presentVal == 1);
-                            }
-                        }
-                        return;
-                    }
+        QString dataString = QString::fromUtf8(line).remove("\r").remove(" ").remove("\u0000");
+        if (dataString.isEmpty()) {
+            continue;
+        }
 
-                    if(dataString.contains("GO")){
-                        flushPendingUpdates();
-                        clearMessageQueue();
-                        return;
-                    }
+        //qDebug() << "dataString:" << dataString;
+        QCoreApplication::processEvents();
 
-                    if(dataString.count("#") < 8){
-                        return;
-                    }
+        if (dataString.startsWith("ACK#")) {
+            QString ackToken = dataString.trimmed();
+            if (m_pendingAckTokens.contains(ackToken)) {
+                m_pendingAckTokens.remove(ackToken);
+            }
+            continue;
+        }
 
-
-                    Cell cell;
-                    cell.updateStatusFromBoard(dataString.toStdString());
-                    cell.setIsPlugged(true);
-                    //qDebug() << "cell id: " << cell.cellID();
-                    QCoreApplication::processEvents();
-
-                    emit sgn_updateCell(cell);
-
-                    //qDebug() << std::chrono::system_clock::now().time_since_epoch()/1000000 << " -  incoming:  " << dataString;
-                    data.clear();
-
-                    return;
-                } else {
-                    data.append(ch);
+        if (dataString.startsWith("presence#")) {
+            QStringList parts = dataString.split('#');
+            if (parts.size() >= 3) {
+                bool okSlot = false;
+                int slotIndex = parts.at(1).toInt(&okSlot);
+                bool okPresent = false;
+                int presentVal = parts.at(2).toInt(&okPresent);
+                if (okSlot && okPresent) {
+                    emit sgn_presenceUpdate(slotIndex, presentVal == 1);
                 }
             }
+            continue;
         }
+
+        if (dataString.contains("GO")) {
+            flushPendingUpdates();
+            clearMessageQueue();
+            continue;
+        }
+
+        if (dataString.count("#") < 8) {
+            continue;
+        }
+
+        Cell cell;
+        cell.updateStatusFromBoard(dataString.toStdString());
+        cell.setIsPlugged(true);
+        //qDebug() << "cell id: " << cell.cellID();
+        QCoreApplication::processEvents();
+
+        emit sgn_updateCell(cell);
+
+        //qDebug() << std::chrono::system_clock::now().time_since_epoch()/1000000 << " -  incoming:  " << dataString;
     }
-
-
-
-
 }
 
 
@@ -287,20 +326,53 @@ void BusboardSerialManager::writeString(QString str, QSerialPort *port)
     if(port == nullptr)
         throw std::exception();
 
+
     if(m_sleeping){
         return;
     }
+    if (m_writing) {
+        return;
+    }
+
+
+    if (!port->isOpen() || !port->isWritable()) {
+        qDebug() << "serial port not writable";
+        return;
+    }
+
+
     m_writing = true;
+
     str.append("\n");
     QByteArray ba = str.toUtf8();
+    if (port->bytesToWrite() > 0) {
+        port->clear(QSerialPort::Output);
+    }
     port->write(ba);
+    port->waitForBytesWritten(200);
+    delay(20);
+    port->write(ba);
+    port->waitForBytesWritten(200);
     qDebug() << "outgoing: " << str;
 
+    delay(200);
 
-    //port->flush();
-    //port->clear(QSerialPort::Output);
     m_writing = false;
 
+}
+
+bool BusboardSerialManager::waitForAckToken(const QString &token, int timeoutMs)
+{
+    QElapsedTimer timer;
+    timer.start();
+    while (timer.elapsed() < timeoutMs) {
+        if (!m_pendingAckTokens.contains(token)) {
+            return true;
+        }
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
+    return false;
 }
 
 void BusboardSerialManager::writeString2Queue(QString str)

@@ -3,7 +3,6 @@
 #include <QObject>
 #include <cpp_redis/cpp_redis>
 #include "Cell.h"
-#include "CellTarget.h"
 #include "CellVisualsHistory.h"
 #include "FlowStatus.h"
 #include "Experiment.h"
@@ -15,13 +14,11 @@
 
 #define DB_BUSBOARD_TABLE_KEY "mr10:busboards"
 #define DB_CELLTABLE_KEY "mr10:cells"
-#define DB_TARGETTABLE_KEY "mr10:targets"
 #define DB_USERS_TABLE_KEY "mr10:users"
 #define DB_EXPERIMENTS_TABLE_KEY "mr10:experiments"
 #define DB_CELLVISUALS_TABLE_KEY "mr10:cell_visuals"
 
 #define DB_CELLJSON_KEY "cell"
-#define DB_TARGETJSON_KEY "celltarget"
 #define DB_BUSBOARDJSON_KEY "busboard"
 #define DB_EXPERIMENTJSON_KEY "experiment"
 #define DB_CELLVISUALS_JSON_KEY "cellVisualsHistory"
@@ -39,13 +36,10 @@ public:
     bool connectToDB(std::string hostname, int port);
     bool initializeSchema(bool reset);
     std::vector<Cell> getCellList(std::vector<std::string> cellIDList);
-    std::vector<CellTarget> getCellTargets(std::vector<std::string> cellIDList);
     std::vector<std::string> getBusboardCellIds(std::string busboardID);
     std::vector<std::string> getBusboardIds();
     std::vector<std::string> getCellIds();
 
-    bool pushCellTarget(CellTarget celltarget);
-    bool pushCellTargets(std::vector<CellTarget> celltargets);
 
     bool pushExperiment(const Experiment& experiment);
     std::optional<Experiment> getExperiment(const std::string& experimentId);

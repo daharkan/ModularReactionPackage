@@ -4,8 +4,6 @@
 #include <QDateTime>
 
 namespace {
-constexpr unsigned long long kPreheatWindowMs = 2ULL * 60ULL * 1000ULL;
-
 QString formatDurationMs(unsigned long long durationMs)
 {
     unsigned long long totalSeconds = durationMs / 1000ULL;
@@ -29,6 +27,13 @@ CellWidget::CellWidget(QWidget *parent)
     , ui(new Ui::CellWidget)
 {
     ui->setupUi(this);
+    if (ui->assignExperimentButton != nullptr) {
+        connect(ui->assignExperimentButton, &QPushButton::clicked, this, [this]() {
+            if (!m_cell.cellID().empty()) {
+                emit sgn_assignExperimentRequested(m_cell.cellID());
+            }
+        });
+    }
 
 }
 
@@ -39,13 +44,13 @@ CellWidget::~CellWidget()
 
 void CellWidget::setCurrentExtTempView(float temp)
 {
-    ui->currentExtTempLabel->setText(QString::number(temp));
+    ui->currentExtTempLabel->setText(QString::number(temp, 'f', 1));
 }
 
 
 void CellWidget::setCurrentInnerTempView(float temp)
 {
-    ui->currentInnerTempLabel->setText(QString::number(temp));
+    ui->currentInnerTempLabel->setText(QString::number(temp, 'f', 1));
 }
 
 
@@ -60,7 +65,7 @@ void CellWidget::setCurrentRPMView(int rpm)
 
 void CellWidget::setTargetTempView(float temp)
 {
-    ui->targetTempLabel->setText(QString::number(temp));
+    ui->targetTempLabel->setText(QString::number(temp, 'f', 1));
 }
 
 
@@ -113,6 +118,9 @@ void CellWidget::setPositionIndex(int positionIndex)
 void CellWidget::updateCell(Cell &cell)
 {
     m_cell = cell;
+    if (ui->assignExperimentButton != nullptr) {
+        ui->assignExperimentButton->setEnabled(!cell.cellID().empty());
+    }
 
     float currentTempExt = cell.currentTempExt();
     float currentTempInner = cell.currentTempInner();
@@ -135,8 +143,7 @@ void CellWidget::updateCell(Cell &cell)
         clearExperimentGraph();
     }
 
-    pushTempAndRPMToCellGraph(currentTempExt, currentRPM);
-        QString expName = QString::fromStdString(experiment.name());
+    QString expName = QString::fromStdString(experiment.name());
     if (expName.isEmpty()) {
         expName = "--";
     }
@@ -155,13 +162,13 @@ void CellWidget::updateCell(Cell &cell)
     }
     ui->assignedAtValueLabel->setText(assignedAt);
 
-    QString stateText = "--";
+    QString stateText = QString::fromStdString(experiment.state());
+    if (stateText.isEmpty()) {
+        stateText = "--";
+    }
+
     QString progressText = "--";
-    if (!cell.isPlugged() || cell.cellID().empty()) {
-        stateText = "UNPLUGGED";
-    } else if (experiment.experimentId().empty() && experiment.name().empty()) {
-        stateText = "IDLE";
-    } else {
+    if (hasExperimentAssigned(experiment)) {
         unsigned long long totalDurationMs = 0;
         const auto &tempArcs = experiment.profile().tempArcsInSeq();
         for (const auto &arc : tempArcs) {
@@ -169,19 +176,9 @@ void CellWidget::updateCell(Cell &cell)
         }
 
         unsigned long long startMs = experiment.startSystemTimeMSecs();
-        if (startMs == 0 || totalDurationMs == 0) {
-            stateText = "PREHEAT";
-        } else {
+        if (startMs > 0 && totalDurationMs > 0) {
             unsigned long long nowMs = Cell::getCurrentTimeMillis();
             unsigned long long elapsedMs = nowMs > startMs ? nowMs - startMs : 0;
-            if (elapsedMs < kPreheatWindowMs) {
-                stateText = "PREHEAT";
-            } else if (elapsedMs < totalDurationMs) {
-                stateText = "RUNNING";
-            } else {
-                stateText = "COMPLETED";
-            }
-
             if (!tempArcs.empty()) {
                 unsigned long long cumulativeMs = 0;
                 int arcIndex = static_cast<int>(tempArcs.size());
@@ -237,10 +234,22 @@ void CellWidget::loadVisualHistoryIfNeeded(const Experiment &experiment)
 
     if (experiment.experimentId().empty()) {
         m_loadedHistoryExperimentId.clear();
+        m_lastHistorySyncMs = 0;
         return;
     }
 
-    if (m_loadedHistoryExperimentId == experiment.experimentId()) {
+    if (experiment.state() != "RUNNING") {
+        m_lastHistorySyncMs = 0;
+        return;
+    }
+
+    if (m_loadedHistoryExperimentId != experiment.experimentId()) {
+        m_loadedHistoryExperimentId = experiment.experimentId();
+        m_lastHistorySyncMs = 0;
+    }
+
+    unsigned long long nowMs = Cell::getCurrentTimeMillis();
+    if (m_lastHistorySyncMs != 0 && nowMs - m_lastHistorySyncMs < 500) {
         return;
     }
 
@@ -250,7 +259,7 @@ void CellWidget::loadVisualHistoryIfNeeded(const Experiment &experiment)
 
     CellVisualsHistory history = RedisDBManager::getInstance()->getCellVisualsHistory(m_cell.cellID());
     m_cellGraph->loadVisualHistory(history);
-    m_loadedHistoryExperimentId = experiment.experimentId();
+    m_lastHistorySyncMs = nowMs;
 }
 
 void CellWidget::clearExperimentGraph()
@@ -263,6 +272,7 @@ void CellWidget::clearExperimentGraph()
     m_firstStartedRunning = false;
     m_assignedExperiment = Experiment();
     m_loadedHistoryExperimentId.clear();
+    m_lastHistorySyncMs = 0;
 }
 
 bool CellWidget::hasExperimentAssigned(const Experiment &experiment) const

@@ -107,6 +107,7 @@ public:
         passLineEdit->setObjectName("passLineEdit");
         sizePolicy.setHeightForWidth(passLineEdit->sizePolicy().hasHeightForWidth());
         passLineEdit->setSizePolicy(sizePolicy);
+        passLineEdit->setEchoMode(QLineEdit::Password);
 
         gridLayout->addWidget(passLineEdit, 1, 2, 1, 1);
 
@@ -153,8 +154,14 @@ public:
 
         gridLayout_3->addWidget(line, 0, 0, 1, 1);
 
+        QWidget::setTabOrder(userLineEdit, passLineEdit);
+        QWidget::setTabOrder(passLineEdit, machineComboBox);
+        QWidget::setTabOrder(machineComboBox, loginPushButton);
 
         retranslateUi(LoginWidget);
+
+        loginPushButton->setDefault(true);
+
 
         QMetaObject::connectSlotsByName(LoginWidget);
     } // setupUi

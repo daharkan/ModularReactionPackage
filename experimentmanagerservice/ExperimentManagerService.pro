@@ -11,7 +11,6 @@ SOURCES += \
         src/BusboardV1.cpp \
         src/common/Cell.cpp \
         src/IBusboard.cpp \
-        src/common/CellTarget.cpp \
         src/common/CellVisuals.cpp \
         src/common/CellVisualsHistory.cpp \
         src/common/FlowStatus.cpp \
@@ -31,7 +30,6 @@ HEADERS += \
     src/BusboardV1.h \
     src/common/Cell.h \
     src/IBusboard.h \
-    src/common/CellTarget.h \
     src/common/CellVisuals.h \
     src/common/CellVisualsHistory.h \
     src/common/FlowStatus.h \

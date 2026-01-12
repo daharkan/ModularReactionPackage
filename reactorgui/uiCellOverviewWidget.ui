@@ -23,6 +23,18 @@
    <property name="spacing">
     <number>4</number>
    </property>
+   <property name="leftMargin">
+    <number>8</number>
+   </property>
+   <property name="topMargin">
+    <number>8</number>
+   </property>
+   <property name="rightMargin">
+    <number>8</number>
+   </property>
+   <property name="bottomMargin">
+    <number>8</number>
+   </property>
    <item>
     <widget class="QLabel" name="slotLabel">
      <property name="font">
@@ -36,83 +48,119 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="experimentLayout">
-     <item>
+    <layout class="QGridLayout" name="detailsLayout">
+     <property name="horizontalSpacing">
+      <number>6</number>
+     </property>
+     <property name="verticalSpacing">
+      <number>2</number>
+     </property>
+     <item row="0" column="0">
       <widget class="QLabel" name="experimentNameLabel">
        <property name="text">
         <string>Experiment:</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="1">
       <widget class="QLabel" name="experimentNameValueLabel">
        <property name="text">
         <string>--</string>
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="assignedByLayout">
-     <item>
+     <item row="1" column="0">
       <widget class="QLabel" name="assignedByLabel">
        <property name="text">
         <string>Assigned by:</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
       </widget>
      </item>
-     <item>
+     <item row="1" column="1">
       <widget class="QLabel" name="assignedByValueLabel">
        <property name="text">
         <string>--</string>
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="assignedAtLayout">
-     <item>
+     <item row="2" column="0">
       <widget class="QLabel" name="assignedAtLabel">
        <property name="text">
         <string>Assigned at:</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
       </widget>
      </item>
-     <item>
+     <item row="2" column="1">
       <widget class="QLabel" name="assignedAtValueLabel">
        <property name="text">
         <string>--</string>
        </property>
       </widget>
      </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="finishesAtLabel">
+       <property name="text">
+        <string>Finishes at:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="finishesAtValueLabel">
+       <property name="text">
+        <string>--</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="rpmTempLayout">
-     <item>
+    <layout class="QGridLayout" name="metricsLayout">
+     <property name="horizontalSpacing">
+      <number>10</number>
+     </property>
+     <property name="verticalSpacing">
+      <number>2</number>
+     </property>
+     <item row="0" column="0">
       <widget class="QLabel" name="rpmLabel">
        <property name="text">
         <string>RPM:</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="1">
       <widget class="QLabel" name="rpmValueLabel">
        <property name="text">
         <string>--</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="2">
       <widget class="QLabel" name="tempLabel">
        <property name="text">
         <string>Temp:</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="3">
       <widget class="QLabel" name="tempValueLabel">
        <property name="text">
         <string>--</string>

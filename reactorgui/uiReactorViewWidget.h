@@ -22,10 +22,13 @@ public:
 
 signals:
     void sgn_openCellView(const std::string &cellId, int positionIndex);
+    void sgn_assignExperimentRequested(const std::string &cellId, int positionIndex);
 
 private slots:
     void updateFlowStatus();
     void handleCellClicked(const std::string &cellId, int positionIndex);
+    void handleAssignRequested(const std::string &cellId, int positionIndex);
+    void handleCellSelected(const std::string &cellId, int positionIndex);
 
 private:
     Ui::ReactorViewWidget *ui;
@@ -34,6 +37,7 @@ private:
     QVector<CellOverviewWidget*> m_rhsCells;
     std::string m_lhsBusboardId;
     std::string m_rhsBusboardId;
+    std::string m_selectedCellId;
 
     void setupCellOverviewWidgets();
     void refreshBusboardIds();

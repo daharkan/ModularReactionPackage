@@ -1,60 +1,84 @@
 #include "uiOptionsWidget.h"
 #include "ui_uiOptionsWidget.h"
 
+#include <QFile>
 #include <QDir>
 #include <fstream>
+
+namespace {
+const char *kThemeConfPath = "conf/style.conf";
+const char *kMenuConfPath = "conf/menu.conf";
+
+QString normalizeTheme(const QString &value)
+{
+    QString lower = value.toLower();
+    if (lower.contains("dark")) {
+        return "Dark";
+    }
+    if (lower.contains("light")) {
+        return "Light";
+    }
+    return "Light";
+}
+
+QString themeToFile(const QString &theme)
+{
+    if (theme.compare("dark", Qt::CaseInsensitive) == 0) {
+        return ":/resources/qss/tad_dark.qss";
+    }
+    return ":/resources/qss/tad_light.qss";
+}
+
+QString readFirstLine(const char *path)
+{
+    QFile file(QString::fromUtf8(path));
+    if (!file.open(QIODevice::ReadOnly)) {
+        return QString();
+    }
+    return QString::fromUtf8(file.readLine()).trimmed();
+}
+
+void ensureConfDir()
+{
+    QDir().mkpath("conf");
+}
+} // namespace
 
 OptionsWidget::OptionsWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::OptionsWidget)
 {
     ui->setupUi(this);
-    QDir dir;
-    dir.setPath(":/resources/qss");
-    QStringList filters;
-    filters << "*.qss";
-    filters << "*.css";
-
-    dir.setNameFilters(QStringList(filters));
-    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-
-    QStringList fileList = dir.entryList();
-    ui->themesComboBox->addItem("none");
-    for (int i=0; i<fileList.count(); i++)
-    {
-        QString filename = fileList.at(i);
-        ui->themesComboBox->addItem(filename);
-    }
+    ui->themesComboBox->addItem("Light");
+    ui->themesComboBox->addItem("Dark");
+    ui->menuPositionComboBox->addItem("Top");
+    ui->menuPositionComboBox->addItem("Bottom");
 
     m_parent = parent;
 
-    std::ifstream styleConf("conf/style.conf");
+    QString theme = normalizeTheme(readFirstLine(kThemeConfPath));
+    ui->themesComboBox->setCurrentText(theme);
 
-    std::string line;
-    std::getline(styleConf, line);
-    styleConf.close();
-
-    QString filename;
-    if(line.size() > 0){
-        ui->themesComboBox->setCurrentText(QString::fromStdString(line));
-        filename = ":/resources/qss/" + ui->themesComboBox->currentText();
-
-    }else{
-        filename = ":/resources/qss/" + ui->themesComboBox->currentText();
+    QString menuPosition = readFirstLine(kMenuConfPath);
+    if (menuPosition.compare("bottom", Qt::CaseInsensitive) == 0) {
+        ui->menuPositionComboBox->setCurrentText("Bottom");
+    } else {
+        ui->menuPositionComboBox->setCurrentText("Top");
     }
 
-    QFile styleFile(filename );
-    bool ok = styleFile.open( QFile::ReadOnly );
-
-    // Apply the loaded stylesheet
-    if(ok){
-    QString style( styleFile.readAll() );
+    QString filename = themeToFile(theme);
+    QFile styleFile(filename);
+    if (styleFile.open(QFile::ReadOnly)) {
+        QString style(styleFile.readAll());
         this->setStyleSheet(style);
-        m_parent->setStyleSheet(style);
-    }else{
+        if (m_parent != nullptr) {
+            m_parent->setStyleSheet(style);
+        }
+    } else {
         this->setStyleSheet(styleSheet());
-        m_parent->setStyleSheet(styleSheet());
-
+        if (m_parent != nullptr) {
+            m_parent->setStyleSheet(styleSheet());
+        }
     }
 
 
@@ -68,33 +92,32 @@ OptionsWidget::~OptionsWidget()
 
 void OptionsWidget::applyButtonClicked()
 {
+    ensureConfDir();
 
-    std::ofstream styleConf("conf/style.conf");
-    styleConf << ui->themesComboBox->currentText().toStdString();
+    QString theme = ui->themesComboBox->currentText().trimmed();
+    std::ofstream styleConf(kThemeConfPath);
+    styleConf << theme.toStdString();
     styleConf.close();
 
-    if(ui->themesComboBox->currentText().compare("none") == 0){
-        this->setStyleSheet("");
-        std::ofstream styleConf("conf/style.conf");
-        styleConf << ui->themesComboBox->currentText().toStdString();
-        styleConf.close();
-        return;
-    }
+    QString menuPosition = ui->menuPositionComboBox->currentText().trimmed();
+    std::ofstream menuConf(kMenuConfPath);
+    menuConf << menuPosition.toLower().toStdString();
+    menuConf.close();
 
-
-    QString filename = ":/resources/qss/" + ui->themesComboBox->currentText();
-
-    QFile styleFile(filename );
-    bool ok = styleFile.open( QFile::ReadOnly );
-
-    // Apply the loaded stylesheet
-    if(ok){
-        QString style( styleFile.readAll() );
+    QString filename = themeToFile(theme);
+    QFile styleFile(filename);
+    if (styleFile.open(QFile::ReadOnly)) {
+        QString style(styleFile.readAll());
         this->setStyleSheet(style);
-        m_parent->setStyleSheet(style);
-    }else{
+        if (m_parent != nullptr) {
+            m_parent->setStyleSheet(style);
+        }
+    } else {
         this->setStyleSheet(styleSheet());
-        m_parent->setStyleSheet(styleSheet());
-
+        if (m_parent != nullptr) {
+            m_parent->setStyleSheet(styleSheet());
+        }
     }
+
+    emit sgn_menuPositionChanged(menuPosition.compare("top", Qt::CaseInsensitive) == 0);
 }

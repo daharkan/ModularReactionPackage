@@ -15,6 +15,7 @@
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -24,7 +25,10 @@ class Ui_ReactorViewWidget
 {
 public:
     QGridLayout *gridLayout;
-    QVBoxLayout *flowLayout;
+    QHBoxLayout *flowLayout;
+    QSpacerItem *flowSpacer;
+    QGroupBox *flowGroupBox;
+    QVBoxLayout *flowGroupLayout;
     QHBoxLayout *flowRateLayout;
     QLabel *flowRateLabel;
     QLabel *flowRateValueLabel;
@@ -49,11 +53,19 @@ public:
         ReactorViewWidget->setSizePolicy(sizePolicy);
         gridLayout = new QGridLayout(ReactorViewWidget);
         gridLayout->setObjectName("gridLayout");
-        flowLayout = new QVBoxLayout();
+        flowLayout = new QHBoxLayout();
         flowLayout->setObjectName("flowLayout");
+        flowSpacer = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
+
+        flowLayout->addItem(flowSpacer);
+
+        flowGroupBox = new QGroupBox(ReactorViewWidget);
+        flowGroupBox->setObjectName("flowGroupBox");
+        flowGroupLayout = new QVBoxLayout(flowGroupBox);
+        flowGroupLayout->setObjectName("flowGroupLayout");
         flowRateLayout = new QHBoxLayout();
         flowRateLayout->setObjectName("flowRateLayout");
-        flowRateLabel = new QLabel(ReactorViewWidget);
+        flowRateLabel = new QLabel(flowGroupBox);
         flowRateLabel->setObjectName("flowRateLabel");
         QSizePolicy sizePolicy1(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Preferred);
         sizePolicy1.setHorizontalStretch(0);
@@ -63,7 +75,7 @@ public:
 
         flowRateLayout->addWidget(flowRateLabel);
 
-        flowRateValueLabel = new QLabel(ReactorViewWidget);
+        flowRateValueLabel = new QLabel(flowGroupBox);
         flowRateValueLabel->setObjectName("flowRateValueLabel");
         sizePolicy1.setHeightForWidth(flowRateValueLabel->sizePolicy().hasHeightForWidth());
         flowRateValueLabel->setSizePolicy(sizePolicy1);
@@ -71,18 +83,18 @@ public:
         flowRateLayout->addWidget(flowRateValueLabel);
 
 
-        flowLayout->addLayout(flowRateLayout);
+        flowGroupLayout->addLayout(flowRateLayout);
 
         flowTempLayout = new QHBoxLayout();
         flowTempLayout->setObjectName("flowTempLayout");
-        flowTempLabel = new QLabel(ReactorViewWidget);
+        flowTempLabel = new QLabel(flowGroupBox);
         flowTempLabel->setObjectName("flowTempLabel");
         sizePolicy1.setHeightForWidth(flowTempLabel->sizePolicy().hasHeightForWidth());
         flowTempLabel->setSizePolicy(sizePolicy1);
 
         flowTempLayout->addWidget(flowTempLabel);
 
-        flowTempValueLabel = new QLabel(ReactorViewWidget);
+        flowTempValueLabel = new QLabel(flowGroupBox);
         flowTempValueLabel->setObjectName("flowTempValueLabel");
         sizePolicy1.setHeightForWidth(flowTempValueLabel->sizePolicy().hasHeightForWidth());
         flowTempValueLabel->setSizePolicy(sizePolicy1);
@@ -90,7 +102,10 @@ public:
         flowTempLayout->addWidget(flowTempValueLabel);
 
 
-        flowLayout->addLayout(flowTempLayout);
+        flowGroupLayout->addLayout(flowTempLayout);
+
+
+        flowLayout->addWidget(flowGroupBox);
 
 
         gridLayout->addLayout(flowLayout, 0, 0, 1, 1);
@@ -127,6 +142,7 @@ public:
     void retranslateUi(QWidget *ReactorViewWidget)
     {
         ReactorViewWidget->setWindowTitle(QCoreApplication::translate("ReactorViewWidget", "Form", nullptr));
+        flowGroupBox->setTitle(QCoreApplication::translate("ReactorViewWidget", "Flow", nullptr));
         flowRateLabel->setText(QCoreApplication::translate("ReactorViewWidget", "Flow (L/min):", nullptr));
         flowRateValueLabel->setText(QCoreApplication::translate("ReactorViewWidget", "--", nullptr));
         flowTempLabel->setText(QCoreApplication::translate("ReactorViewWidget", "Flow Temp (mV):", nullptr));

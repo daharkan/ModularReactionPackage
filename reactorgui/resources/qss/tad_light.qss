@@ -1,0 +1,92 @@
+QMainWindow,
+QWidget#centralwidget {
+    background-color: #f1f5fb;
+    color: #213268;
+    font-family: "Ubuntu";
+    font-size: 11pt;
+}
+
+QLabel {
+    color: #213268;
+}
+
+QGroupBox {
+    background-color: #ffffff;
+    border: 1px solid #c7d4ea;
+    border-radius: 8px;
+    margin-top: 12px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 6px;
+    font-weight: 600;
+    color: #213268;
+}
+
+QPushButton {
+    background-color: #ffffff;
+    border: 1px solid #c7d4ea;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #213268;
+}
+
+QPushButton:hover {
+    background-color: #e6effa;
+    border-color: #9fd8c5;
+}
+
+QPushButton:pressed {
+    background-color: #d9e7f6;
+}
+
+QPushButton:checked {
+    background-color: #59c19e;
+    border-color: #4aae8d;
+    color: #ffffff;
+}
+
+QPushButton:disabled {
+    color: #8aa0c2;
+    background-color: #edf2f7;
+    border-color: #d3ddee;
+}
+
+QComboBox,
+QLineEdit {
+    background-color: #ffffff;
+    border: 1px solid #c7d4ea;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: #213268;
+}
+
+MenuWidget {
+    background-color: #1b8f78;
+    border-bottom: 1px solid #167563;
+}
+
+MenuWidget QLabel#titleLabel {
+    font-size: 18pt;
+    font-weight: 600;
+    color: #f4f7ff;
+}
+
+MenuWidget QPushButton {
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: #f4f7ff;
+    font-weight: 600;
+}
+
+MenuWidget QPushButton:hover {
+    background-color: rgba(255, 255, 255, 0.18);
+}
+
+MenuWidget QPushButton:pressed {
+    background-color: rgba(255, 255, 255, 0.28);
+}

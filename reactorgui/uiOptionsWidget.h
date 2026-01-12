@@ -15,6 +15,9 @@ public:
     explicit OptionsWidget(QWidget *parent = nullptr);
     ~OptionsWidget();
 
+signals:
+    void sgn_menuPositionChanged(bool isTop);
+
 private:
     Ui::OptionsWidget *ui;
     QWidget *m_parent;

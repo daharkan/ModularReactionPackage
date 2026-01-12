@@ -15,6 +15,8 @@ LoginWidget::LoginWidget(bool isMachineConnected, QWidget *parent)
     }
 
     connect(ui->loginPushButton, &QPushButton::clicked, this, &LoginWidget::loginPressed);
+    connect(ui->userLineEdit, &QLineEdit::returnPressed, this, &LoginWidget::loginPressed);
+    connect(ui->passLineEdit, &QLineEdit::returnPressed, this, &LoginWidget::loginPressed);
 }
 
 LoginWidget::~LoginWidget()

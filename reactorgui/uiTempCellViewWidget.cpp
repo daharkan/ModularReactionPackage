@@ -97,5 +97,7 @@ CellWidget *TempCellViewWidget::ensureCellWidget(const std::string &cellId)
     auto *cellWidget = new CellWidget(this);
     m_stackLayout->addWidget(cellWidget);
     m_cellWidgets.insert(key, cellWidget);
+    connect(cellWidget, &CellWidget::sgn_assignExperimentRequested,
+            this, &TempCellViewWidget::sgn_assignExperimentRequested);
     return cellWidget;
 }
