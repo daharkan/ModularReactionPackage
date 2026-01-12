@@ -10,8 +10,9 @@ TempCellViewWidget::TempCellViewWidget(QWidget *parent)
     auto *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    m_cellWidget = new CellWidget(this);
-    layout->addWidget(m_cellWidget);
+    m_stackLayout = new QStackedLayout();
+    m_stackLayout->setContentsMargins(0, 0, 0, 0);
+    layout->addLayout(m_stackLayout);
 
     m_updateTimer = new QTimer(this);
     connect(m_updateTimer, &QTimer::timeout, this, &TempCellViewWidget::refreshCellData);
@@ -27,7 +28,11 @@ TempCellViewWidget::~TempCellViewWidget()
 void TempCellViewWidget::setCellId(const std::string &cellId)
 {
     m_cellId = cellId;
-    m_cellWidget->setCellId(cellId);
+    CellWidget *cellWidget = ensureCellWidget(cellId);
+    if (cellWidget == nullptr) {
+        return;
+    }
+    m_stackLayout->setCurrentWidget(cellWidget);
     refreshCellData();
 }
 
@@ -39,6 +44,11 @@ std::string TempCellViewWidget::cellId() const
 void TempCellViewWidget::refreshCellData()
 {
     if (m_cellId.empty()) {
+        return;
+    }
+
+    CellWidget *cellWidget = ensureCellWidget(m_cellId);
+    if (cellWidget == nullptr) {
         return;
     }
 
@@ -55,7 +65,7 @@ void TempCellViewWidget::refreshCellData()
         return;
     }
 
-    m_cellWidget->updateCell(cells.front());
+    cellWidget->updateCell(cells.front());
 }
 
 void TempCellViewWidget::ensureRedisConnection()
@@ -63,4 +73,23 @@ void TempCellViewWidget::ensureRedisConnection()
     if (!RedisDBManager::getInstance()->isConnected()) {
         RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
     }
+}
+
+CellWidget *TempCellViewWidget::ensureCellWidget(const std::string &cellId)
+{
+    if (cellId.empty()) {
+        return nullptr;
+    }
+
+    const QString key = QString::fromStdString(cellId);
+    auto it = m_cellWidgets.find(key);
+    if (it != m_cellWidgets.end()) {
+        return it.value();
+    }
+
+    auto *cellWidget = new CellWidget(this);
+    cellWidget->setCellId(cellId);
+    m_stackLayout->addWidget(cellWidget);
+    m_cellWidgets.insert(key, cellWidget);
+    return cellWidget;
 }
