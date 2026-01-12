@@ -1,7 +1,7 @@
 #include "Profile.h"
 #include <iostream>
 
-Profile::Profile() {}
+Profile::Profile() : m_totalMaxProfileDuration(0) {}
 
 
 bool Profile::addTempArcInSequence(TempArc tArc)

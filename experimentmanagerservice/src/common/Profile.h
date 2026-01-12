@@ -100,7 +100,7 @@ public:
 private:
     std::vector<TempArc> m_tempArcsInSeq;
     std::vector<RPMArc> m_rpmArcsInSeq;
-    long m_totalMaxProfileDuration;
+    long m_totalMaxProfileDuration = 0;
 
 };
 

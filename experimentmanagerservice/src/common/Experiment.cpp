@@ -134,6 +134,11 @@ unsigned long Experiment::totalProfileDurationMSecs() const
     return 0;
 }
 
+void Experiment::setTotalProfileDurationMSecs(unsigned long newTotalProfileDurationMSecs)
+{
+    m_totalProfileDurationMSecs = newTotalProfileDurationMSecs;
+}
+
 Experiment Experiment::fromJSon(std::string jsonString)
 {
     Experiment exp;

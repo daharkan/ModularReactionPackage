@@ -556,13 +556,15 @@ bool ExperimentCreateWidget::buildProfile(Profile &profile)
         return false;
     }
 
-    TempArc firstTempArc = profile.tempArcsInSeq().at(0);
-    TempArc lastTempARc = profile.tempArcsInSeq().at(profile.tempArcsInSeq().size() - 1);
+    const auto tempArcs = profile.tempArcsInSeq();
+    TempArc firstTempArc = tempArcs.at(0);
+    TempArc lastTempARc = tempArcs.at(tempArcs.size() - 1);
 
     float rpmC = ui->initRPMLineEdit->text().toFloat();
     RPMArc rpmarc(0, 0, rpmC, firstTempArc.startTimeMsec(),
                   lastTempARc.finishTimeMsec() - firstTempArc.startTimeMsec());
     profile.addRPMArcInSequence(rpmarc);
+    profile.setTotalMaxProfileDuration(lastTempARc.finishTimeMsec());
 
     return true;
 }
@@ -982,6 +984,7 @@ void ExperimentCreateWidget::updateClicked()
     }
 
     m_currentExperiment.setProfile(profile);
+    m_currentExperiment.setTotalProfileDurationMSecs(profile.totalMaxProfileDuration());
     m_currentExperiment.setExperimentType(static_cast<int>(m_currentExpType));
     m_currentExperiment.setSettingsJson(captureUiState());
 
@@ -1000,6 +1003,7 @@ void ExperimentCreateWidget::updateClicked()
         }
         m_currentExperiment.setCreatedAtMSecs(Cell::getCurrentTimeMillis());
         m_currentExperiment.setOwner(m_currentUser);
+        m_currentExperiment.setStartSystemTimeMSecs(0);
     }
 
     if (!RedisDBManager::getInstance()->isConnected()) {

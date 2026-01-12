@@ -98,6 +98,13 @@ void ExperimentRunner::run()
     }
     m_cell = cells.front();
 
+    if (m_experiment.startSystemTimeMSecs() == 0) {
+        m_startingTimestampMsec = Cell::getCurrentTimeMillis();
+        m_experiment.setStartSystemTimeMSecs(m_startingTimestampMsec);
+        m_cell.setAsignedExperiment(m_experiment);
+        RedisDBManager::getInstance()->pushCellList({m_cell});
+    }
+
     float startTemp = m_experiment.profile().tempArcsInSeq().at(0).startTemp();
     qDebug() << "ExperimentRunner    runinit...";
 
@@ -125,13 +132,6 @@ void ExperimentRunner::run()
 
         emit sgn_updateExperimentState(m_state);
         delay(LOOP_TIME_INTERVAL_MSECS);
-    }
-
-    m_startingTimestampMsec = Cell::getCurrentTimeMillis();
-    if (m_experiment.startSystemTimeMSecs() == 0) {
-        m_experiment.setStartSystemTimeMSecs(m_startingTimestampMsec);
-        m_cell.setAsignedExperiment(m_experiment);
-        RedisDBManager::getInstance()->pushCellList({m_cell});
     }
 
     cells = RedisDBManager::getInstance()->getCellList(cellIds);

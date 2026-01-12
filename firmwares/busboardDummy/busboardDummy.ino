@@ -11,8 +11,7 @@
 static const uint16_t STATUS_PERIOD_MS = 500;
 static const uint16_t GO_INTERVAL_MS = 100;
 
-static const float TEMP_APPROACH_FACTOR = 0.95f;
-static const float TEMP_NOISE_RANGE = 0.2f;
+static const float TEMP_NOISE_RANGE = 1.0f;
 
 struct CellState {
   float targetTemp;
@@ -134,9 +133,7 @@ static float randomNoise(float amplitude) {
 
 static void updateCellTemps() {
   for (int i = 0; i < SLOT_COUNT; i++) {
-    float delta = cells[i].targetTemp - cells[i].currentTemp;
-    cells[i].currentTemp += delta * TEMP_APPROACH_FACTOR;
-    cells[i].currentTemp += randomNoise(TEMP_NOISE_RANGE);
+    cells[i].currentTemp = cells[i].targetTemp + randomNoise(TEMP_NOISE_RANGE);
 
     cells[i].currentRpm = cells[i].targetRpm;
     cells[i].stirrerAmp = 18.0f + randomNoise(2.0f);
