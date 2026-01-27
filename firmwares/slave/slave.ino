@@ -78,6 +78,9 @@ volatile uint16_t peltierCtr = 0;
 volatile uint16_t heaterCtr = 0;
 volatile uint16_t motorCtr = 0;
 
+volatile int8_t peltierDutyPercent = 0;
+volatile uint8_t heaterDutyPercent = 0;
+
 // ===================== STATE =====================
 float currentTempInner = 0.0f;
 float currentTempExternal = 0.0f;
@@ -181,6 +184,7 @@ void disablePeltier() {
   peltierEnabled = false;
   peltierOnTicks = 0;
   peltierOffTicks = T1_PERIOD_TICKS;
+  peltierDutyPercent = 0;
   interrupts();
 
   digitalWrite(PELTIER_PWM_PIN, LOW);
@@ -201,6 +205,7 @@ void enablePeltier(int8_t percent) {
   peltierOffTicks = T1_PERIOD_TICKS - peltierOnTicks;
   peltierEnabled = true;
   peltierCtr = 0;
+  peltierDutyPercent = percent;
   interrupts();
 
   digitalWrite(PELTIER_EN_PIN, HIGH);
@@ -211,6 +216,7 @@ void disableHeater() {
   heaterEnabled = false;
   heaterOnTicks = 0;
   heaterOffTicks = T1_PERIOD_TICKS;
+  heaterDutyPercent = 0;
   interrupts();
 
   digitalWrite(HEATER_PWM_PIN, LOW);
@@ -223,6 +229,7 @@ void enableHeater(uint8_t percent) {
   heaterOffTicks = T1_PERIOD_TICKS - heaterOnTicks;
   heaterEnabled = true;
   heaterCtr = 0;
+  heaterDutyPercent = percent;
   interrupts();
 
   digitalWrite(HEATER_EN_PIN, HIGH);
@@ -385,6 +392,14 @@ void sendStatus() {
   Serial.println(output);
 }
 
+void sendDebug() {
+  char output[64];
+  int8_t peltierDuty = peltierDutyPercent;
+  uint8_t heaterDuty = heaterDutyPercent;
+  snprintf(output, sizeof(output), "DEBUG#HEATER:%u#PELTIER:%d", heaterDuty, peltierDuty);
+  Serial.println(output);
+}
+
 bool handleUpdateCommand(const char* line) {
   if (!line || line[0] == '\0') return false;
   if (line[0] != '>' || line[strlen(line) - 1] != '<') return false;
@@ -433,6 +448,10 @@ bool handlePollCommand(const char* line) {
   if (*line == '\0') return false;
   if (strcmp(line, "GO") == 0) {
     sendStatus();
+    return true;
+  }
+  if (strcmp(line, "DEBUG") == 0) {
+    sendDebug();
     return true;
   }
   return false;
