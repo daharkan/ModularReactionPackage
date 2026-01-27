@@ -2,6 +2,7 @@
 #include <math.h>
 #include <SPI.h>
 #include <Adafruit_MAX31865.h>
+#include <ctype.h>
 
 // ===================== ID / POSITION =====================
 #define CELL_ID "s25_555"
@@ -33,8 +34,7 @@
 // ===================== TIMER =====================
 #define T1_PERIOD_TICKS 532 // ~15kHz @8MHz, prescaler yok
 
-constexpr uint32_t BAUD = 115200;
-constexpr uint16_t STATUS_PERIOD_MS = 250;
+constexpr uint32_t BAUD = 19200;
 constexpr uint16_t RPM_UPDATE_MS = 1000;
 constexpr float TEMP_HYSTERESIS = 0.3f;
 constexpr float HEAT_K = 8.0f; // duty per degC
@@ -93,7 +93,6 @@ float currentRpm = 0.0f;
 
 uint8_t motorDutyPercent = 0;
 
-unsigned long lastStatusMs = 0;
 
 static inline uint16_t dutyToTicks(uint8_t percent) {
   if (percent > 100) percent = 100;
@@ -426,6 +425,19 @@ bool handleUpdateCommand(const char* line) {
   return true;
 }
 
+bool handlePollCommand(const char* line) {
+  if (!line) return false;
+  while (*line && isspace(static_cast<unsigned char>(*line))) {
+    line++;
+  }
+  if (*line == '\0') return false;
+  if (strcmp(line, "GO") == 0) {
+    sendStatus();
+    return true;
+  }
+  return false;
+}
+
 void setup() {
   Serial.begin(BAUD);
 
@@ -461,7 +473,6 @@ void setup() {
   setupTimer1CTC();
 
   lastRpmMs = millis();
-  lastStatusMs = millis();
 }
 
 void loop() {
@@ -487,13 +498,9 @@ void loop() {
     char line[128];
     size_t len = Serial.readBytesUntil('\n', line, sizeof(line) - 1);
     line[len] = '\0';
-    handleUpdateCommand(line);
-  }
-
-  unsigned long now = millis();
-  if (now - lastStatusMs >= STATUS_PERIOD_MS) {
-    sendStatus();
-    lastStatusMs = now;
+    if (!handleUpdateCommand(line)) {
+      handlePollCommand(line);
+    }
   }
 }
 

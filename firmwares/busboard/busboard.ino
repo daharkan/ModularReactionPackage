@@ -8,9 +8,9 @@
 
 // ---------- Config ----------
 static const uint32_t PC_BAUD = 9600;
-static const uint32_t SLAVE_BAUD = 9600;
+static const uint32_t SLAVE_BAUD = 19200;
 
-static const uint16_t RR_LISTEN_US = 1500;
+static const uint16_t RR_LISTEN_US = 70000;
 static const uint16_t GO_INTERVAL_MS = 200;
 static const bool INTERLOCK_ACTIVE_LOW = false;
 
@@ -226,8 +226,11 @@ static void rrPollOnce() {
     uint8_t i = (rrIndex + k) % SLOT_COUNT;
     rrIndex = (i + 1) % SLOT_COUNT;
 
+    if (!present[i]) continue;
     SoftwareSerial* ss = SSS[i];
     ss->listen();
+    ss->println(F("GO"));
+    ss->flush();
 
     uint32_t tStart = micros();
     while ((uint32_t)(micros() - tStart) < RR_LISTEN_US) {
@@ -392,4 +395,3 @@ void loop() {
     lastGoMs = now;
   }
 }
-
