@@ -12,7 +12,9 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QGridLayout>
+#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -22,7 +24,10 @@ class Ui_CellOverviewWidget
 {
 public:
     QVBoxLayout *verticalLayout;
+    QHBoxLayout *headerLayout;
     QLabel *slotLabel;
+    QSpacerItem *headerSpacer;
+    QLabel *stateLabel;
     QGridLayout *detailsLayout;
     QLabel *experimentNameLabel;
     QLabel *experimentNameValueLabel;
@@ -52,13 +57,30 @@ public:
         verticalLayout->setSpacing(4);
         verticalLayout->setObjectName("verticalLayout");
         verticalLayout->setContentsMargins(8, 8, 8, 8);
+        headerLayout = new QHBoxLayout();
+        headerLayout->setSpacing(6);
+        headerLayout->setObjectName("headerLayout");
         slotLabel = new QLabel(CellOverviewWidget);
         slotLabel->setObjectName("slotLabel");
         QFont font;
         font.setBold(true);
         slotLabel->setFont(font);
 
-        verticalLayout->addWidget(slotLabel);
+        headerLayout->addWidget(slotLabel);
+
+        headerSpacer = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
+
+        headerLayout->addItem(headerSpacer);
+
+        stateLabel = new QLabel(CellOverviewWidget);
+        stateLabel->setObjectName("stateLabel");
+        stateLabel->setFont(font);
+        stateLabel->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        headerLayout->addWidget(stateLabel);
+
+
+        verticalLayout->addLayout(headerLayout);
 
         detailsLayout = new QGridLayout();
         detailsLayout->setObjectName("detailsLayout");
@@ -149,7 +171,8 @@ public:
     void retranslateUi(QWidget *CellOverviewWidget)
     {
         CellOverviewWidget->setWindowTitle(QCoreApplication::translate("CellOverviewWidget", "Form", nullptr));
-        slotLabel->setText(QCoreApplication::translate("CellOverviewWidget", "LHS-1", nullptr));
+        slotLabel->setText(QCoreApplication::translate("CellOverviewWidget", "Cell 1", nullptr));
+        stateLabel->setText(QString());
         experimentNameLabel->setText(QCoreApplication::translate("CellOverviewWidget", "Experiment:", nullptr));
         experimentNameValueLabel->setText(QCoreApplication::translate("CellOverviewWidget", "--", nullptr));
         assignedByLabel->setText(QCoreApplication::translate("CellOverviewWidget", "Assigned by:", nullptr));

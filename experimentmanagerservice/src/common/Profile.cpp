@@ -9,6 +9,7 @@ bool Profile::addTempArcInSequence(TempArc tArc)
     std::cout << "addTempArcInSequence :: fin time before: " << tArc.finishTemp() << std::endl;
 
     m_tempArcsInSeq.push_back(tArc);
+    m_totalMaxProfileDuration = m_tempArcsInSeq.back().finishTimeMsec();
 
     std::cout << "addTempArcInSequence :: fin time after: " << m_tempArcsInSeq.at(m_tempArcsInSeq.size()-1).finishTemp() << std::endl;
     return true;
@@ -17,6 +18,22 @@ bool Profile::addTempArcInSequence(TempArc tArc)
 bool Profile::addRPMArcInSequence(RPMArc rArc)
 {
     m_rpmArcsInSeq.push_back(rArc);
+    return true;
+}
+
+bool Profile::removeLastTempArc()
+{
+    if (m_tempArcsInSeq.empty()) {
+        return false;
+    }
+
+    m_tempArcsInSeq.pop_back();
+    if (m_tempArcsInSeq.empty()) {
+        m_totalMaxProfileDuration = 0;
+    } else {
+        m_totalMaxProfileDuration = m_tempArcsInSeq.back().finishTimeMsec();
+    }
+
     return true;
 }
 

@@ -101,23 +101,6 @@
     </spacer>
    </item>
    <item>
-    <widget class="QPushButton" name="homeButton">
-     <property name="text">
-      <string>Home</string>
-     </property>
-     <property name="icon">
-      <iconset resource="resources.qrc">
-       <normaloff>:/resources/icons/home.svg</normaloff>:/resources/icons/home.svg</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QPushButton" name="reactorButton">
      <property name="text">
       <string>Reactor</string>

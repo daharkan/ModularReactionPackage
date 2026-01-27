@@ -43,6 +43,8 @@ namespace Ui {
 class ExperimentCreateWidget;
 }
 
+class QButtonGroup;
+
 class ExperimentCreateWidget : public QWidget
 {
     Q_OBJECT
@@ -60,6 +62,12 @@ public:
     void setCurrentUser(const User &user);
 
 private:
+    enum class Adv2ndDegDriver {
+        None,
+        A,
+        Target
+    };
+
     Ui::ExperimentCreateWidget *ui;
     ExperimentGraph *m_expGraph = nullptr;
     Experiment m_currentExperiment;
@@ -70,10 +78,17 @@ private:
     int m_lastPageIndex = 0;
     QPushButton *m_assignButton = nullptr;
     QPushButton *m_assignButtonAdvanced = nullptr;
+    Adv2ndDegDriver m_adv2ndDegDriver = Adv2ndDegDriver::None;
+    QButtonGroup *m_advArcButtonGroup = nullptr;
 
     void setVisibleAllBasicExperimentItems(bool en);
+    void updateBasicGroupVisibility();
     void setVisibleAllAdvExperimentItems(bool en, bool clearFields = true);
     void adv_forceInitialTemp();
+    void adv_update2ndDegBindings(Adv2ndDegDriver driver);
+    void clearAdvancedArcSelection();
+    void updatePreviewFromUi();
+    bool validateBasicInputs(bool showErrors);
 
     Profile createBasicStandardProfile();
     Profile createLinearUpStepDownProfile();
@@ -114,6 +129,8 @@ private slots:
 
     void adv_addArcDurationChanged();
     void adv_rampChanged();
+    void adv_polyAChanged();
+    void adv_finalTempChanged();
 
 signals:
     void sgn_experimentSaved();

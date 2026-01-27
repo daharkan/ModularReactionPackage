@@ -67,43 +67,76 @@ void CellGraph::updateTheExperiment(Experiment &experiment)
     bool hasTempRange = false;
     double minTemp = std::numeric_limits<double>::max();
     double maxTemp = std::numeric_limits<double>::lowest();
+    bool hasTempSample = false;
+    unsigned long lastTempSampleMsec = 0;
     for(int i = 0; i < profile.tempArcsInSeq().size(); i++){
         TempArc tempArc = profile.tempArcsInSeq().at(i);
-        unsigned long arcDurationMsecs = tempArc.durationMSec();
-
-        qDebug() << "arcDurationMsecs: " << arcDurationMsecs;
-
         minTemp = std::min<double>(minTemp, tempArc.startTemp());
         minTemp = std::min<double>(minTemp, tempArc.finishTemp());
         maxTemp = std::max<double>(maxTemp, tempArc.startTemp());
         maxTemp = std::max<double>(maxTemp, tempArc.finishTemp());
         hasTempRange = true;
 
-        unsigned long lastSecs = 0;
-        if(tempTimeData.size() > 0){
-            lastSecs = tempTimeData.at(tempTimeData.size()-1);
+        unsigned long arcStartMsecs = tempArc.startTimeMsec();
+        unsigned long arcFinishMsecs = tempArc.finishTimeMsec();
+
+        if(!hasTempSample || lastTempSampleMsec < arcStartMsecs){
+            tempTimeData.push_back(arcStartMsecs / 1000.0);
+            temperatureData.push_back(tempArc.calculateY(arcStartMsecs));
+            hasTempSample = true;
+            lastTempSampleMsec = arcStartMsecs;
         }
 
-        qDebug() << "minTemp: " << minTemp << ", maxTemp: " << maxTemp;
-        qDebug() << "lastSecs: " << lastSecs;
+        for(unsigned long time = arcStartMsecs + GRAPH_RESOLUTION_MSECS;
+            time < arcFinishMsecs;
+            time += GRAPH_RESOLUTION_MSECS){
+            if(time <= lastTempSampleMsec){
+                continue;
+            }
+            tempTimeData.push_back(time / 1000.0  /*- (m_dataPushStartTimestamp/1000.0)*/);
+            temperatureData.push_back(tempArc.calculateY(time));
+            lastTempSampleMsec = time;
+        }
 
-        for(unsigned long time = GRAPH_RESOLUTION_MSECS; time < arcDurationMsecs; time+=GRAPH_RESOLUTION_MSECS){
-            tempTimeData.push_back(lastSecs+time/1000.0  /*- (m_dataPushStartTimestamp/1000.0)*/);
-            temperatureData.push_back(tempArc.calculateY(lastSecs*1000.0+time));
+        if(!hasTempSample || arcFinishMsecs > lastTempSampleMsec){
+            tempTimeData.push_back(arcFinishMsecs / 1000.0);
+            temperatureData.push_back(tempArc.calculateY(arcFinishMsecs));
+            hasTempSample = true;
+            lastTempSampleMsec = arcFinishMsecs;
         }
     }
 
 
+    bool hasRpmSample = false;
+    unsigned long lastRpmSampleMsec = 0;
     for(int i = 0; i < profile.rpmArcsInSeq().size(); i++){
         RPMArc rpmArc = profile.rpmArcsInSeq().at(i);
-        unsigned long arcDurationMsecs = rpmArc.durationMSec();
-        unsigned long lastSecs = 0;
-        if(rpmTimeData.size() > 0){
-            lastSecs = rpmTimeData.at(rpmTimeData.size()-1);
+        unsigned long arcStartMsecs = rpmArc.startTimeMsec();
+        unsigned long arcFinishMsecs = rpmArc.finishTimeMsec();
+
+        if(!hasRpmSample || lastRpmSampleMsec < arcStartMsecs){
+            rpmTimeData.push_back(arcStartMsecs / 1000.0);
+            rpmData.push_back(rpmArc.calculateY(arcStartMsecs));
+            hasRpmSample = true;
+            lastRpmSampleMsec = arcStartMsecs;
         }
-        for(int time = GRAPH_RESOLUTION_MSECS; time < arcDurationMsecs; time+=GRAPH_RESOLUTION_MSECS){
-            rpmTimeData.push_back(lastSecs+time/1000.0 /*- (m_dataPushStartTimestamp/1000.0)*/);
-            rpmData.push_back(rpmArc.calculateY(lastSecs*1000.0 + time));
+
+        for(unsigned long time = arcStartMsecs + GRAPH_RESOLUTION_MSECS;
+            time < arcFinishMsecs;
+            time += GRAPH_RESOLUTION_MSECS){
+            if(time <= lastRpmSampleMsec){
+                continue;
+            }
+            rpmTimeData.push_back(time / 1000.0 /*- (m_dataPushStartTimestamp/1000.0)*/);
+            rpmData.push_back(rpmArc.calculateY(time));
+            lastRpmSampleMsec = time;
+        }
+
+        if(!hasRpmSample || arcFinishMsecs > lastRpmSampleMsec){
+            rpmTimeData.push_back(arcFinishMsecs / 1000.0);
+            rpmData.push_back(rpmArc.calculateY(arcFinishMsecs));
+            hasRpmSample = true;
+            lastRpmSampleMsec = arcFinishMsecs;
         }
     }
     m_expRpmCurve->setSamples(rpmTimeData.data(), rpmData.data(), rpmTimeData.size());

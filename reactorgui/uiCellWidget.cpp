@@ -254,7 +254,7 @@ void CellWidget::loadVisualHistoryIfNeeded(const Experiment &experiment)
     }
 
     if (!RedisDBManager::getInstance()->isConnected()) {
-        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+        RedisDBManager::getInstance()->connectToDefault();
     }
 
     CellVisualsHistory history = RedisDBManager::getInstance()->getCellVisualsHistory(m_cell.cellID());

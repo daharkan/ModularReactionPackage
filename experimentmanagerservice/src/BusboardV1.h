@@ -20,6 +20,7 @@ public:
     bool checkHealth() override;
     bool sendUpdateString(QString str) override;
     std::vector<std::string> getCellIdList() override;
+    unsigned int machineStatusSequence() const override;
 
     std::vector<Cell>& getCellArray() override;
     FlowStatus flowStatus() const override;
@@ -28,6 +29,7 @@ private:
     std::vector<Cell> m_cellArray;
     FlowStatus m_flowStatus;
     BusboardSerialManager *m_serialManager = nullptr;
+    unsigned int m_machineStatusSequence = 0;
     float calculateTargetTemp(Cell cell);
     int calculateTargetRPM(Cell cell);
 
@@ -36,6 +38,7 @@ private:
 private slots:
     void cellStatusUpdated(Cell& cell);
     void presenceStatusUpdated(int slotIndex, bool isPresent);
+    void machineStatusUpdated(const QString &busboardId, const QVector<int> &slotStates);
 
 };
 

@@ -53,7 +53,9 @@ template <> constexpr inline auto ExperimentCreateWidget::qt_create_metaobjectda
         "adv_delLastArcClicked",
         "adv_clearProfileClicked",
         "adv_addArcDurationChanged",
-        "adv_rampChanged"
+        "adv_rampChanged",
+        "adv_polyAChanged",
+        "adv_finalTempChanged"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -83,6 +85,10 @@ template <> constexpr inline auto ExperimentCreateWidget::qt_create_metaobjectda
         QtMocHelpers::SlotData<void()>(13, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'adv_rampChanged'
         QtMocHelpers::SlotData<void()>(14, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'adv_polyAChanged'
+        QtMocHelpers::SlotData<void()>(15, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'adv_finalTempChanged'
+        QtMocHelpers::SlotData<void()>(16, 2, QMC::AccessPrivate, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -119,6 +125,8 @@ void ExperimentCreateWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _
         case 10: _t->adv_clearProfileClicked(); break;
         case 11: _t->adv_addArcDurationChanged(); break;
         case 12: _t->adv_rampChanged(); break;
+        case 13: _t->adv_polyAChanged(); break;
+        case 14: _t->adv_finalTempChanged(); break;
         default: ;
         }
     }
@@ -147,14 +155,14 @@ int ExperimentCreateWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 13)
+        if (_id < 15)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 13;
+        _id -= 15;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 13)
+        if (_id < 15)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 13;
+        _id -= 15;
     }
     return _id;
 }

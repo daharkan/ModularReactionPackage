@@ -142,7 +142,7 @@ void ExperimentListWidget::filterTableBySearch(const QString &text)
 void ExperimentListWidget::reloadExperiments()
 {
     if (!RedisDBManager::getInstance()->isConnected()) {
-        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+        RedisDBManager::getInstance()->connectToDefault();
     }
 
     m_experiments = RedisDBManager::getInstance()->getExperiments();

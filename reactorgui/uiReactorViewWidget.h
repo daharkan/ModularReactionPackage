@@ -19,6 +19,7 @@ class ReactorViewWidget : public QWidget
 public:
     explicit ReactorViewWidget(QWidget *parent = nullptr);
     ~ReactorViewWidget();
+    void setMachineId(const std::string &machineId);
 
 signals:
     void sgn_openCellView(const std::string &cellId, int positionIndex);
@@ -35,6 +36,7 @@ private:
     QTimer *m_flowTimer = nullptr;
     QVector<CellOverviewWidget*> m_lhsCells;
     QVector<CellOverviewWidget*> m_rhsCells;
+    std::string m_machineId;
     std::string m_lhsBusboardId;
     std::string m_rhsBusboardId;
     std::string m_selectedCellId;

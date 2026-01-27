@@ -44,8 +44,7 @@ template <> constexpr inline auto MenuWidget::qt_create_metaobjectdata<qt_meta_t
         "sgn_reactorClicked",
         "sgn_experimentClicked",
         "sgn_userClicked",
-        "sgn_optionsClicked",
-        "sgn_homeClicked"
+        "sgn_optionsClicked"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -59,8 +58,6 @@ template <> constexpr inline auto MenuWidget::qt_create_metaobjectdata<qt_meta_t
         QtMocHelpers::SignalData<void()>(5, 2, QMC::AccessPublic, QMetaType::Void),
         // Signal 'sgn_optionsClicked'
         QtMocHelpers::SignalData<void()>(6, 2, QMC::AccessPublic, QMetaType::Void),
-        // Signal 'sgn_homeClicked'
-        QtMocHelpers::SignalData<void()>(7, 2, QMC::AccessPublic, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -89,7 +86,6 @@ void MenuWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 2: _t->sgn_experimentClicked(); break;
         case 3: _t->sgn_userClicked(); break;
         case 4: _t->sgn_optionsClicked(); break;
-        case 5: _t->sgn_homeClicked(); break;
         default: ;
         }
     }
@@ -103,8 +99,6 @@ void MenuWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         if (QtMocHelpers::indexOfMethod<void (MenuWidget::*)()>(_a, &MenuWidget::sgn_userClicked, 3))
             return;
         if (QtMocHelpers::indexOfMethod<void (MenuWidget::*)()>(_a, &MenuWidget::sgn_optionsClicked, 4))
-            return;
-        if (QtMocHelpers::indexOfMethod<void (MenuWidget::*)()>(_a, &MenuWidget::sgn_homeClicked, 5))
             return;
     }
 }
@@ -128,14 +122,14 @@ int MenuWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
+        if (_id < 5)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 5;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 6)
+        if (_id < 5)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 6;
+        _id -= 5;
     }
     return _id;
 }
@@ -168,11 +162,5 @@ void MenuWidget::sgn_userClicked()
 void MenuWidget::sgn_optionsClicked()
 {
     QMetaObject::activate(this, &staticMetaObject, 4, nullptr);
-}
-
-// SIGNAL 5
-void MenuWidget::sgn_homeClicked()
-{
-    QMetaObject::activate(this, &staticMetaObject, 5, nullptr);
 }
 QT_WARNING_POP

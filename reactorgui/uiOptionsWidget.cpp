@@ -1,46 +1,96 @@
 #include "uiOptionsWidget.h"
 #include "ui_uiOptionsWidget.h"
 
-#include <QFile>
 #include <QDir>
-#include <fstream>
+#include <QFile>
+#include <QMap>
+#include <QTextStream>
 
 namespace {
-const char *kThemeConfPath = "conf/style.conf";
-const char *kMenuConfPath = "conf/menu.conf";
+const char *kUiConfigPath = "conf/reactorgui.conf";
+const char *kDefaultTheme = "Light";
+const char *kDefaultMenuPosition = "top";
+
+using ConfigMap = QMap<QString, QString>;
+
+void ensureConfDir()
+{
+    QDir().mkpath("conf");
+}
+
+ConfigMap readConfigFile(const QString &path)
+{
+    ConfigMap map;
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return map;
+    }
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        if (line.isEmpty() || line.startsWith('#') || line.startsWith(';')) {
+            continue;
+        }
+        int idx = line.indexOf('=');
+        if (idx <= 0) {
+            continue;
+        }
+        QString key = line.left(idx).trimmed().toLower();
+        QString value = line.mid(idx + 1).trimmed();
+        if (!key.isEmpty()) {
+            map.insert(key, value);
+        }
+    }
+    return map;
+}
+
+bool writeConfigFile(const QString &path, const ConfigMap &map)
+{
+    ensureConfDir();
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+        return false;
+    }
+    QTextStream out(&file);
+    for (auto it = map.constBegin(); it != map.constEnd(); ++it) {
+        out << it.key() << '=' << it.value() << '\n';
+    }
+    return true;
+}
 
 QString normalizeTheme(const QString &value)
 {
     QString lower = value.toLower();
+    if (lower.contains("touch")) {
+        return "Touch";
+    }
     if (lower.contains("dark")) {
         return "Dark";
     }
     if (lower.contains("light")) {
         return "Light";
     }
-    return "Light";
+    return QString::fromUtf8(kDefaultTheme);
+}
+
+QString normalizeMenuPosition(const QString &value)
+{
+    QString lower = value.trimmed().toLower();
+    if (lower == "bottom") {
+        return "bottom";
+    }
+    return QString::fromUtf8(kDefaultMenuPosition);
 }
 
 QString themeToFile(const QString &theme)
 {
+    if (theme.compare("touch", Qt::CaseInsensitive) == 0) {
+        return ":/resources/qss/tad_touch.qss";
+    }
     if (theme.compare("dark", Qt::CaseInsensitive) == 0) {
         return ":/resources/qss/tad_dark.qss";
     }
     return ":/resources/qss/tad_light.qss";
-}
-
-QString readFirstLine(const char *path)
-{
-    QFile file(QString::fromUtf8(path));
-    if (!file.open(QIODevice::ReadOnly)) {
-        return QString();
-    }
-    return QString::fromUtf8(file.readLine()).trimmed();
-}
-
-void ensureConfDir()
-{
-    QDir().mkpath("conf");
 }
 } // namespace
 
@@ -51,16 +101,18 @@ OptionsWidget::OptionsWidget(QWidget *parent) :
     ui->setupUi(this);
     ui->themesComboBox->addItem("Light");
     ui->themesComboBox->addItem("Dark");
+    ui->themesComboBox->addItem("Touch");
     ui->menuPositionComboBox->addItem("Top");
     ui->menuPositionComboBox->addItem("Bottom");
 
     m_parent = parent;
 
-    QString theme = normalizeTheme(readFirstLine(kThemeConfPath));
+    ConfigMap config = readConfigFile(QString::fromUtf8(kUiConfigPath));
+    QString theme = normalizeTheme(config.value("theme", QString::fromUtf8(kDefaultTheme)));
     ui->themesComboBox->setCurrentText(theme);
 
-    QString menuPosition = readFirstLine(kMenuConfPath);
-    if (menuPosition.compare("bottom", Qt::CaseInsensitive) == 0) {
+    QString menuPosition = normalizeMenuPosition(config.value("menu_position", QString::fromUtf8(kDefaultMenuPosition)));
+    if (menuPosition == "bottom") {
         ui->menuPositionComboBox->setCurrentText("Bottom");
     } else {
         ui->menuPositionComboBox->setCurrentText("Top");
@@ -92,17 +144,12 @@ OptionsWidget::~OptionsWidget()
 
 void OptionsWidget::applyButtonClicked()
 {
-    ensureConfDir();
-
-    QString theme = ui->themesComboBox->currentText().trimmed();
-    std::ofstream styleConf(kThemeConfPath);
-    styleConf << theme.toStdString();
-    styleConf.close();
-
-    QString menuPosition = ui->menuPositionComboBox->currentText().trimmed();
-    std::ofstream menuConf(kMenuConfPath);
-    menuConf << menuPosition.toLower().toStdString();
-    menuConf.close();
+    ConfigMap config = readConfigFile(QString::fromUtf8(kUiConfigPath));
+    QString theme = normalizeTheme(ui->themesComboBox->currentText().trimmed());
+    QString menuPosition = normalizeMenuPosition(ui->menuPositionComboBox->currentText().trimmed());
+    config.insert("theme", theme);
+    config.insert("menu_position", menuPosition);
+    writeConfigFile(QString::fromUtf8(kUiConfigPath), config);
 
     QString filename = themeToFile(theme);
     QFile styleFile(filename);
@@ -119,5 +166,5 @@ void OptionsWidget::applyButtonClicked()
         }
     }
 
-    emit sgn_menuPositionChanged(menuPosition.compare("top", Qt::CaseInsensitive) == 0);
+    emit sgn_menuPositionChanged(menuPosition == "top");
 }

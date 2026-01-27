@@ -10,11 +10,54 @@
 #include <QLocale>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QTextStream>
 #include <QVBoxLayout>
 
-#define IS_MACHINE_CONNECTED false
+#define IS_MACHINE_CONNECTED true
 
 #define MAX_HISTORY_SIZE 200
+
+namespace {
+const char *kUiConfigPath = "conf/reactorgui.conf";
+
+QString readConfigValue(const QString &key)
+{
+    QString target = key.trimmed().toLower();
+    QFile file(QString::fromUtf8(kUiConfigPath));
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return QString();
+    }
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        if (line.isEmpty() || line.startsWith('#') || line.startsWith(';')) {
+            continue;
+        }
+        int idx = line.indexOf('=');
+        if (idx <= 0) {
+            continue;
+        }
+        QString foundKey = line.left(idx).trimmed().toLower();
+        if (foundKey != target) {
+            continue;
+        }
+        return line.mid(idx + 1).trimmed();
+    }
+    return QString();
+}
+
+QString normalizeMenuPosition(const QString &value)
+{
+    QString lower = value.trimmed().toLower();
+    if (lower == "bottom") {
+        return "bottom";
+    }
+    if (lower == "top") {
+        return "top";
+    }
+    return QString();
+}
+} // namespace
 
 TSMainWindow::TSMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -33,7 +76,6 @@ TSMainWindow::TSMainWindow(QWidget *parent)
     connect(m_menuWidget, &MenuWidget::sgn_experimentClicked, this, &TSMainWindow::showExpManagerWidget);
     connect(m_menuWidget, &MenuWidget::sgn_userClicked, this, &TSMainWindow::showUserManagementWidget);
     connect(m_menuWidget, &MenuWidget::sgn_optionsClicked, this, &TSMainWindow::showOptionsWidget);
-    connect(m_menuWidget, &MenuWidget::sgn_homeClicked, this, &TSMainWindow::showHomeWidget);
 
     m_loginWidget = new LoginWidget(IS_MACHINE_CONNECTED, this);
     m_optionsWidget = new OptionsWidget(this);
@@ -214,6 +256,7 @@ void TSMainWindow::loginSucceed()
     m_currentUser = m_loginWidget->currentUser();
     m_experimentManagerWidget->setCurrentUser(m_currentUser);
     m_userManagementWidget->setCurrentUser(m_currentUser);
+    m_reactorViewWidget->setMachineId(m_loginWidget->selectedMachineId());
     ui->menuContainer->setVisible(true);
     showHomeWidget();
 }
@@ -239,13 +282,8 @@ void TSMainWindow::applyMenuPosition(bool isTop)
 
 void TSMainWindow::loadMenuPosition()
 {
-    QFile file("conf/menu.conf");
-    if (!file.open(QIODevice::ReadOnly)) {
-        applyMenuPosition(true);
-        return;
-    }
-    QString line = QString::fromUtf8(file.readLine()).trimmed().toLower();
-    applyMenuPosition(line == "top" || line.isEmpty());
+    QString menuPosition = normalizeMenuPosition(readConfigValue("menu_position"));
+    applyMenuPosition(menuPosition != "bottom");
 }
 
 void TSMainWindow::handleMenuPositionChanged(bool isTop)
@@ -266,7 +304,7 @@ void TSMainWindow::assignExperimentToCell(const std::string &cellId)
     }
 
     if (!RedisDBManager::getInstance()->isConnected()) {
-        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+        RedisDBManager::getInstance()->connectToDefault();
     }
     if (!RedisDBManager::getInstance()->isConnected()) {
         return;

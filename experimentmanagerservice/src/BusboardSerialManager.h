@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QSet>
 #include <QByteArray>
+#include <QVector>
 
 class BusboardSerialManager : public QObject
 {
@@ -53,6 +54,7 @@ private slots:
 signals:
     void sgn_updateCell(Cell& cell);
     void sgn_presenceUpdate(int slotIndex, bool isPresent);
+    void sgn_machineStatusUpdate(const QString &busboardId, const QVector<int> &slotStates);
 
 };
 

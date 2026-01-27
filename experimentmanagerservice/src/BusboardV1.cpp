@@ -10,6 +10,7 @@ BusboardV1::BusboardV1()
     m_serialManager = new BusboardSerialManager(this);
     QObject::connect(m_serialManager, &BusboardSerialManager::sgn_updateCell, this, &BusboardV1::cellStatusUpdated);
     QObject::connect(m_serialManager, &BusboardSerialManager::sgn_presenceUpdate, this, &BusboardV1::presenceStatusUpdated);
+    QObject::connect(m_serialManager, &BusboardSerialManager::sgn_machineStatusUpdate, this, &BusboardV1::machineStatusUpdated);
 }
 
 BusboardV1::~BusboardV1()
@@ -56,6 +57,11 @@ std::vector<std::string> BusboardV1::getCellIdList()
         cellIdList.push_back(m_cellArray.at(i).cellID());
     }
     return cellIdList;
+}
+
+unsigned int BusboardV1::machineStatusSequence() const
+{
+    return m_machineStatusSequence;
 }
 
 float BusboardV1::calculateTargetTemp(Cell cell)
@@ -106,4 +112,23 @@ void BusboardV1::presenceStatusUpdated(int slotIndex, bool isPresent)
     Cell &cell = m_cellArray[slotIndex - 1];
     cell.setIsPlugged(isPresent);
     cell.setLastUpdatedTimestamp(Cell::getCurrentTimeMillis());
+}
+
+void BusboardV1::machineStatusUpdated(const QString &busboardId, const QVector<int> &slotStates)
+{
+    if (!busboardId.isEmpty() && busboardId.toStdString() != m_busboardID) {
+        return;
+    }
+    if (slotStates.size() < CELL_COUNT) {
+        return;
+    }
+
+    for (int i = 0; i < CELL_COUNT; ++i) {
+        bool isPresent = slotStates.at(i) == 1;
+        m_cellArray[i].setIsPlugged(isPresent);
+        if (!isPresent) {
+            m_cellArray[i].setLastUpdatedTimestamp(Cell::getCurrentTimeMillis());
+        }
+    }
+    m_machineStatusSequence++;
 }

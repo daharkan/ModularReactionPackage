@@ -28,7 +28,6 @@ public:
     QSpacerItem *horizontalSpacer_2;
     QLabel *titleLabel;
     QSpacerItem *horizontalSpacer;
-    QPushButton *homeButton;
     QPushButton *reactorButton;
     QPushButton *experimentButton;
     QPushButton *userButton;
@@ -77,47 +76,38 @@ public:
 
         mainLayout->addItem(horizontalSpacer);
 
-        homeButton = new QPushButton(MenuWidget);
-        homeButton->setObjectName("homeButton");
-        QIcon icon1;
-        icon1.addFile(QString::fromUtf8(":/resources/icons/home.svg"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
-        homeButton->setIcon(icon1);
-        homeButton->setIconSize(QSize(24, 24));
-
-        mainLayout->addWidget(homeButton);
-
         reactorButton = new QPushButton(MenuWidget);
         reactorButton->setObjectName("reactorButton");
-        QIcon icon2;
-        icon2.addFile(QString::fromUtf8(":/resources/icons/grid.svg"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
-        reactorButton->setIcon(icon2);
+        QIcon icon1;
+        icon1.addFile(QString::fromUtf8(":/resources/icons/grid.svg"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
+        reactorButton->setIcon(icon1);
         reactorButton->setIconSize(QSize(24, 24));
 
         mainLayout->addWidget(reactorButton);
 
         experimentButton = new QPushButton(MenuWidget);
         experimentButton->setObjectName("experimentButton");
-        QIcon icon3;
-        icon3.addFile(QString::fromUtf8(":/resources/icons/bar chart.svg"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
-        experimentButton->setIcon(icon3);
+        QIcon icon2;
+        icon2.addFile(QString::fromUtf8(":/resources/icons/bar chart.svg"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
+        experimentButton->setIcon(icon2);
         experimentButton->setIconSize(QSize(24, 24));
 
         mainLayout->addWidget(experimentButton);
 
         userButton = new QPushButton(MenuWidget);
         userButton->setObjectName("userButton");
-        QIcon icon4;
-        icon4.addFile(QString::fromUtf8(":/resources/icons/users.svg"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
-        userButton->setIcon(icon4);
+        QIcon icon3;
+        icon3.addFile(QString::fromUtf8(":/resources/icons/users.svg"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
+        userButton->setIcon(icon3);
         userButton->setIconSize(QSize(24, 24));
 
         mainLayout->addWidget(userButton);
 
         optionsButton = new QPushButton(MenuWidget);
         optionsButton->setObjectName("optionsButton");
-        QIcon icon5;
-        icon5.addFile(QString::fromUtf8(":/resources/icons/settings.svg"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
-        optionsButton->setIcon(icon5);
+        QIcon icon4;
+        icon4.addFile(QString::fromUtf8(":/resources/icons/settings.svg"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
+        optionsButton->setIcon(icon4);
         optionsButton->setIconSize(QSize(24, 24));
 
         mainLayout->addWidget(optionsButton);
@@ -133,7 +123,6 @@ public:
         MenuWidget->setWindowTitle(QCoreApplication::translate("MenuWidget", "MenuWidget", nullptr));
         backButton->setText(QCoreApplication::translate("MenuWidget", "Back", nullptr));
         titleLabel->setText(QCoreApplication::translate("MenuWidget", "Title", nullptr));
-        homeButton->setText(QCoreApplication::translate("MenuWidget", "Home", nullptr));
         reactorButton->setText(QCoreApplication::translate("MenuWidget", "Reactor", nullptr));
         experimentButton->setText(QCoreApplication::translate("MenuWidget", "Experiments", nullptr));
         userButton->setText(QCoreApplication::translate("MenuWidget", "Users", nullptr));

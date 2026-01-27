@@ -1414,6 +1414,7 @@ qrc_resources.cpp: ../../resources.qrc \
 		../../resources/qss/bf.css \
 		../../resources/qss/ConsoleStyle.qss \
 		../../resources/qss/tad_dark.qss \
+		../../resources/qss/tad_touch.qss \
 		../../resources/qss/darkblack.css \
 		../../resources/qss/darkRed.qss \
 		../../resources/qss/darkblue/radiobutton_checked.png \
@@ -6300,7 +6301,15 @@ uiCellGraph.o: ../../uiCellGraph.cpp ../../uiCellGraph.h \
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
-		ui_uiCellGraph.h
+		ui_uiCellGraph.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QGridLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiCellGraph.o ../../uiCellGraph.cpp
 
 main.o: ../../main.cpp ../../uiTSMainWindow.h \
@@ -6606,8 +6615,20 @@ main.o: ../../main.cpp ../../uiTSMainWindow.h \
 		../../uiCellGraph.h \
 		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		../../uiMenuWidget.h \
+		../../../experimentmanagerservice/src/common/RedisDBManager.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDir \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdir.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdirlisting.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfiledevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatetime.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcalendar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfile.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfileinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimezone.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QFile \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QTextStream
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../../main.cpp
 
 uiCellOverviewWidget.o: ../../uiCellOverviewWidget.cpp ../../uiCellOverviewWidget.h \
@@ -6842,6 +6863,20 @@ uiCellOverviewWidget.o: ../../uiCellOverviewWidget.cpp ../../uiCellOverviewWidge
 		../../../experimentmanagerservice/src/common/RPMArc.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		ui_uiCellOverviewWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QGridLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QLabel \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlabel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpicture.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QVBoxLayout \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDateTime \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatetime.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcalendar.h \
@@ -7104,6 +7139,28 @@ uiCellWidget.o: ../../uiCellWidget.cpp ../../uiCellWidget.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		ui_uiCellWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/QIcon \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QFrame \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QGridLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QGroupBox \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgroupbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QHBoxLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QLabel \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlabel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpicture.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QPushButton \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QSpacerItem \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QVBoxLayout \
 		../../../experimentmanagerservice/src/common/RedisDBManager.h \
 		../../../experimentmanagerservice/src/common/FlowStatus.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDateTime \
@@ -7374,6 +7431,44 @@ uiExperimentCreateWidget.o: ../../uiExperimentCreateWidget.cpp ../../uiExperimen
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qdialog.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qdialogbuttonbox.h \
 		ui_uiExperimentCreateWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/QIcon \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QComboBox \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qcombobox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvalidator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qregularexpression.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyle.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qrubberband.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QFrame \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QGridLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QGroupBox \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgroupbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QHBoxLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QLabel \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlabel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpicture.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QLineEdit \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QPushButton \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QRadioButton \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qradiobutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QSpacerItem \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QStackedWidget \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstackedwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QVBoxLayout \
 		../../../experimentmanagerservice/src/common/RedisDBManager.h \
 		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		../../../experimentmanagerservice/src/common/FlowStatus.h \
@@ -7386,21 +7481,7 @@ uiExperimentCreateWidget.o: ../../uiExperimentCreateWidget.cpp ../../uiExperimen
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qheaderview.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemview.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qitemselectionmodel.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyleoption.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvalidator.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qregularexpression.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qslider.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractslider.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyle.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabbar.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabwidget.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qrubberband.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QComboBox \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qcombobox.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QInputDialog \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qinputdialog.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QJsonDocument \
@@ -7417,16 +7498,9 @@ uiExperimentCreateWidget.o: ../../uiExperimentCreateWidget.cpp ../../uiExperimen
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QListWidget \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlistwidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlistview.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QRadioButton \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qradiobutton.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/QScreen \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QTimer \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimer.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QVBoxLayout \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayoutitem.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QUuid \
 		../../uiCellOverviewWidget.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiExperimentCreateWidget.o ../../uiExperimentCreateWidget.cpp
@@ -7681,7 +7755,15 @@ uiExperimentGraph.o: ../../uiExperimentGraph.cpp ../../uiExperimentGraph.h \
 		../../../experimentmanagerservice/src/common/RPMArc.h \
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
-		ui_uiExperimentGraph.h
+		ui_uiExperimentGraph.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QGridLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiExperimentGraph.o ../../uiExperimentGraph.cpp
 
 uiExperimentListWidget.o: ../../uiExperimentListWidget.cpp ../../uiExperimentListWidget.h \
@@ -7943,6 +8025,18 @@ uiExperimentListWidget.o: ../../uiExperimentListWidget.cpp ../../uiExperimentLis
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
 		ui_uiExperimentListWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QGridLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QHBoxLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QHeaderView \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qheaderview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QTableWidget \
 		../../../experimentmanagerservice/src/common/RedisDBManager.h \
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
@@ -7950,9 +8044,7 @@ uiExperimentListWidget.o: ../../uiExperimentListWidget.cpp ../../uiExperimentLis
 		../../../experimentmanagerservice/src/common/FlowStatus.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDateTime \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatetime.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcalendar.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QHeaderView \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qheaderview.h
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcalendar.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiExperimentListWidget.o ../../uiExperimentListWidget.cpp
 
 uiExperimentManagerWidget.o: ../../uiExperimentManagerWidget.cpp ../../uiExperimentManagerWidget.h \
@@ -8235,6 +8327,17 @@ uiExperimentManagerWidget.o: ../../uiExperimentManagerWidget.cpp ../../uiExperim
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		ui_uiExperimentManagerWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QGridLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QPushButton \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QSpacerItem \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QVBoxLayout \
 		../../../experimentmanagerservice/src/common/RedisDBManager.h \
 		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		../../../experimentmanagerservice/src/common/FlowStatus.h \
@@ -8469,6 +8572,43 @@ uiLoginWidget.o: ../../uiLoginWidget.cpp ../../uiLoginWidget.h \
 		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
 		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
 		ui_uiLoginWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QComboBox \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qcombobox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvalidator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qregularexpression.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyle.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qrubberband.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QGridLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QLabel \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlabel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpicture.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QLineEdit \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlineedit.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextcursor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextformat.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpen.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QPushButton \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QSpacerItem \
 		../../../experimentmanagerservice/src/common/RedisDBManager.h \
 		../../../experimentmanagerservice/src/common/Cell.h \
 		../../../experimentmanagerservice/src/common/Experiment.h \
@@ -8678,7 +8818,25 @@ uiMenuWidget.o: ../../uiMenuWidget.cpp ../../uiMenuWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qinputmethod.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
-		ui_uiMenuWidget.h
+		ui_uiMenuWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/QIcon \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QHBoxLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QLabel \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlabel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpicture.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QPushButton \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QSpacerItem
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiMenuWidget.o ../../uiMenuWidget.cpp
 
 uiOptionsWidget.o: ../../uiOptionsWidget.cpp ../../uiOptionsWidget.h \
@@ -8879,9 +9037,55 @@ uiOptionsWidget.o: ../../uiOptionsWidget.cpp ../../uiOptionsWidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qguiapplication_platform.h \
 		ui_uiOptionsWidget.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QFile \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QComboBox \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qcombobox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyleoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qvalidator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qregularexpression.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyle.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabbar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qrubberband.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QFormLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qformlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QGroupBox \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgroupbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QHBoxLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QLabel \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlabel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpicture.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QPushButton \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QSpacerItem \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QVBoxLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDir \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdir.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdirlisting.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfiledevice.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatetime.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcalendar.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfile.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfiledevice.h
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfileinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimezone.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QFile \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QMap \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QTextStream
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiOptionsWidget.o ../../uiOptionsWidget.cpp
 
 uiReactorViewWidget.o: ../../uiReactorViewWidget.cpp ../../uiReactorViewWidget.h \
@@ -9122,6 +9326,24 @@ uiReactorViewWidget.o: ../../uiReactorViewWidget.cpp ../../uiReactorViewWidget.h
 		../../../experimentmanagerservice/src/common/CellVisuals.h \
 		../../../experimentmanagerservice/src/common/FlowStatus.h \
 		ui_uiReactorViewWidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QGridLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QGroupBox \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgroupbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QHBoxLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QLabel \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlabel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpicture.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QSpacerItem \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QVBoxLayout \
 		../../../experimentmanagerservice/src/common/RedisDBManager.h \
 		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QMap
@@ -9698,6 +9920,15 @@ uiTSMainWindow.o: ../../uiTSMainWindow.cpp ../../uiTSMainWindow.h \
 		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
 		../../uiMenuWidget.h \
 		ui_uiTSMainWindow.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QHBoxLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QStackedWidget \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstackedwidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QStatusBar \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstatusbar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QVBoxLayout \
 		../../../experimentmanagerservice/src/common/RedisDBManager.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QDialog \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qdialog.h \
@@ -9707,8 +9938,10 @@ uiTSMainWindow.o: ../../uiTSMainWindow.cpp ../../uiTSMainWindow.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfile.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfiledevice.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QLocale \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QMessageBox \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qmessagebox.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QPushButton \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QVBoxLayout
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QTextStream
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o uiTSMainWindow.o ../../uiTSMainWindow.cpp
 
 uiUserManagementWidget.o: ../../uiUserManagementWidget.cpp ../../uiUserManagementWidget.h \
@@ -9936,23 +10169,11 @@ uiUserManagementWidget.o: ../../uiUserManagementWidget.cpp ../../uiUserManagemen
 		../../../experimentmanagerservice/src/common/rapidjson/stringbuffer.h \
 		../../../experimentmanagerservice/src/common/rapidjson/ostreamwrapper.h \
 		ui_uiUserManagementWidget.h \
-		../../../experimentmanagerservice/src/common/RedisDBManager.h \
-		../../../experimentmanagerservice/src/common/Cell.h \
-		../../../experimentmanagerservice/src/common/Experiment.h \
-		../../../experimentmanagerservice/src/common/Profile.h \
-		../../../experimentmanagerservice/src/common/TempArc.h \
-		../../../experimentmanagerservice/src/common/Arc.h \
-		../../../experimentmanagerservice/src/common/RPMArc.h \
-		../../../experimentmanagerservice/src/common/CellVisuals.h \
-		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
-		../../../experimentmanagerservice/src/common/FlowStatus.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QHeaderView \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qheaderview.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemview.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVariant \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QApplication \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qapplication.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QComboBox \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qcombobox.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qstyleoption.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractspinbox.h \
@@ -9964,6 +10185,49 @@ uiUserManagementWidget.o: ../../uiUserManagementWidget.cpp ../../uiUserManagemen
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabbar.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtabwidget.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qrubberband.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qframe.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qabstractitemmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QGridLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgridlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlayoutitem.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qboxlayout.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QGroupBox \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qgroupbox.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QHBoxLayout \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QHeaderView \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qheaderview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractitemview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qitemselectionmodel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QLabel \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlabel.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpicture.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextdocument.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QLineEdit \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qlineedit.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextcursor.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextformat.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qpen.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtGui/qtextoption.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QPushButton \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QSpacerItem \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QTableWidget \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtablewidget.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qtableview.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QVBoxLayout \
+		../../../experimentmanagerservice/src/common/RedisDBManager.h \
+		../../../experimentmanagerservice/src/common/Cell.h \
+		../../../experimentmanagerservice/src/common/Experiment.h \
+		../../../experimentmanagerservice/src/common/Profile.h \
+		../../../experimentmanagerservice/src/common/TempArc.h \
+		../../../experimentmanagerservice/src/common/Arc.h \
+		../../../experimentmanagerservice/src/common/RPMArc.h \
+		../../../experimentmanagerservice/src/common/CellVisuals.h \
+		../../../experimentmanagerservice/src/common/CellVisualsHistory.h \
+		../../../experimentmanagerservice/src/common/FlowStatus.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/QMessageBox \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qmessagebox.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtWidgets/qdialog.h \

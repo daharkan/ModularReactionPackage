@@ -24,12 +24,13 @@ public:
     explicit ExperimentGraph(Experiment &experiment, QWidget *parent = nullptr);
     ~ExperimentGraph();
     void updateTheExperiment(Experiment& experiment);
+    void updatePreviewProfile(const Profile &profile);
     void pushTemperatureAndRPMData(double temp, double rpm, unsigned long timestamp = 0);
 
 private:
     Ui::ExperimentGraph *ui;
     QwtPlot *m_plot;
-    QwtPlotCurve *m_tempCurve, *m_rpmCurve;
+    QwtPlotCurve *m_tempCurve, *m_rpmCurve, *m_tempPreviewCurve;
     QwtLegend *m_legend;
 
 };

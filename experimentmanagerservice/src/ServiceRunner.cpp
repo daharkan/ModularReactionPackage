@@ -6,11 +6,11 @@
 #include <QString>
 #include <chrono>
 #include <cmath>
+#include <optional>
+#include <algorithm>
+#include <cctype>
 #include <thread>
 #include <QtConcurrent/QtConcurrent>
-
-#define HOSTNAME "127.0.0.1"
-#define PORT 6379
 
 #define MIN_CELL_UPDATE_INTERVAL_MSECS 100
 #define TEMP_EPSILON 0.5
@@ -21,6 +21,49 @@ constexpr const char *kStateIdle = "IDLE";
 constexpr const char *kStatePreheat = "PREHEAT";
 constexpr const char *kStateRunning = "RUNNING";
 constexpr const char *kStateCompleted = "COMPLETED";
+constexpr unsigned int kMaxMissedMachineStatus = 5;
+constexpr unsigned long long kMachineStatusCheckIntervalMs = 500;
+
+struct BusboardMeta {
+    std::string machineId;
+    std::string side;
+};
+
+std::optional<BusboardMeta> parseBusboardMeta(const std::string &busboardId)
+{
+    if (busboardId.empty()) {
+        return std::nullopt;
+    }
+
+    std::string upper = busboardId;
+    std::transform(upper.begin(), upper.end(), upper.begin(), [](unsigned char c) {
+        return static_cast<char>(std::toupper(c));
+    });
+
+    std::string side;
+    if (upper.find("LHS") != std::string::npos) {
+        side = "LHS";
+    } else if (upper.find("RHS") != std::string::npos) {
+        side = "RHS";
+    } else {
+        return std::nullopt;
+    }
+
+    std::string digits;
+    for (char c : upper) {
+        if (std::isdigit(static_cast<unsigned char>(c))) {
+            digits.push_back(c);
+        }
+    }
+    if (digits.empty()) {
+        return std::nullopt;
+    }
+    if (digits.size() < 3) {
+        digits.insert(digits.begin(), 3 - digits.size(), '0');
+    }
+
+    return BusboardMeta{digits, side};
+}
 
 unsigned long long totalExperimentDurationMs(Experiment& experiment)
 {
@@ -100,7 +143,9 @@ void calculateExperimentTargets(Experiment &experiment,
 } // namespace
 
 
-ServiceRunner::ServiceRunner()
+ServiceRunner::ServiceRunner(const std::string &redisHost, int redisPort)
+    : m_redisHost(redisHost)
+    , m_redisPort(redisPort)
 {
 }
 
@@ -108,8 +153,10 @@ bool ServiceRunner::initService()
 {
     bool succ = false;
     m_busboards.clear();
-    bool hasLeft = false;
-    bool hasRight = false;
+    std::shared_ptr<IBusboard> lhsBusboard;
+    std::shared_ptr<IBusboard> rhsBusboard;
+    std::string lhsMachineId;
+    std::string rhsMachineId;
 
     int portCount = QSerialPortInfo::availablePorts().size();
     for (int i = 0; i < portCount; i++) {
@@ -119,38 +166,61 @@ bool ServiceRunner::initService()
         }
 
         std::string busboardId = busboard->busboardID();
-        QString idUpper = QString::fromStdString(busboardId).toUpper();
-        bool isLeft = idUpper.contains("LHS");
-        bool isRight = idUpper.contains("RHS");
-
-        if (isLeft && hasLeft) {
-            continue;
-        }
-        if (isRight && hasRight) {
+        auto metaOpt = parseBusboardMeta(busboardId);
+        if (!metaOpt.has_value()) {
+            qWarning() << "Unknown busboard id, ignoring:" << QString::fromStdString(busboardId);
             continue;
         }
 
-        m_busboards.push_back(busboard);
-        succ = true;
-
-        if (isLeft) {
-            hasLeft = true;
+        const BusboardMeta &meta = metaOpt.value();
+        if (meta.side == "LHS") {
+            if (lhsBusboard) {
+                continue;
+            }
+            lhsBusboard = busboard;
+            lhsMachineId = meta.machineId;
+            if (rhsBusboard && !rhsMachineId.empty() && rhsMachineId != lhsMachineId) {
+                qWarning() << "Machine ID mismatch. Ignoring RHS busboard"
+                           << QString::fromStdString(rhsBusboard->busboardID())
+                           << "for LHS"
+                           << QString::fromStdString(busboardId);
+                rhsBusboard.reset();
+                rhsMachineId.clear();
+            }
+        } else if (meta.side == "RHS") {
+            if (rhsBusboard) {
+                continue;
+            }
+            if (lhsBusboard && !lhsMachineId.empty() && lhsMachineId != meta.machineId) {
+                qWarning() << "Machine ID mismatch. Ignoring RHS busboard"
+                           << QString::fromStdString(busboardId)
+                           << "for LHS"
+                           << QString::fromStdString(lhsBusboard->busboardID());
+                continue;
+            }
+            rhsBusboard = busboard;
+            rhsMachineId = meta.machineId;
         }
-        if (isRight) {
-            hasRight = true;
-        }
 
-        if (hasLeft && hasRight) {
+        if (lhsBusboard && rhsBusboard) {
             break;
         }
     }
+
+    if (lhsBusboard) {
+        m_busboards.push_back(lhsBusboard);
+    }
+    if (rhsBusboard) {
+        m_busboards.push_back(rhsBusboard);
+    }
+    succ = !m_busboards.empty();
 
     bool succDB = false;
 
     if(RedisDBManager::getInstance()->isConnected()){
         return succ;
     }
-    succDB = RedisDBManager::getInstance()->connectToDB(HOSTNAME, PORT);
+    succDB = RedisDBManager::getInstance()->connectToDB(m_redisHost, m_redisPort);
     return succ && succDB;
 }
 
@@ -176,20 +246,70 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
 {
     QCoreApplication::processEvents();
 
+    const std::string busboardId = busboard->busboardID();
+    if (busboardId.empty()) {
+        return;
+    }
+
+    unsigned long long nowMs = Cell::getCurrentTimeMillis();
+    unsigned int statusSeq = busboard->machineStatusSequence();
+    bool hasNewMachineStatus = false;
+
+    auto &lastSeq = m_lastMachineStatusSeq[busboardId];
+    auto &missedCount = m_missedMachineStatus[busboardId];
+    auto &lastCheckMs = m_lastMachineStatusCheckMs[busboardId];
+
+    if (statusSeq > 0 && statusSeq != lastSeq) {
+        lastSeq = statusSeq;
+        missedCount = 0;
+        lastCheckMs = nowMs;
+        hasNewMachineStatus = true;
+    } else if (lastCheckMs == 0) {
+        lastCheckMs = nowMs;
+    } else if (nowMs - lastCheckMs >= kMachineStatusCheckIntervalMs) {
+        missedCount++;
+        lastCheckMs = nowMs;
+    }
+
+    if (missedCount >= kMaxMissedMachineStatus) {
+        const auto &cells = busboard->getCellArray();
+        for (const auto &cell : cells) {
+            if (!cell.cellID().empty()) {
+                RedisDBManager::getInstance()->deleteCell(cell.cellID());
+            }
+        }
+        RedisDBManager::getInstance()->removeBusboardFromMachine(busboardId);
+        return;
+    }
+
     std::vector<Cell> cellsFromBoard = busboard->getCellArray();
-    std::vector<std::string> cellIDList = busboard->getCellIdList();
+    std::vector<std::string> cellIdsBySlot;
     std::vector<std::string> activeCellIDs;
-    activeCellIDs.reserve(cellIDList.size());
-    for (const auto& id : cellIDList) {
-        if (!id.empty()) {
-            activeCellIDs.push_back(id);
+    cellIdsBySlot.reserve(cellsFromBoard.size());
+    activeCellIDs.reserve(cellsFromBoard.size());
+
+    for (const auto &cell : cellsFromBoard) {
+        if (cell.isPlugged() && !cell.cellID().empty()) {
+            activeCellIDs.push_back(cell.cellID());
+            cellIdsBySlot.push_back(cell.cellID());
+        } else {
+            cellIdsBySlot.push_back("");
+            if (!cell.isPlugged() && !cell.cellID().empty()) {
+                RedisDBManager::getInstance()->deleteCell(cell.cellID());
+            }
         }
     }
 
-    if(cellsFromBoard.size() != cellIDList.size()){
-        qDebug() << "cellsFromBoard size mismatch";
-        return;
+    if (hasNewMachineStatus) {
+        std::vector<int> slotStates;
+        slotStates.reserve(cellsFromBoard.size());
+        for (const auto &cell : cellsFromBoard) {
+            slotStates.push_back(cell.isPlugged() ? 1 : 0);
+        }
+        RedisDBManager::getInstance()->pushMachineStatus(busboardId, slotStates);
+        QCoreApplication::processEvents();
     }
+
     std::vector<Cell> cellsFromDB = RedisDBManager::getInstance()->getCellList(activeCellIDs);
 
     std::map<std::string, Cell> boardCellMap;
@@ -234,7 +354,6 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
 
         Experiment experiment = dbCell.asignedExperiment();
         bool hasExperiment = hasExperimentAssigned(experiment);
-        unsigned long long nowMs = Cell::getCurrentTimeMillis();
         if (hasExperiment) {
             const auto &tempArcs = experiment.profile().tempArcsInSeq();
             if (tempArcs.empty()) {
@@ -348,9 +467,9 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
         m_lastVisualTimestamp[cellID] = nowMs;
     }
 
-    RedisDBManager::getInstance()->pushFlowStatus(busboard->busboardID(), busboard->flowStatus());
+    RedisDBManager::getInstance()->pushFlowStatus(busboardId, busboard->flowStatus());
     QCoreApplication::processEvents();
 
-    RedisDBManager::getInstance()->pushBusboardCellIds(busboard->busboardID(), activeCellIDs);
+    RedisDBManager::getInstance()->pushBusboardCellIds(busboardId, cellIdsBySlot);
     QCoreApplication::processEvents();
 }

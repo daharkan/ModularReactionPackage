@@ -18,6 +18,7 @@ public:
     virtual bool sendUpdateString(QString str) = 0;
     virtual std::vector<std::string> getCellIdList() = 0;
     virtual FlowStatus flowStatus() const = 0;
+    virtual unsigned int machineStatusSequence() const { return 0; }
 
     std::string busboardID() const;
     void setBusboardID(const std::string &newBusboardID);

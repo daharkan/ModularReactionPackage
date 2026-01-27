@@ -8,6 +8,9 @@
 #define BAUDRATE 115200
 #define SLOT_COUNT 5
 
+// Single defined machine id
+#define MACHINE_ID "bbb_RHS_001"
+
 static const uint16_t STATUS_PERIOD_MS = 500;
 static const uint16_t GO_INTERVAL_MS = 100;
 
@@ -24,11 +27,11 @@ struct CellState {
 
 static CellState cells[SLOT_COUNT];
 static const char* CELL_IDS[SLOT_COUNT] = {
-  "s25_111",
-  "s25_222",
-  "s25_333",
-  "s25_444",
-  "s25_555"
+  "s25_011",
+  "s25_022",
+  "s25_033",
+  "s25_044",
+  "s25_055"
 };
 
 static uint32_t lastStatusMs = 0;
@@ -36,6 +39,7 @@ static uint32_t lastGoMs = 0;
 
 static float flowLpm = 0.0f;
 static float flowTempMv = 0.0f;
+static uint8_t slotPresent[SLOT_COUNT] = {1, 1, 1, 1, 1};
 
 static char* trimLine(char* line) {
   if (!line) return line;
@@ -134,7 +138,6 @@ static void handleSerialUpdates() {
   }
 }
 
-
 static float randomNoise(float amplitude) {
   long raw = random(-1000, 1001);
   return (raw / 1000.0f) * amplitude;
@@ -176,7 +179,8 @@ static void sendStatus() {
     dtostrf(flowLpm, 4, 3, flowStr);
     dtostrf(flowTempMv, 4, 1, flowTempStr);
 
-    Serial.print(F("bbb_RHS_000#"));
+    Serial.print(F(MACHINE_ID));
+    Serial.print('#');
     Serial.print(CELL_IDS[i]);
     Serial.print('#');
     Serial.print(i + 1);
@@ -197,6 +201,18 @@ static void sendStatus() {
     Serial.print('#');
     Serial.println(flowTempStr);
   }
+}
+
+static void sendMachineStatus() {
+  Serial.print(F(MACHINE_ID));
+  Serial.print('#');
+  for (int i = 0; i < SLOT_COUNT; i++) {
+    Serial.print(slotPresent[i]);
+    if (i < SLOT_COUNT - 1) {
+      Serial.print('#');
+    }
+  }
+  Serial.println();
 }
 
 static void sendPresenceStatus() {
@@ -224,7 +240,8 @@ void setup() {
   flowLpm = 1.2f;
   flowTempMv = 250.0f;
 
-  Serial.println(F("bbb_RHS_000#HELLO"));
+  Serial.print(F(MACHINE_ID));
+  Serial.println(F("#HELLO"));
   sendPresenceStatus();
   lastStatusMs = millis();
   lastGoMs = millis();
@@ -237,15 +254,14 @@ void loop() {
   if ((uint32_t)(now - lastStatusMs) >= STATUS_PERIOD_MS) {
     updateCellTemps();
     updateFlow();
+    sendMachineStatus();
     sendStatus();
     Serial.println(F("GO"));
     lastStatusMs = now;
   }
 
-
   if ((uint32_t)(now - lastGoMs) >= GO_INTERVAL_MS) {
     Serial.println(F("GO"));
     lastGoMs = now;
   }
-
 }

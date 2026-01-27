@@ -73,9 +73,15 @@ ExperimentCreateWidget::ExperimentCreateWidget(QWidget *parent)
     connect(ui->adv_addArcToExpButton, &QPushButton::clicked, this, &ExperimentCreateWidget::adv_addArcToExperimentClicked);
     connect(ui->adv_delLastArcButton, &QPushButton::clicked, this, &ExperimentCreateWidget::adv_delLastArcClicked);
     connect(ui->adv_clearProfileButton, &QPushButton::clicked, this, &ExperimentCreateWidget::adv_clearProfileClicked);
+    connect(ui->adv_createPushButton, &QPushButton::clicked, this, &ExperimentCreateWidget::updateClicked);
 
     connect(ui->adv_arcDurationLineEdit, &QLineEdit::textEdited, this, &ExperimentCreateWidget::adv_addArcDurationChanged);
+    connect(ui->adv_arcDurationComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &ExperimentCreateWidget::adv_addArcDurationChanged);
     connect(ui->adv_arcRampLineEdit, &QLineEdit::textEdited, this, &ExperimentCreateWidget::adv_rampChanged);
+    connect(ui->adv_initTempLineEdit, &QLineEdit::textEdited, this, &ExperimentCreateWidget::adv_finalTempChanged);
+    connect(ui->adv_polyALineEdit, &QLineEdit::textEdited, this, &ExperimentCreateWidget::adv_polyAChanged);
+    connect(ui->adv_finalTempLineEdit, &QLineEdit::textEdited, this, &ExperimentCreateWidget::adv_finalTempChanged);
 
     ui->numOfStepsDownLineEdit->setValidator(new QIntValidator(0,9999,this));
     ui->numOfStepsUpLineEdit->setValidator(new QIntValidator(0,9999,this));
@@ -126,19 +132,34 @@ ExperimentCreateWidget::ExperimentCreateWidget(QWidget *parent)
     ui->warningMessageBoxLayout->addWidget(label);
 
 
-    QButtonGroup *buttonGroup = new QButtonGroup(this);
-    buttonGroup->addButton(ui->adv_addPlatueRadioButton);
-    buttonGroup->addButton(ui->adv_addStepsRadioButton);
-    buttonGroup->addButton(ui->adv_addLinearRadioButton);
-    buttonGroup->addButton(ui->adv_add2ndDegRadioButton);
+    m_advArcButtonGroup = new QButtonGroup(this);
+    m_advArcButtonGroup->addButton(ui->adv_addPlatueRadioButton);
+    m_advArcButtonGroup->addButton(ui->adv_addStepsRadioButton);
+    m_advArcButtonGroup->addButton(ui->adv_addLinearRadioButton);
+    m_advArcButtonGroup->addButton(ui->adv_add2ndDegRadioButton);
 
     m_assignButton = new QPushButton(tr("Assign"), this);
-    ui->gridLayout_4->addWidget(m_assignButton, 9, 1);
+    ui->basicActionLayout->addWidget(m_assignButton);
     connect(m_assignButton, &QPushButton::clicked, this, &ExperimentCreateWidget::assignExperimentToCells);
 
     m_assignButtonAdvanced = new QPushButton(tr("Assign"), this);
-    ui->gridLayout_5->addWidget(m_assignButtonAdvanced, 13, 0, 1, 2);
+    ui->advActionLayout->addWidget(m_assignButtonAdvanced);
     connect(m_assignButtonAdvanced, &QPushButton::clicked, this, &ExperimentCreateWidget::assignExperimentToCells);
+
+    const QList<QLineEdit*> edits = findChildren<QLineEdit*>();
+    for (QLineEdit *edit : edits) {
+        connect(edit, &QLineEdit::textChanged, this, [this](const QString &) {
+            updatePreviewFromUi();
+        });
+    }
+
+    const QList<QComboBox*> combos = findChildren<QComboBox*>();
+    for (QComboBox *combo : combos) {
+        connect(combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+                this, [this](int) {
+                    updatePreviewFromUi();
+                });
+    }
 
 }
 
@@ -161,6 +182,7 @@ void ExperimentCreateWidget::loadExperiment(const Experiment &experiment, Mode m
     applyExperimentType(m_currentExpType);
     applyUiState(experiment.settingsJson());
     m_expGraph->updateTheExperiment(m_currentExperiment);
+    updatePreviewFromUi();
     updateModeUi();
 }
 
@@ -202,6 +224,15 @@ void ExperimentCreateWidget::setVisibleAllBasicExperimentItems(bool en)
     ui->finalTempLabel->setVisible(en);
     ui->finalTempLineEdit->setVisible(en);
 
+}
+
+void ExperimentCreateWidget::updateBasicGroupVisibility()
+{
+    bool showSteps = m_currentExpType == EXP_BASIC_LI_UP_ST_DOWN
+        || m_currentExpType == EXP_BASIC_ST_UP_LI_DOWN
+        || m_currentExpType == EXP_BASIC_ST_UP_ST_DOWN;
+
+    ui->basicStepsGroupBox->setVisible(showSteps);
 }
 
 TempArc ExperimentCreateWidget::createLinearTempArc(float startTemp, float endTemp, float rank, unsigned long startTimeMSec)
@@ -270,7 +301,7 @@ TempArc ExperimentCreateWidget::create2ndDegArc(float startTemp, float endTemp, 
     double durationSec = durationMSec / 1000.0;
     double startTimeSec = startTimeMSec / 1000.0;
 
-    float b = ((endTemp-startTemp)/durationSec) - (a * (startTimeSec+durationSec+durationSec));
+    float b = ((endTemp - startTemp) / durationSec) - (a * ((2 * startTimeSec) + durationSec));
     float c = startTemp - (a*startTimeSec*startTimeSec) - b*startTimeSec;
     qDebug() << "create2ndDegArc::b: " << b;
     qDebug() << "create2ndDegArc::c: " << c;
@@ -400,11 +431,11 @@ void ExperimentCreateWidget::handleBasicsButtonClicked() {
             ui->stepsUpDurationComboBox->setVisible(false);
         }
 
-
-
+        updateBasicGroupVisibility();
 
         ui->stackedWidget->setCurrentIndex(PAGE_CREATE_IDX);
         m_lastPageIndex = PAGE_CREATE_IDX;
+        updatePreviewFromUi();
 
     } else if (ret == QMessageBox::No) {
         // Handle 'No' button clicked
@@ -446,107 +477,92 @@ void ExperimentCreateWidget::blinkLineEdit(QLineEdit* lineEdit, int blinkCount)
     timer->start(200); // 200ms interval
 }
 
+bool ExperimentCreateWidget::validateBasicInputs(bool showErrors)
+{
+    auto requireNonEmpty = [this, showErrors](QLineEdit *edit) -> bool {
+        if (!edit || !edit->isVisible()) {
+            return true;
+        }
+        if (edit->text().trimmed().isEmpty()) {
+            if (showErrors) {
+                blinkLineEdit(edit);
+            }
+            return false;
+        }
+        return true;
+    };
+
+    auto requirePositive = [this, showErrors, &requireNonEmpty](QLineEdit *edit) -> bool {
+        if (!requireNonEmpty(edit)) {
+            return false;
+        }
+        bool ok = false;
+        double value = edit->text().toDouble(&ok);
+        if (!ok || value <= 0.0) {
+            if (showErrors) {
+                blinkLineEdit(edit);
+            }
+            return false;
+        }
+        return true;
+    };
+
+    if (!requireNonEmpty(ui->initTempLineEdit)
+        || !requireNonEmpty(ui->targetTempLineEdit)
+        || !requireNonEmpty(ui->finalTempLineEdit)
+        || !requireNonEmpty(ui->initHoldTimeLineEdit)
+        || !requireNonEmpty(ui->plateauTimeLineEdit)
+        || !requireNonEmpty(ui->finalHoldTimeLineEdit)
+        || !requirePositive(ui->numOfCyclesLineEdit)) {
+        return false;
+    }
+
+    if (m_currentExpType == EXP_BASIC_STANDARD) {
+        return requirePositive(ui->initRampLineEdit)
+            && requirePositive(ui->finalRampLineEdit);
+    }
+
+    if (m_currentExpType == EXP_BASIC_LI_UP_ST_DOWN) {
+        return requirePositive(ui->initRampLineEdit)
+            && requirePositive(ui->numOfStepsDownLineEdit)
+            && requirePositive(ui->stepsDownDurationLineEdit);
+    }
+
+    if (m_currentExpType == EXP_BASIC_ST_UP_LI_DOWN) {
+        return requirePositive(ui->finalRampLineEdit)
+            && requirePositive(ui->numOfStepsUpLineEdit)
+            && requirePositive(ui->stepsUpDurationLineEdit);
+    }
+
+    if (m_currentExpType == EXP_BASIC_ST_UP_ST_DOWN) {
+        return requirePositive(ui->numOfStepsUpLineEdit)
+            && requirePositive(ui->stepsUpDurationLineEdit)
+            && requirePositive(ui->numOfStepsDownLineEdit)
+            && requirePositive(ui->stepsDownDurationLineEdit);
+    }
+
+    return false;
+}
+
 bool ExperimentCreateWidget::buildProfile(Profile &profile)
 {
-    if (m_currentExpType == EXP_BASIC_STANDARD) {
-        int numOfCycles = ui->numOfCyclesLineEdit->text().toInt();
-        if (numOfCycles < 1) {
-            blinkLineEdit(ui->numOfCyclesLineEdit);
-            return false;
-        }
-        int rank = ui->initRampLineEdit->text().toInt();
-        if (rank < 1) {
-            blinkLineEdit(ui->initRampLineEdit);
-            return false;
-        }
-        rank = ui->finalRampLineEdit->text().toInt();
-        if (rank < 1) {
-            blinkLineEdit(ui->finalRampLineEdit);
+    if (m_currentExpType == EXP_BASIC_STANDARD
+        || m_currentExpType == EXP_BASIC_LI_UP_ST_DOWN
+        || m_currentExpType == EXP_BASIC_ST_UP_LI_DOWN
+        || m_currentExpType == EXP_BASIC_ST_UP_ST_DOWN) {
+        if (!validateBasicInputs(true)) {
             return false;
         }
 
-        profile = createBasicStandardProfile();
-    } else if (m_currentExpType == EXP_BASIC_LI_UP_ST_DOWN) {
-        int numOfCycles = ui->numOfCyclesLineEdit->text().toInt();
-        if (numOfCycles < 1) {
-            blinkLineEdit(ui->numOfCyclesLineEdit);
-            return false;
+        if (m_currentExpType == EXP_BASIC_STANDARD) {
+            profile = createBasicStandardProfile();
+        } else if (m_currentExpType == EXP_BASIC_LI_UP_ST_DOWN) {
+            profile = createLinearUpStepDownProfile();
+        } else if (m_currentExpType == EXP_BASIC_ST_UP_LI_DOWN) {
+            profile = createStepUpLinearDownProfile();
+        } else if (m_currentExpType == EXP_BASIC_ST_UP_ST_DOWN) {
+            profile = createStepUpStepDownProfile();
         }
-        int rank = ui->initRampLineEdit->text().toInt();
-        if (rank < 1) {
-            blinkLineEdit(ui->initRampLineEdit);
-            return false;
-        }
-
-        int stCount = ui->numOfStepsDownLineEdit->text().toInt();
-        if (stCount < 1) {
-            blinkLineEdit(ui->numOfStepsDownLineEdit);
-            return false;
-        }
-
-        float stDur = ui->stepsDownDurationLineEdit->text().toFloat();
-        if (stDur == 0) {
-            blinkLineEdit(ui->stepsDownDurationLineEdit);
-            return false;
-        }
-
-        profile = createLinearUpStepDownProfile();
-    } else if (m_currentExpType == EXP_BASIC_ST_UP_LI_DOWN) {
-        int numOfCycles = ui->numOfCyclesLineEdit->text().toInt();
-        if (numOfCycles < 1) {
-            blinkLineEdit(ui->numOfCyclesLineEdit);
-            return false;
-        }
-        int rank = ui->finalRampLineEdit->text().toInt();
-        if (rank < 1) {
-            blinkLineEdit(ui->finalRampLineEdit);
-            return false;
-        }
-
-        int stCount = ui->numOfStepsUpLineEdit->text().toInt();
-        if (stCount < 1) {
-            blinkLineEdit(ui->numOfStepsUpLineEdit);
-            return false;
-        }
-
-        float stDur = ui->stepsUpDurationLineEdit->text().toFloat();
-        if (stDur == 0) {
-            blinkLineEdit(ui->stepsUpDurationLineEdit);
-            return false;
-        }
-
-        profile = createStepUpLinearDownProfile();
-    } else if (m_currentExpType == EXP_BASIC_ST_UP_ST_DOWN) {
-        int numOfCycles = ui->numOfCyclesLineEdit->text().toInt();
-        if (numOfCycles < 1) {
-            blinkLineEdit(ui->numOfCyclesLineEdit);
-            return false;
-        }
-        int stCount = ui->numOfStepsDownLineEdit->text().toInt();
-        if (stCount < 1) {
-            blinkLineEdit(ui->numOfStepsDownLineEdit);
-            return false;
-        }
-
-        float stDur = ui->stepsDownDurationLineEdit->text().toFloat();
-        if (stDur == 0) {
-            blinkLineEdit(ui->stepsDownDurationLineEdit);
-            return false;
-        }
-
-        stCount = ui->numOfStepsUpLineEdit->text().toInt();
-        if (stCount < 1) {
-            blinkLineEdit(ui->numOfStepsUpLineEdit);
-            return false;
-        }
-
-        stDur = ui->stepsUpDurationLineEdit->text().toFloat();
-        if (stDur == 0) {
-            blinkLineEdit(ui->stepsUpDurationLineEdit);
-            return false;
-        }
-
-        profile = createStepUpStepDownProfile();
     } else if (m_currentExpType == EXP_ADVANCED_LIN || m_currentExpType == EXP_ADVANCED_PLATUE ||
                m_currentExpType == EXP_ADVANCED_STEPS || m_currentExpType == EXP_ADVANCED_2NDDEG) {
         profile = m_currentExperiment.profile();
@@ -644,6 +660,7 @@ void ExperimentCreateWidget::applyExperimentType(ExperimentType type)
             ui->stepsUpDurationLabel->setVisible(false);
             ui->stepsUpDurationComboBox->setVisible(false);
         }
+        updateBasicGroupVisibility();
         return;
     }
 
@@ -675,6 +692,7 @@ void ExperimentCreateWidget::applyExperimentType(ExperimentType type)
             ui->adv_arcRampLabel->setVisible(true);
             ui->adv_arcRampLineEdit->setVisible(true);
             ui->adv_arcRampCLabel->setVisible(true);
+            ui->adv_arcRampLabel->setText(tr("Arc Ramp:"));
             ui->adv_addLinearRadioButton->setChecked(true);
         } else if (type == EXP_ADVANCED_STEPS) {
             ui->adv_finalTempLabel->setVisible(true);
@@ -685,15 +703,23 @@ void ExperimentCreateWidget::applyExperimentType(ExperimentType type)
             ui->adv_arcRampLabel->setVisible(true);
             ui->adv_arcRampLineEdit->setVisible(true);
             ui->adv_arcRampCLabel->setVisible(true);
+            ui->adv_arcRampLabel->setText(tr("Arc Ramp:"));
             ui->adv_addStepsRadioButton->setChecked(true);
         } else if (type == EXP_ADVANCED_2NDDEG) {
             ui->adv_finalTempLabel->setVisible(true);
             ui->adv_finalTempLineEdit->setVisible(true);
             ui->adv_finalTempCLabel->setVisible(true);
+            ui->adv_arcRampLabel->setVisible(true);
+            ui->adv_arcRampLineEdit->setVisible(true);
+            ui->adv_arcRampCLabel->setVisible(true);
+            ui->adv_arcRampLineEdit->setReadOnly(true);
+            ui->adv_arcRampLabel->setText(tr("Extremum Temp (calc):"));
+            ui->adv_arcRampCLabel->setText(tr("°C"));
             ui->adv_polyALabel->setVisible(true);
             ui->adv_polyALineEdit->setVisible(true);
             ui->adv_polyDescrLabel->setVisible(true);
             ui->adv_add2ndDegRadioButton->setChecked(true);
+            m_adv2ndDegDriver = Adv2ndDegDriver::Target;
         }
     }
 }
@@ -702,17 +728,24 @@ void ExperimentCreateWidget::updateModeUi()
 {
     if (m_mode == Mode::Create) {
         ui->createPushButton->setText(tr("Create"));
+        ui->adv_createPushButton->setText(tr("Create"));
+        ui->createPushButton->show();
+        ui->adv_createPushButton->show();
         setInputsEnabled(true);
         return;
     }
 
     if (m_mode == Mode::Edit) {
         ui->createPushButton->setText(tr("Update"));
+        ui->adv_createPushButton->setText(tr("Update"));
+        ui->createPushButton->show();
+        ui->adv_createPushButton->show();
         setInputsEnabled(true);
         return;
     }
 
-    ui->createPushButton->setText(tr("Assign"));
+    ui->createPushButton->hide();
+    ui->adv_createPushButton->hide();
     setInputsEnabled(false);
 }
 
@@ -815,7 +848,7 @@ void ExperimentCreateWidget::setInputsEnabled(bool enabled)
 void ExperimentCreateWidget::assignExperimentToCells()
 {
     if (!RedisDBManager::getInstance()->isConnected()) {
-        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+        RedisDBManager::getInstance()->connectToDefault();
     }
 
     bool isAdmin = m_currentUser.role() == ROLE_ADMIN || m_currentUser.role() == ROLE_ROOT;
@@ -1022,7 +1055,7 @@ void ExperimentCreateWidget::updateClicked()
     }
 
     if (!RedisDBManager::getInstance()->isConnected()) {
-        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+        RedisDBManager::getInstance()->connectToDefault();
     }
     RedisDBManager::getInstance()->pushExperiment(m_currentExperiment);
 
@@ -1045,6 +1078,9 @@ void ExperimentCreateWidget::setVisibleAllAdvExperimentItems(bool en, bool clear
     ui->adv_arcRampLabel->setVisible(en);
     ui->adv_arcRampCLabel->setVisible(en);
     ui->adv_arcRampLineEdit->setVisible(en);
+    ui->adv_arcRampLineEdit->setReadOnly(false);
+    ui->adv_arcRampLabel->setText(tr("Arc Ramp:"));
+    ui->adv_arcRampCLabel->setText(tr("°C/min"));
     ui->adv_finalTempLineEdit->setVisible(en);
     ui->adv_finalTempLabel->setVisible(en);
     ui->adv_finalTempCLabel->setVisible(en);
@@ -1128,10 +1164,268 @@ void ExperimentCreateWidget::adv_forceInitialTemp()
     }
 }
 
+void ExperimentCreateWidget::adv_update2ndDegBindings(Adv2ndDegDriver driver)
+{
+    if (m_currentExpType != EXP_ADVANCED_2NDDEG) {
+        return;
+    }
+    (void)driver;
+
+    Profile profile = m_currentExperiment.profile();
+    const auto tempArcs = profile.tempArcsInSeq();
+
+    double initialTemp = 0.0;
+    if (!tempArcs.empty()) {
+        initialTemp = tempArcs.back().finishTemp();
+    } else {
+        QString initialText = ui->adv_initTempLineEdit->text().trimmed();
+        if (initialText.isEmpty()) {
+            return;
+        }
+        initialTemp = initialText.toDouble();
+    }
+
+    QString durationText = ui->adv_arcDurationLineEdit->text().trimmed();
+    if (durationText.isEmpty()) {
+        return;
+    }
+
+    double durationValue = durationText.toDouble();
+    if (durationValue <= 0.0) {
+        return;
+    }
+
+    int arcDurationIdx = ui->adv_arcDurationComboBox->currentData().toInt();
+    double arcDurationTimeMult = 1.0;
+    if (arcDurationIdx == IDX_TIME_MIN) {
+        arcDurationTimeMult = 60.0;
+    } else if (arcDurationIdx == IDX_TIME_HOUR) {
+        arcDurationTimeMult = 3600.0;
+    }
+    double durationSec = durationValue * arcDurationTimeMult;
+    if (durationSec <= 0.0) {
+        return;
+    }
+
+    QString aText = ui->adv_polyALineEdit->text().trimmed();
+    QString targetText = ui->adv_finalTempLineEdit->text().trimmed();
+    if (aText.isEmpty() || targetText.isEmpty()) {
+        ui->adv_arcRampLineEdit->clear();
+        ui->adv_arcRampLabel->setText(tr("Extremum Temp (calc):"));
+        ui->adv_arcRampCLabel->setText(tr("°C"));
+        return;
+    }
+
+    double a = aText.toDouble();
+    double target = targetText.toDouble();
+    double bLocal = (target - initialTemp - (a * durationSec * durationSec)) / durationSec;
+    double extremumTemp = initialTemp;
+
+    if (std::fabs(a) < 1e-12) {
+        extremumTemp = (a < 0.0)
+            ? std::max(initialTemp, target)
+            : std::min(initialTemp, target);
+    } else {
+        double tau = -bLocal / (2.0 * a);
+        if (tau >= 0.0 && tau <= durationSec) {
+            extremumTemp = (a * tau * tau) + (bLocal * tau) + initialTemp;
+        } else {
+            extremumTemp = (a < 0.0)
+                ? std::max(initialTemp, target)
+                : std::min(initialTemp, target);
+        }
+    }
+
+    if (a < 0.0) {
+        ui->adv_arcRampLabel->setText(tr("Max Temp (calc):"));
+    } else {
+        ui->adv_arcRampLabel->setText(tr("Min Temp (calc):"));
+    }
+    ui->adv_arcRampCLabel->setText(tr("°C"));
+    ui->adv_arcRampLineEdit->setText(QString::number(extremumTemp));
+}
+
+void ExperimentCreateWidget::clearAdvancedArcSelection()
+{
+    if (!m_advArcButtonGroup) {
+        return;
+    }
+
+    m_advArcButtonGroup->setExclusive(false);
+    const auto buttons = m_advArcButtonGroup->buttons();
+    for (auto *button : buttons) {
+        button->setChecked(false);
+    }
+    m_advArcButtonGroup->setExclusive(true);
+}
+
+void ExperimentCreateWidget::updatePreviewFromUi()
+{
+    if (!m_expGraph) {
+        return;
+    }
+
+    if (m_currentExpType == EXP_ADVANCED_2NDDEG) {
+        adv_update2ndDegBindings(Adv2ndDegDriver::None);
+    }
+
+    Profile previewProfile;
+    bool hasPreview = false;
+
+    if (m_currentExpType == EXP_BASIC_STANDARD
+        || m_currentExpType == EXP_BASIC_LI_UP_ST_DOWN
+        || m_currentExpType == EXP_BASIC_ST_UP_LI_DOWN
+        || m_currentExpType == EXP_BASIC_ST_UP_ST_DOWN) {
+        if (!validateBasicInputs(false)) {
+            m_expGraph->updatePreviewProfile(Profile());
+            return;
+        }
+
+        if (m_currentExpType == EXP_BASIC_STANDARD) {
+            previewProfile = createBasicStandardProfile();
+        } else if (m_currentExpType == EXP_BASIC_LI_UP_ST_DOWN) {
+            previewProfile = createLinearUpStepDownProfile();
+        } else if (m_currentExpType == EXP_BASIC_ST_UP_LI_DOWN) {
+            previewProfile = createStepUpLinearDownProfile();
+        } else if (m_currentExpType == EXP_BASIC_ST_UP_ST_DOWN) {
+            previewProfile = createStepUpStepDownProfile();
+        }
+        hasPreview = !previewProfile.tempArcsInSeq().empty();
+    } else if (m_currentExpType == EXP_ADVANCED_PLATUE
+               || m_currentExpType == EXP_ADVANCED_LIN
+               || m_currentExpType == EXP_ADVANCED_STEPS
+               || m_currentExpType == EXP_ADVANCED_2NDDEG) {
+        Profile currentProfile = m_currentExperiment.profile();
+        double initialTemp = 0.0;
+        unsigned long initTimeMsecs = 0;
+        const auto tempArcs = currentProfile.tempArcsInSeq();
+        if (!tempArcs.empty()) {
+            initialTemp = tempArcs.back().finishTemp();
+            initTimeMsecs = tempArcs.back().finishTimeMsec();
+        } else {
+            QString initialText = ui->adv_initTempLineEdit->text().trimmed();
+            if (initialText.isEmpty()) {
+                m_expGraph->updatePreviewProfile(Profile());
+                return;
+            }
+            initialTemp = initialText.toDouble();
+        }
+
+        QString durationText = ui->adv_arcDurationLineEdit->text().trimmed();
+        if (durationText.isEmpty()) {
+            m_expGraph->updatePreviewProfile(Profile());
+            return;
+        }
+
+        double durationValue = durationText.toDouble();
+        if (durationValue <= 0.0) {
+            m_expGraph->updatePreviewProfile(Profile());
+            return;
+        }
+
+        int arcDurationIdx = ui->adv_arcDurationComboBox->currentData().toInt();
+        double arcDurationTimeMult = 1.0;
+        if (arcDurationIdx == IDX_TIME_MIN) {
+            arcDurationTimeMult = 60.0;
+        } else if (arcDurationIdx == IDX_TIME_HOUR) {
+            arcDurationTimeMult = 3600.0;
+        }
+        unsigned long arcDurationMSecs = static_cast<unsigned long>(durationValue * arcDurationTimeMult * 1000.0);
+
+        if (m_currentExpType == EXP_ADVANCED_PLATUE) {
+            TempArc tempArc = createPlateuTempArc(static_cast<float>(initialTemp), initTimeMsecs, arcDurationMSecs);
+            previewProfile.addTempArcInSequence(tempArc);
+            hasPreview = true;
+        } else if (m_currentExpType == EXP_ADVANCED_LIN) {
+            QString finalText = ui->adv_finalTempLineEdit->text().trimmed();
+            if (finalText.isEmpty()) {
+                m_expGraph->updatePreviewProfile(Profile());
+                return;
+            }
+            double finalTemp = finalText.toDouble();
+            if (std::fabs(finalTemp - initialTemp) < 1e-6) {
+                m_expGraph->updatePreviewProfile(Profile());
+                return;
+            }
+            double durationSec = arcDurationMSecs / 1000.0;
+            if (durationSec <= 0.0) {
+                m_expGraph->updatePreviewProfile(Profile());
+                return;
+            }
+            double rampCPerSec = std::fabs(finalTemp - initialTemp) / durationSec;
+            TempArc tempArc = createLinearTempArc(static_cast<float>(initialTemp),
+                                                  static_cast<float>(finalTemp),
+                                                  static_cast<float>(rampCPerSec),
+                                                  initTimeMsecs);
+            previewProfile.addTempArcInSequence(tempArc);
+            hasPreview = true;
+        } else if (m_currentExpType == EXP_ADVANCED_STEPS) {
+            QString finalText = ui->adv_finalTempLineEdit->text().trimmed();
+            QString stepsText = ui->adv_stepCntLieEdit->text().trimmed();
+            if (finalText.isEmpty() || stepsText.isEmpty()) {
+                m_expGraph->updatePreviewProfile(Profile());
+                return;
+            }
+            int stepCnt = stepsText.toInt();
+            if (stepCnt < 1) {
+                m_expGraph->updatePreviewProfile(Profile());
+                return;
+            }
+            double finalTemp = finalText.toDouble();
+            if (std::fabs(finalTemp - initialTemp) < 1e-6) {
+                m_expGraph->updatePreviewProfile(Profile());
+                return;
+            }
+            std::vector<TempArc> stepArcs = createStepTempArc(static_cast<float>(initialTemp),
+                                                              static_cast<float>(finalTemp),
+                                                              stepCnt,
+                                                              arcDurationMSecs,
+                                                              initTimeMsecs);
+            for (const auto &arc : stepArcs) {
+                previewProfile.addTempArcInSequence(arc);
+            }
+            hasPreview = !stepArcs.empty();
+        } else if (m_currentExpType == EXP_ADVANCED_2NDDEG) {
+            QString finalText = ui->adv_finalTempLineEdit->text().trimmed();
+            QString aText = ui->adv_polyALineEdit->text().trimmed();
+            if (finalText.isEmpty() || aText.isEmpty()) {
+                m_expGraph->updatePreviewProfile(Profile());
+                return;
+            }
+            double finalTemp = finalText.toDouble();
+            double a = aText.toDouble();
+            double durationSec = arcDurationMSecs / 1000.0;
+            if (durationSec <= 0.0) {
+                m_expGraph->updatePreviewProfile(Profile());
+                return;
+            }
+            double rampCPerSec = (finalTemp - initialTemp - (a * durationSec * durationSec)) / durationSec;
+            double startTimeSec = initTimeMsecs / 1000.0;
+            double bLocal = rampCPerSec;
+            double b = bLocal - (2.0 * a * startTimeSec);
+            double c = (a * startTimeSec * startTimeSec) - (bLocal * startTimeSec) + initialTemp;
+            TempArc tempArc(static_cast<float>(a),
+                            static_cast<float>(b),
+                            static_cast<float>(c),
+                            initTimeMsecs,
+                            arcDurationMSecs);
+            previewProfile.addTempArcInSequence(tempArc);
+            hasPreview = true;
+        }
+    }
+
+    if (hasPreview) {
+        m_expGraph->updatePreviewProfile(previewProfile);
+    } else {
+        m_expGraph->updatePreviewProfile(Profile());
+    }
+}
+
 void ExperimentCreateWidget::adv_addPlatueClicked()
 {
 
     setVisibleAllAdvExperimentItems(false);
+    m_adv2ndDegDriver = Adv2ndDegDriver::None;
 
     ui->adv_initTempCLabel->setVisible(true);
     ui->adv_initTempLabel->setVisible(true);
@@ -1143,6 +1437,7 @@ void ExperimentCreateWidget::adv_addPlatueClicked()
 
     adv_forceInitialTemp();
     m_currentExpType = EXP_ADVANCED_PLATUE;
+    updatePreviewFromUi();
 
 
 }
@@ -1151,6 +1446,7 @@ void ExperimentCreateWidget::adv_addPlatueClicked()
 void ExperimentCreateWidget::adv_addLinearClicked()
 {
     setVisibleAllAdvExperimentItems(false);
+    m_adv2ndDegDriver = Adv2ndDegDriver::None;
 
     ui->adv_initTempCLabel->setVisible(true);
     ui->adv_initTempLabel->setVisible(true);
@@ -1167,14 +1463,17 @@ void ExperimentCreateWidget::adv_addLinearClicked()
     ui->adv_arcRampCLabel->setVisible(true);
     ui->adv_arcRampLabel->setVisible(true);
     ui->adv_arcRampLineEdit->setVisible(true);
+    ui->adv_arcRampLabel->setText(tr("Arc Ramp:"));
 
     adv_forceInitialTemp();
     m_currentExpType = EXP_ADVANCED_LIN;
+    updatePreviewFromUi();
 }
 
 void ExperimentCreateWidget::adv_addStepsClicked()
 {
     setVisibleAllAdvExperimentItems(false);
+    m_adv2ndDegDriver = Adv2ndDegDriver::None;
 
     ui->adv_initTempCLabel->setVisible(true);
     ui->adv_initTempLabel->setVisible(true);
@@ -1193,6 +1492,7 @@ void ExperimentCreateWidget::adv_addStepsClicked()
 
     adv_forceInitialTemp();
     m_currentExpType = EXP_ADVANCED_STEPS;
+    updatePreviewFromUi();
 
 
 }
@@ -1200,6 +1500,7 @@ void ExperimentCreateWidget::adv_addStepsClicked()
 void ExperimentCreateWidget::adv_add2ndDegClicked()
 {
     setVisibleAllAdvExperimentItems(false);
+    m_adv2ndDegDriver = Adv2ndDegDriver::Target;
 
     ui->adv_initTempCLabel->setVisible(true);
     ui->adv_initTempLabel->setVisible(true);
@@ -1213,35 +1514,75 @@ void ExperimentCreateWidget::adv_add2ndDegClicked()
     ui->adv_arcDurationLabel->setVisible(true);
     ui->adv_arcDurationComboBox->setVisible(true);
 
+    ui->adv_arcRampCLabel->setVisible(true);
+    ui->adv_arcRampLabel->setVisible(true);
+    ui->adv_arcRampLineEdit->setVisible(true);
+    ui->adv_arcRampLineEdit->setReadOnly(true);
+    ui->adv_arcRampLabel->setText(tr("Extremum Temp (calc):"));
+    ui->adv_arcRampCLabel->setText(tr("°C"));
+
     ui->adv_polyALineEdit->setVisible(true);
     ui->adv_polyALabel->setVisible(true);
     ui->adv_polyDescrLabel->setVisible(true);
 
     adv_forceInitialTemp();
     m_currentExpType = EXP_ADVANCED_2NDDEG;
+    adv_update2ndDegBindings(Adv2ndDegDriver::None);
+    updatePreviewFromUi();
 }
 
 
 void ExperimentCreateWidget::adv_addArcToExperimentClicked()
 {
+    if (m_currentExpType == EXP_UNDEFINED) {
+        return;
+    }
+
+    auto requireNonEmpty = [this](QLineEdit *lineEdit) -> bool {
+        if (!lineEdit) {
+            return false;
+        }
+        if (lineEdit->text().trimmed().isEmpty()) {
+            blinkLineEdit(lineEdit);
+            return false;
+        }
+        return true;
+    };
+
+    auto requirePositive = [this, &requireNonEmpty](QLineEdit *lineEdit) -> bool {
+        if (!requireNonEmpty(lineEdit)) {
+            return false;
+        }
+        if (lineEdit->text().toDouble() <= 0) {
+            blinkLineEdit(lineEdit);
+            return false;
+        }
+        return true;
+    };
+
     Profile profile = m_currentExperiment.profile();
 
     float initialTemp = ui->adv_initTempLineEdit->text().toFloat();
     unsigned long initTimeMsecs = 0;
 
-    if(profile.tempArcsInSeq().size() > 0){
-        initialTemp = profile.tempArcsInSeq().at(profile.tempArcsInSeq().size()-1).finishTemp();
-        initTimeMsecs = profile.tempArcsInSeq().at(profile.tempArcsInSeq().size()-1).finishTimeMsec();
+    const auto tempArcs = profile.tempArcsInSeq();
+    if (!tempArcs.empty()) {
+        initialTemp = tempArcs.back().finishTemp();
+        initTimeMsecs = tempArcs.back().finishTimeMsec();
+    } else if (!requireNonEmpty(ui->adv_initTempLineEdit)) {
+        return;
     }
 
+    const QString arcDurationText = ui->adv_arcDurationLineEdit->text().trimmed();
+    double arcDurationValue = arcDurationText.toDouble();
     int arcDurationIdx = ui->adv_arcDurationComboBox->currentData().toInt();
-    int arcDurationTimeMult = 1;
-    if(arcDurationIdx == IDX_TIME_MIN){
-        arcDurationTimeMult = 60;
-    }else if(arcDurationIdx == IDX_TIME_HOUR){
-        arcDurationTimeMult = 3600;
+    double arcDurationTimeMult = 1.0;
+    if (arcDurationIdx == IDX_TIME_MIN) {
+        arcDurationTimeMult = 60.0;
+    } else if (arcDurationIdx == IDX_TIME_HOUR) {
+        arcDurationTimeMult = 3600.0;
     }
-    unsigned long arcDurationMSecs = ui->adv_arcDurationLineEdit->text().toInt() * arcDurationTimeMult * 1000;
+    unsigned long arcDurationMSecs = 0;
 
 
 
@@ -1253,6 +1594,10 @@ void ExperimentCreateWidget::adv_addArcToExperimentClicked()
 
 
     if(m_currentExpType == EXP_ADVANCED_PLATUE){
+        if (!requirePositive(ui->adv_arcDurationLineEdit)) {
+            return;
+        }
+        arcDurationMSecs = static_cast<unsigned long>(arcDurationValue * arcDurationTimeMult * 1000.0);
         TempArc tempArc(0, 0, initialTemp, initTimeMsecs, arcDurationMSecs);
         profile.addTempArcInSequence(tempArc);
     }
@@ -1260,8 +1605,35 @@ void ExperimentCreateWidget::adv_addArcToExperimentClicked()
 
     else if(m_currentExpType == EXP_ADVANCED_LIN){
 
+        if (!requireNonEmpty(ui->adv_finalTempLineEdit)) {
+            return;
+        }
         float finalTemp = ui->adv_finalTempLineEdit->text().toFloat();
-        float ramp = std::fabs(ui->adv_arcRampLineEdit->text().toFloat() / 60.0);
+        if (std::fabs(finalTemp - initialTemp) < 1e-6) {
+            blinkLineEdit(ui->adv_finalTempLineEdit);
+            return;
+        }
+
+        const QString rampText = ui->adv_arcRampLineEdit->text().trimmed();
+        const bool hasRamp = !rampText.isEmpty();
+        double rampCPerMin = rampText.toDouble();
+        if (!hasRamp) {
+            if (!requirePositive(ui->adv_arcDurationLineEdit)) {
+                return;
+            }
+            double durationMin = (arcDurationValue * arcDurationTimeMult) / 60.0;
+            rampCPerMin = std::fabs(finalTemp - initialTemp) / durationMin;
+            if (rampCPerMin <= 0) {
+                blinkLineEdit(ui->adv_arcRampLineEdit);
+                return;
+            }
+            ui->adv_arcRampLineEdit->setText(QString::number(rampCPerMin));
+        } else if (rampCPerMin <= 0) {
+            blinkLineEdit(ui->adv_arcRampLineEdit);
+            return;
+        }
+
+        float ramp = std::fabs(static_cast<float>(rampCPerMin) / 60.0);
         profile.addTempArcInSequence(createLinearTempArc(initialTemp, finalTemp, ramp, initTimeMsecs));
 
     }
@@ -1269,8 +1641,22 @@ void ExperimentCreateWidget::adv_addArcToExperimentClicked()
 
     else if(m_currentExpType == EXP_ADVANCED_STEPS){
 
+        if (!requireNonEmpty(ui->adv_finalTempLineEdit)) {
+            return;
+        }
+        if (!requirePositive(ui->adv_arcDurationLineEdit)) {
+            return;
+        }
+        if (!requirePositive(ui->adv_stepCntLieEdit)) {
+            return;
+        }
         float finalTemp = ui->adv_finalTempLineEdit->text().toFloat();
-        float stepCnt = ui->adv_stepCntLieEdit->text().toInt();
+        if (std::fabs(finalTemp - initialTemp) < 1e-6) {
+            blinkLineEdit(ui->adv_finalTempLineEdit);
+            return;
+        }
+        arcDurationMSecs = static_cast<unsigned long>(arcDurationValue * arcDurationTimeMult * 1000.0);
+        int stepCnt = ui->adv_stepCntLieEdit->text().toInt();
         std::vector<TempArc> stepArcs = createStepTempArc(initialTemp, finalTemp, stepCnt, arcDurationMSecs, initTimeMsecs);
         foreach (TempArc arc, stepArcs) {
             profile.addTempArcInSequence(arc);
@@ -1280,12 +1666,41 @@ void ExperimentCreateWidget::adv_addArcToExperimentClicked()
 
 
     else if(m_currentExpType == EXP_ADVANCED_2NDDEG){
+        if (!requirePositive(ui->adv_arcDurationLineEdit)) {
+            return;
+        }
 
-        float finalTemp = ui->adv_finalTempLineEdit->text().toFloat();
-        double a = ui->adv_polyALineEdit->text().toDouble();
-        qDebug() << "adv_addArcToExperimentClicked::a: " << a;
+        arcDurationMSecs = static_cast<unsigned long>(arcDurationValue * arcDurationTimeMult * 1000.0);
+        double durationSec = arcDurationMSecs / 1000.0;
+        if (durationSec <= 0.0) {
+            blinkLineEdit(ui->adv_arcDurationLineEdit);
+            return;
+        }
 
-        TempArc deg2Arc = create2ndDegArc(initialTemp, finalTemp, a, initTimeMsecs, arcDurationMSecs);
+        QString aText = ui->adv_polyALineEdit->text().trimmed();
+        QString targetText = ui->adv_finalTempLineEdit->text().trimmed();
+        if (aText.isEmpty()) {
+            blinkLineEdit(ui->adv_polyALineEdit);
+            return;
+        }
+        if (targetText.isEmpty()) {
+            blinkLineEdit(ui->adv_finalTempLineEdit);
+            return;
+        }
+
+        double a = aText.toDouble();
+        double finalTemp = targetText.toDouble();
+        double rampCPerSec = (finalTemp - initialTemp - (a * durationSec * durationSec)) / durationSec;
+
+        double startTimeSec = initTimeMsecs / 1000.0;
+        double bLocal = rampCPerSec;
+        double b = bLocal - (2.0 * a * startTimeSec);
+        double c = (a * startTimeSec * startTimeSec) - (bLocal * startTimeSec) + initialTemp;
+        TempArc deg2Arc(static_cast<float>(a),
+                        static_cast<float>(b),
+                        static_cast<float>(c),
+                        initTimeMsecs,
+                        arcDurationMSecs);
         profile.addTempArcInSequence(deg2Arc);
     }
 
@@ -1293,25 +1708,45 @@ void ExperimentCreateWidget::adv_addArcToExperimentClicked()
 
     m_currentExpType = EXP_UNDEFINED;
     setVisibleAllAdvExperimentItems(false);
+    clearAdvancedArcSelection();
     m_currentExperiment.setProfile(profile);
     m_expGraph->updateTheExperiment(m_currentExperiment);
+    updatePreviewFromUi();
 
 }
 
 void ExperimentCreateWidget::adv_delLastArcClicked()
 {
     Profile profile = m_currentExperiment.profile();
-    if(profile.tempArcsInSeq().size() > 0){
-        profile.tempArcsInSeq().erase(profile.tempArcsInSeq().begin()+profile.tempArcsInSeq().size()-1);
+    if (profile.removeLastTempArc()) {
         m_currentExperiment.setProfile(profile);
         m_expGraph->updateTheExperiment(m_currentExperiment);
+        if (profile.tempArcsInSeq().empty()) {
+            ui->adv_initTempLineEdit->setEnabled(true);
+        }
     }
+    updatePreviewFromUi();
 }
 
 void ExperimentCreateWidget::adv_clearProfileClicked()
 {
-    m_currentExperiment.setProfile(Profile());
+    Profile profile = m_currentExperiment.profile();
+    profile.clearProfile();
+    m_currentExperiment.setProfile(profile);
     m_expGraph->updateTheExperiment(m_currentExperiment);
+    if (ui->adv_addPlatueRadioButton->isChecked()) {
+        adv_addPlatueClicked();
+    } else if (ui->adv_addLinearRadioButton->isChecked()) {
+        adv_addLinearClicked();
+    } else if (ui->adv_addStepsRadioButton->isChecked()) {
+        adv_addStepsClicked();
+    } else if (ui->adv_add2ndDegRadioButton->isChecked()) {
+        adv_add2ndDegClicked();
+    } else {
+        m_currentExpType = EXP_UNDEFINED;
+        setVisibleAllAdvExperimentItems(false);
+    }
+    updatePreviewFromUi();
 }
 
 
@@ -1324,20 +1759,32 @@ void ExperimentCreateWidget::adv_addArcDurationChanged()
     float finalTemp = ui->adv_finalTempLineEdit->text().toFloat();
 
     if(m_currentExpType == EXP_ADVANCED_LIN){
+        const QString durationText = ui->adv_arcDurationLineEdit->text().trimmed();
+        if (durationText.isEmpty()) {
+            return;
+        }
 
+        double durationValue = durationText.toDouble();
+        if (durationValue <= 0) {
+            return;
+        }
 
         int arcDurationIdx = ui->adv_arcDurationComboBox->currentData().toInt();
-        int arcDurationTimeMult = 1;
+        double arcDurationTimeMult = 1.0;
         if(arcDurationIdx == IDX_TIME_MIN){
-            arcDurationTimeMult = 60;
+            arcDurationTimeMult = 60.0;
         }else if(arcDurationIdx == IDX_TIME_HOUR){
-            arcDurationTimeMult = 3600;
+            arcDurationTimeMult = 3600.0;
         }
-        unsigned long arcDurationMSecs = ui->adv_arcDurationLineEdit->text().toInt() * arcDurationTimeMult * 1000;
-        float arcDurationMin = arcDurationMSecs/(1000.0*60.0);
+        double arcDurationMin = (durationValue * arcDurationTimeMult) / 60.0;
+        if (arcDurationMin <= 0) {
+            return;
+        }
 
-        float rank = std::fabs(finalTemp-initialTemp)/arcDurationMin;
+        double rank = std::fabs(finalTemp-initialTemp)/arcDurationMin;
         ui->adv_arcRampLineEdit->setText(QString::number(rank));
+    } else if (m_currentExpType == EXP_ADVANCED_2NDDEG) {
+        adv_update2ndDegBindings(m_adv2ndDegDriver);
     }
 }
 
@@ -1351,10 +1798,35 @@ void ExperimentCreateWidget::adv_rampChanged()
         ui->adv_arcDurationComboBox->setCurrentIndex(IDX_TIME_MIN);
 
         float rank = ui->adv_arcRampLineEdit->text().toFloat();   //   C/min.
+        if (rank <= 0) {
+            return;
+        }
 
         float durationMin = std::fabs(finalTemp-initialTemp) / rank;
         ui->adv_arcDurationLineEdit->setText(QString::number(durationMin));
+    } else if (m_currentExpType == EXP_ADVANCED_2NDDEG) {
+        adv_update2ndDegBindings(m_adv2ndDegDriver);
     }
+}
+
+void ExperimentCreateWidget::adv_polyAChanged()
+{
+    if (m_currentExpType != EXP_ADVANCED_2NDDEG) {
+        return;
+    }
+
+    m_adv2ndDegDriver = Adv2ndDegDriver::A;
+    adv_update2ndDegBindings(m_adv2ndDegDriver);
+}
+
+void ExperimentCreateWidget::adv_finalTempChanged()
+{
+    if (m_currentExpType != EXP_ADVANCED_2NDDEG) {
+        return;
+    }
+
+    m_adv2ndDegDriver = Adv2ndDegDriver::Target;
+    adv_update2ndDegBindings(m_adv2ndDegDriver);
 }
 
 

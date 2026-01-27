@@ -1,0 +1,146 @@
+QMainWindow,
+QWidget#centralwidget {
+    background-color: #c5cfe0;
+    color: #213268;
+    font-family: "Ubuntu";
+    font-size: 13pt;
+}
+
+QDialog,
+QMessageBox {
+    background-color: #cdd5e3;
+    color: #213268;
+}
+
+QLabel {
+    color: #213268;
+}
+
+QDialog QLabel,
+QMessageBox QLabel {
+    color: #213268;
+}
+
+QGroupBox {
+    background-color: #dae1ec;
+    border: 1px solid #acbcd6;
+    border-radius: 10px;
+    margin-top: 16px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 12px;
+    padding: 0 8px;
+    font-weight: 600;
+    color: #213268;
+}
+
+QPushButton {
+    background-color: #dee4ed;
+    border: 1px solid #acbcd6;
+    border-radius: 8px;
+    padding: 10px 16px;
+    min-height: 36px;
+    color: #213268;
+}
+
+QPushButton:hover {
+    background-color: #cdd9e9;
+    border-color: #9fd8c5;
+}
+
+QPushButton:pressed {
+    background-color: #c2d1e0;
+}
+
+QPushButton:checked {
+    background-color: #59c19e;
+    border-color: #4aae8d;
+    color: #ffffff;
+}
+
+QPushButton:disabled {
+    color: #8aa0c2;
+    background-color: #d4dce8;
+    border-color: #bbc9dd;
+}
+
+QComboBox,
+QLineEdit,
+QSpinBox,
+QDoubleSpinBox,
+QTextEdit,
+QPlainTextEdit {
+    background-color: #dee4ed;
+    border: 1px solid #acbcd6;
+    border-radius: 8px;
+    padding: 8px 12px;
+    min-height: 42px;
+    color: #213268;
+}
+
+QComboBox::drop-down {
+    width: 32px;
+}
+
+QComboBox QAbstractItemView {
+    padding: 8px;
+}
+
+QCheckBox,
+QRadioButton {
+    spacing: 10px;
+}
+
+QCheckBox::indicator,
+QRadioButton::indicator {
+    width: 22px;
+    height: 22px;
+}
+
+QAbstractItemView::item {
+    padding: 8px 10px;
+    min-height: 36px;
+}
+
+QTableView::item,
+QTreeView::item,
+QListView::item {
+    padding: 8px 10px;
+    min-height: 36px;
+}
+
+QHeaderView::section {
+    padding: 8px 10px;
+    min-height: 34px;
+}
+
+MenuWidget {
+    background-color: #177a66;
+    border-bottom: 1px solid #136655;
+}
+
+MenuWidget QLabel#titleLabel {
+    font-size: 20pt;
+    font-weight: 600;
+    color: #f4f7ff;
+}
+
+MenuWidget QPushButton {
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 12px 16px;
+    border-radius: 10px;
+    color: #f4f7ff;
+    font-weight: 600;
+    font-size: 13pt;
+}
+
+MenuWidget QPushButton:hover {
+    background-color: rgba(255, 255, 255, 0.18);
+}
+
+MenuWidget QPushButton:pressed {
+    background-color: rgba(255, 255, 255, 0.28);
+}

@@ -30,7 +30,6 @@ void CellOverviewWidget::setCellData(const Cell &cell)
 {
     m_isActive = cell.isPlugged() && !cell.cellID().empty();
     m_cellId = cell.cellID();
-    updateHeader();
 
     Experiment experiment = cell.asignedExperiment();
     QString expName = QString::fromStdString(experiment.name());
@@ -93,17 +92,18 @@ void CellOverviewWidget::setCellData(const Cell &cell)
     if (stateKey.isEmpty()) {
         m_stateKey = "active";
         applyActiveStyle(true);
+        updateHeader();
         return;
     }
 
     applyStateStyle(stateKey);
+    updateHeader();
 }
 
 void CellOverviewWidget::setInactive()
 {
     m_isActive = false;
     m_cellId.clear();
-    updateHeader();
 
     ui->experimentNameValueLabel->setText("--");
     ui->assignedByValueLabel->setText("--");
@@ -115,6 +115,7 @@ void CellOverviewWidget::setInactive()
 
     setSelected(false);
     applyStateStyle("empty");
+    updateHeader();
 }
 
 void CellOverviewWidget::setSelected(bool selected)
@@ -170,13 +171,20 @@ void CellOverviewWidget::contextMenuEvent(QContextMenuEvent *event)
 
 void CellOverviewWidget::updateHeader()
 {
-    QString header = QString("Cell %1").arg(m_slotIndex);
+    QString headerLeft = QString("Cell %1").arg(m_slotIndex);
+    QString stateLabel;
+    if (!m_stateKey.isEmpty() && m_stateKey != "empty" && m_stateKey != "active") {
+        stateLabel = m_stateKey.toUpper();
+    }
     if (m_isActive && !m_cellId.empty()) {
         setToolTip(QString::fromStdString(m_cellId));
     } else {
         setToolTip(QString());
     }
-    ui->slotLabel->setText(header);
+    ui->slotLabel->setTextFormat(Qt::PlainText);
+    ui->slotLabel->setText(headerLeft);
+    ui->stateLabel->setTextFormat(Qt::PlainText);
+    ui->stateLabel->setText(stateLabel);
 }
 
 void CellOverviewWidget::applyActiveStyle(bool active)

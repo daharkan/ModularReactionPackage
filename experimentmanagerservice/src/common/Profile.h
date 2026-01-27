@@ -29,6 +29,7 @@ public:
 
     bool addTempArcInSequence(TempArc tArc);
     bool addRPMArcInSequence(RPMArc rArc);
+    bool removeLastTempArc();
 
     long totalMaxProfileDuration() const;
     void setTotalMaxProfileDuration(long newTotalMaxProfileDuration);

@@ -20,7 +20,7 @@ ExperimentManagerWidget::ExperimentManagerWidget(QWidget *parent)
     connect(m_experimentListWidget, &ExperimentListWidget::sgn_experimentActivated, this, &ExperimentManagerWidget::editClicked);
 
     if (!RedisDBManager::getInstance()->isConnected()) {
-        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+        RedisDBManager::getInstance()->connectToDefault();
     }
 
 }

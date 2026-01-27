@@ -24,7 +24,6 @@ signals:
     void sgn_experimentClicked();
     void sgn_userClicked();
     void sgn_optionsClicked();
-    void sgn_homeClicked();
 
 private:
     Ui::MenuWidget *ui;

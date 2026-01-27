@@ -14,6 +14,9 @@ static const uint16_t RR_LISTEN_US = 1500;
 static const uint16_t GO_INTERVAL_MS = 200;
 static const bool INTERLOCK_ACTIVE_LOW = false;
 
+// ---------- Machine ID (single define) ----------
+#define MACHINE_ID "bbb_LHS_001"
+
 // ---------- Pin map (new board) ----------
 static const uint8_t PIN_S1_RX = 2;
 static const uint8_t PIN_S1_TX = 3;
@@ -55,8 +58,8 @@ SoftwareSerial ss5(PIN_S5_RX, PIN_S5_TX);
 static SoftwareSerial* const SSS[5] = { &ss1, &ss2, &ss3, &ss4, &ss5 };
 
 static const uint8_t SLOT_COUNT = 5;
-static const char BUSBOARD_PREFIX[] = "bb_000#";
-static const char BUSBOARD_HELLO[] = "bb_000#HELLO";
+static const char BUSBOARD_PREFIX[] = MACHINE_ID "#";
+static const char BUSBOARD_HELLO[]  = MACHINE_ID "#HELLO";
 
 static const uint8_t IL_PINS[5] = { PIN_IL1, PIN_IL2, PIN_IL3, PIN_IL4, PIN_IL5 };
 static bool present[5] = { false, false, false, false, false };
@@ -91,6 +94,17 @@ static void logPresenceChange(uint8_t slot1based, bool isPresent) {
   Serial.print(slot1based);
   Serial.print(F("#"));
   Serial.println(isPresent ? F("1") : F("0"));
+}
+
+static void sendMachineStatus() {
+  Serial.print(BUSBOARD_PREFIX);
+  for (uint8_t i = 0; i < SLOT_COUNT; i++) {
+    Serial.print(present[i] ? 1 : 0);
+    if (i + 1 < SLOT_COUNT) {
+      Serial.print('#');
+    }
+  }
+  Serial.println();
 }
 
 static void IRAM_ATTR flow_isr() {
@@ -373,7 +387,9 @@ void loop() {
 
   uint32_t now = millis();
   if ((uint32_t)(now - lastGoMs) >= GO_INTERVAL_MS) {
+    sendMachineStatus();
     Serial.println(F("GO"));
     lastGoMs = now;
   }
 }
+

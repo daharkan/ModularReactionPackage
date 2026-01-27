@@ -2,6 +2,7 @@
 #include "ui_uiReactorViewWidget.h"
 #include "RedisDBManager.h"
 #include <QMap>
+#include <algorithm>
 
 ReactorViewWidget::ReactorViewWidget(QWidget *parent)
     : QWidget(parent)
@@ -10,7 +11,7 @@ ReactorViewWidget::ReactorViewWidget(QWidget *parent)
     ui->setupUi(this);
 
     if (!RedisDBManager::getInstance()->isConnected()) {
-        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+        RedisDBManager::getInstance()->connectToDefault();
     }
 
     setupCellOverviewWidgets();
@@ -23,6 +24,16 @@ ReactorViewWidget::ReactorViewWidget(QWidget *parent)
 ReactorViewWidget::~ReactorViewWidget()
 {
     delete ui;
+}
+
+void ReactorViewWidget::setMachineId(const std::string &machineId)
+{
+    if (machineId == m_machineId) {
+        return;
+    }
+    m_machineId = machineId;
+    m_selectedCellId.clear();
+    updateFlowStatus();
 }
 
 void ReactorViewWidget::updateFlowStatus()
@@ -105,19 +116,20 @@ void ReactorViewWidget::setupCellOverviewWidgets()
 
 void ReactorViewWidget::refreshBusboardIds()
 {
-    std::vector<std::string> busboardIds = RedisDBManager::getInstance()->getBusboardIds();
+    std::vector<std::string> machineIds = RedisDBManager::getInstance()->getMachineIds();
     m_lhsBusboardId.clear();
     m_rhsBusboardId.clear();
-
-    for (const auto &id : busboardIds) {
-        QString upper = QString::fromStdString(id).toUpper();
-        if (upper.contains("LHS") && m_lhsBusboardId.empty()) {
-            m_lhsBusboardId = id;
-        }
-        if (upper.contains("RHS") && m_rhsBusboardId.empty()) {
-            m_rhsBusboardId = id;
-        }
+    if (machineIds.empty()) {
+        m_machineId.clear();
+        return;
     }
+
+    if (m_machineId.empty()
+        || std::find(machineIds.begin(), machineIds.end(), m_machineId) == machineIds.end()) {
+        m_machineId = machineIds.front();
+    }
+
+    RedisDBManager::getInstance()->getMachineBusboardIds(m_machineId, &m_lhsBusboardId, &m_rhsBusboardId);
 }
 
 void ReactorViewWidget::updateCellGroup(const std::string &busboardId, QVector<CellOverviewWidget*> &widgets, const QString &sideLabel)

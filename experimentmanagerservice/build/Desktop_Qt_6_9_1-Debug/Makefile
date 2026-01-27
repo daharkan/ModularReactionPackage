@@ -1485,6 +1485,10 @@ moc_BusboardSerialManager.cpp: ../../src/BusboardSerialManager.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qset.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSet \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QByteArray \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVector \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
 		moc_predefs.h \
 		/home/dev/Qt/6.9.1/gcc_64/libexec/moc
 	/home/dev/Qt/6.9.1/gcc_64/libexec/moc $(DEFINES) --include /home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice/build/Desktop_Qt_6_9_1-Debug/moc_predefs.h -I/home/dev/Qt/6.9.1/gcc_64/mkspecs/linux-g++ -I/home/dev/perdev/TAD_Workspace/Projects/ModularReactionPackage/experimentmanagerservice -I/home/dev/Qt/6.9.1/gcc_64/include -I/home/dev/Qt/6.9.1/gcc_64/include/QtSerialPort -I/home/dev/Qt/6.9.1/gcc_64/include/QtConcurrent -I/home/dev/Qt/6.9.1/gcc_64/include/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../src/BusboardSerialManager.h -o moc_BusboardSerialManager.cpp
@@ -1974,6 +1978,10 @@ BusboardSerialManager.o: ../../src/BusboardSerialManager.cpp ../../src/BusboardS
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qset.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSet \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QByteArray \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVector \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QCoreApplication \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnativeinterface.h \
@@ -1992,7 +2000,7 @@ BusboardSerialManager.o: ../../src/BusboardSerialManager.cpp ../../src/BusboardS
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariant.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q23utility.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20utility.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSet
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QElapsedTimer
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o BusboardSerialManager.o ../../src/BusboardSerialManager.cpp
 
 Arc.o: ../../src/common/Arc.cpp ../../src/common/Arc.h
@@ -2320,6 +2328,10 @@ BusboardV1.o: ../../src/BusboardV1.cpp ../../src/BusboardV1.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qset.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSet \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QByteArray \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVector \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
 		../../src/common/RedisDBManager.h \
 		../../src/common/CellVisualsHistory.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o BusboardV1.o ../../src/BusboardV1.cpp
@@ -2906,6 +2918,10 @@ ServiceRunner.o: ../../src/ServiceRunner.cpp ../../src/ServiceRunner.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qset.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qhash.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QSet \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QByteArray \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QVector \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QCoreApplication \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcoreapplication.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qnativeinterface.h \
@@ -3056,7 +3072,6 @@ ServiceRunner.o: ../../src/ServiceRunner.cpp ../../src/ServiceRunner.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariantlist.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QList \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvariantmap.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvector.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qwaitcondition.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDeadlineTimer \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qwineventnotifier.h \
@@ -3415,11 +3430,23 @@ main.o: ../../src/main.cpp ../../src/ServiceRunner.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qvarlengtharray.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q23utility.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20utility.h \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QProcess \
-		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qprocess.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QDir \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdir.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdirlisting.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfiledevice.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qiodevice.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qspan.h \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/q20iterator.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qdatetime.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qcalendar.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qlocale.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfile.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qfileinfo.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qtimezone.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QFile \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QProcess \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/qprocess.h \
+		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QTextStream \
 		/home/dev/Qt/6.9.1/gcc_64/include/QtCore/QThread
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../../src/main.cpp
 

@@ -57,7 +57,7 @@ void UserManagementWidget::setCurrentUser(const User &user)
 void UserManagementWidget::refreshUsers()
 {
     if (!RedisDBManager::getInstance()->isConnected()) {
-        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+        RedisDBManager::getInstance()->connectToDefault();
     }
 
     std::vector<User> users = RedisDBManager::getInstance()->getUsers();
@@ -95,7 +95,7 @@ void UserManagementWidget::handleCreateUser()
     }
 
     if (!RedisDBManager::getInstance()->isConnected()) {
-        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+        RedisDBManager::getInstance()->connectToDefault();
     }
 
     if (RedisDBManager::getInstance()->getUser(username.toStdString()).has_value()) {
@@ -143,7 +143,7 @@ void UserManagementWidget::handleDeleteUser()
     }
 
     if (!RedisDBManager::getInstance()->isConnected()) {
-        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+        RedisDBManager::getInstance()->connectToDefault();
     }
 
     RedisDBManager::getInstance()->deleteUser(username.toStdString());
@@ -171,7 +171,7 @@ void UserManagementWidget::handleChangePassword()
     }
 
     if (!RedisDBManager::getInstance()->isConnected()) {
-        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+        RedisDBManager::getInstance()->connectToDefault();
     }
 
     auto existing = RedisDBManager::getInstance()->getUser(m_currentUser.username());

@@ -1,18 +1,29 @@
 QMainWindow,
 QWidget#centralwidget {
-    background-color: #0f172a;
-    color: #eaf1ff;
+    background-color: #c5cfe0;
+    color: #213268;
     font-family: "Ubuntu";
     font-size: 11pt;
 }
 
+QDialog,
+QMessageBox {
+    background-color: #cdd5e3;
+    color: #213268;
+}
+
 QLabel {
-    color: #eaf1ff;
+    color: #213268;
+}
+
+QDialog QLabel,
+QMessageBox QLabel {
+    color: #213268;
 }
 
 QGroupBox {
-    background-color: #17213b;
-    border: 1px solid #2c3f66;
+    background-color: #dae1ec;
+    border: 1px solid #acbcd6;
     border-radius: 8px;
     margin-top: 12px;
 }
@@ -22,50 +33,50 @@ QGroupBox::title {
     left: 10px;
     padding: 0 6px;
     font-weight: 600;
-    color: #eaf1ff;
+    color: #213268;
 }
 
 QPushButton {
-    background-color: #17213b;
-    border: 1px solid #2c3f66;
+    background-color: #dee4ed;
+    border: 1px solid #acbcd6;
     border-radius: 6px;
     padding: 6px 10px;
-    color: #eaf1ff;
+    color: #213268;
 }
 
 QPushButton:hover {
-    background-color: #1e2c4d;
-    border-color: #59c19e;
+    background-color: #cdd9e9;
+    border-color: #9fd8c5;
 }
 
 QPushButton:pressed {
-    background-color: #24335b;
+    background-color: #c2d1e0;
 }
 
 QPushButton:checked {
     background-color: #59c19e;
     border-color: #4aae8d;
-    color: #0f172a;
+    color: #ffffff;
 }
 
 QPushButton:disabled {
     color: #8aa0c2;
-    background-color: #131c33;
-    border-color: #24355a;
+    background-color: #d4dce8;
+    border-color: #bbc9dd;
 }
 
 QComboBox,
 QLineEdit {
-    background-color: #17213b;
-    border: 1px solid #2c3f66;
+    background-color: #dee4ed;
+    border: 1px solid #acbcd6;
     border-radius: 6px;
     padding: 4px 8px;
-    color: #eaf1ff;
+    color: #213268;
 }
 
 MenuWidget {
-    background-color: #117461;
-    border-bottom: 1px solid #0c5d4e;
+    background-color: #177a66;
+    border-bottom: 1px solid #136655;
 }
 
 MenuWidget QLabel#titleLabel {
@@ -84,9 +95,9 @@ MenuWidget QPushButton {
 }
 
 MenuWidget QPushButton:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.18);
 }
 
 MenuWidget QPushButton:pressed {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.28);
 }

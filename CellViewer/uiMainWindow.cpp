@@ -196,11 +196,17 @@ void MainWindow::pollCellStatus()
     }
 
     if (m_busboardId.empty()) {
-        std::vector<std::string> busboardIds = RedisDBManager::getInstance()->getBusboardIds();
-        if (busboardIds.empty()) {
+        std::vector<std::string> machineIds = RedisDBManager::getInstance()->getMachineIds();
+        if (machineIds.empty()) {
             return;
         }
-        m_busboardId = busboardIds.front();
+        std::string lhsId;
+        std::string rhsId;
+        RedisDBManager::getInstance()->getMachineBusboardIds(machineIds.front(), &lhsId, &rhsId);
+        m_busboardId = !lhsId.empty() ? lhsId : rhsId;
+        if (m_busboardId.empty()) {
+            return;
+        }
     }
 
     if (m_firstCellId.empty()) {

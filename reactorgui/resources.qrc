@@ -535,6 +535,7 @@
         <file>resources/qss/Ubuntu.qss</file>
         <file>resources/qss/tad_light.qss</file>
         <file>resources/qss/tad_dark.qss</file>
+        <file>resources/qss/tad_touch.qss</file>
         <file>resources/icons/linearupstepdown.png</file>
         <file>resources/icons/standard.png</file>
         <file>resources/icons/stepuplineardown.png</file>

@@ -14,7 +14,6 @@ MenuWidget::MenuWidget(QWidget *parent)
     connect(ui->experimentButton, &QPushButton::clicked, this, &MenuWidget::sgn_experimentClicked);
     connect(ui->userButton, &QPushButton::clicked, this, &MenuWidget::sgn_userClicked);
     connect(ui->optionsButton, &QPushButton::clicked, this, &MenuWidget::sgn_optionsClicked);
-    connect(ui->homeButton, &QPushButton::clicked, this, &MenuWidget::sgn_homeClicked);
 }
 
 MenuWidget::~MenuWidget()

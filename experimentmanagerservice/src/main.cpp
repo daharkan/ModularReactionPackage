@@ -6,11 +6,78 @@
 #include <chrono>
 #include <thread>
 #include <QCoreApplication>
+#include <QDir>
+#include <QFile>
 #include <QProcess>
+#include <QTextStream>
 #include <QThread>
 #include <fstream>
 
 using namespace std;
+
+namespace {
+const char *kServiceConfigPath = "conf/experimentmanagerservice.conf";
+const char *kDefaultRedisHost = "127.0.0.1";
+const int kDefaultRedisPort = 6379;
+
+struct RedisConfig {
+    std::string host;
+    int port;
+};
+
+void ensureConfDir()
+{
+    QDir().mkpath("conf");
+}
+
+bool parsePort(const QString &value, int *portOut)
+{
+    bool ok = false;
+    int port = value.trimmed().toInt(&ok);
+    if (!ok || port <= 0 || port > 65535) {
+        return false;
+    }
+    *portOut = port;
+    return true;
+}
+
+RedisConfig loadRedisConfig()
+{
+    RedisConfig config{std::string(kDefaultRedisHost), kDefaultRedisPort};
+    QFile file(QString::fromUtf8(kServiceConfigPath));
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&file);
+        while (!in.atEnd()) {
+            QString line = in.readLine().trimmed();
+            if (line.isEmpty() || line.startsWith('#') || line.startsWith(';')) {
+                continue;
+            }
+            int idx = line.indexOf('=');
+            if (idx <= 0) {
+                continue;
+            }
+            QString key = line.left(idx).trimmed().toLower();
+            QString value = line.mid(idx + 1).trimmed();
+            if (key == "redis_host" && !value.isEmpty()) {
+                config.host = value.toStdString();
+            } else if (key == "redis_port") {
+                int port = config.port;
+                if (parsePort(value, &port)) {
+                    config.port = port;
+                }
+            }
+        }
+    } else {
+        ensureConfDir();
+        if (file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+            QTextStream out(&file);
+            out << "redis_host=" << QString::fromStdString(config.host) << '\n';
+            out << "redis_port=" << config.port << '\n';
+        }
+    }
+    return config;
+}
+} // namespace
 
 
 void writeJSONToFile(const std::string& jsonString, const std::string& filename) {
@@ -30,6 +97,12 @@ bool ensureRedisRunning(const std::string& host, int port)
     client.connect(host, port);
     if (client.is_connected()) {
         return true;
+    }
+
+    QString hostValue = QString::fromStdString(host).trimmed().toLower();
+    if (hostValue != "127.0.0.1" && hostValue != "localhost" && hostValue != "::1") {
+        std::cerr << "Redis host is remote; skipping redis-server startup." << std::endl;
+        return false;
     }
 
     QString program = "redis-server";
@@ -57,7 +130,9 @@ bool ensureRedisRunning(const std::string& host, int port)
 
 int main(int argc, char *argv[])
 {
-    ensureRedisRunning("127.0.0.1", 6379);
+    RedisConfig config = loadRedisConfig();
+    RedisDBManager::setDefaultConnection(config.host, config.port);
+    ensureRedisRunning(config.host, config.port);
 
 /*
     for(int i = 0; i < 9; i++){
@@ -110,7 +185,7 @@ int main(int argc, char *argv[])
 
     QCoreApplication app(argc, argv); // Create a QCoreApplication instance to run the event loop
 
-    ServiceRunner serviceRunner;
+    ServiceRunner serviceRunner(config.host, config.port);
     while (true) {
         if (serviceRunner.initService()) {
             try {

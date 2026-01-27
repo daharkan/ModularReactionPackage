@@ -2,6 +2,12 @@
 #include "ui_uiLoginWidget.h"
 #include "RedisDBManager.h"
 
+#include <vector>
+
+namespace {
+const char *kNoMachinesText = "No machines";
+}
+
 LoginWidget::LoginWidget(bool isMachineConnected, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::LoginWidget)
@@ -12,6 +18,8 @@ LoginWidget::LoginWidget(bool isMachineConnected, QWidget *parent)
     if(!m_isMachineConnected){
         ui->machineComboBox->hide();
         ui->machneLabel->hide();
+    } else {
+        refreshMachineList();
     }
 
     connect(ui->loginPushButton, &QPushButton::clicked, this, &LoginWidget::loginPressed);
@@ -29,6 +37,42 @@ User LoginWidget::currentUser() const
     return m_currentUser;
 }
 
+std::string LoginWidget::selectedMachineId() const
+{
+    if (!ui->machineComboBox->isEnabled()) {
+        return {};
+    }
+    QString selection = ui->machineComboBox->currentText().trimmed();
+    if (selection.isEmpty() || selection == QString::fromUtf8(kNoMachinesText)) {
+        return {};
+    }
+    return selection.toStdString();
+}
+
+void LoginWidget::refreshMachineList()
+{
+    ui->machineComboBox->clear();
+    if (!RedisDBManager::getInstance()->isConnected()) {
+        RedisDBManager::getInstance()->connectToDefault();
+    }
+
+    std::vector<std::string> machineIds;
+    if (RedisDBManager::getInstance()->isConnected()) {
+        machineIds = RedisDBManager::getInstance()->getMachineIds();
+    }
+
+    if (machineIds.empty()) {
+        ui->machineComboBox->addItem(QString::fromUtf8(kNoMachinesText));
+        ui->machineComboBox->setEnabled(false);
+        return;
+    }
+
+    ui->machineComboBox->setEnabled(true);
+    for (const auto &id : machineIds) {
+        ui->machineComboBox->addItem(QString::fromStdString(id));
+    }
+}
+
 void LoginWidget::loginPressed()
 {
     QString username = ui->userLineEdit->text().trimmed();
@@ -39,7 +83,7 @@ void LoginWidget::loginPressed()
     }
 
     if (!RedisDBManager::getInstance()->isConnected()) {
-        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+        RedisDBManager::getInstance()->connectToDefault();
     }
 
     auto userOpt = RedisDBManager::getInstance()->getUser(username.toStdString());

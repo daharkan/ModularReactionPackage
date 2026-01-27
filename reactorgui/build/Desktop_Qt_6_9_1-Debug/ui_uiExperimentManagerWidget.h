@@ -12,9 +12,9 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QGridLayout>
-#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -24,9 +24,10 @@ class Ui_ExperimentManagerWidget
 public:
     QGridLayout *gridLayout;
     QGridLayout *mainGridLayout;
-    QHBoxLayout *horizontalLayout;
-    QPushButton *listExperimentsPushButton;
     QSpacerItem *horizontalSpacer;
+    QVBoxLayout *verticalLayout;
+    QPushButton *listExperimentsPushButton;
+    QSpacerItem *verticalSpacer;
     QPushButton *createPushButton;
     QPushButton *edtExperimentPushButton;
     QPushButton *delExperimentPushButton;
@@ -35,7 +36,7 @@ public:
     {
         if (ExperimentManagerWidget->objectName().isEmpty())
             ExperimentManagerWidget->setObjectName("ExperimentManagerWidget");
-        ExperimentManagerWidget->resize(621, 389);
+        ExperimentManagerWidget->resize(1375, 628);
         QSizePolicy sizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -45,19 +46,24 @@ public:
         gridLayout->setObjectName("gridLayout");
         mainGridLayout = new QGridLayout();
         mainGridLayout->setObjectName("mainGridLayout");
+        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
+
+        mainGridLayout->addItem(horizontalSpacer, 0, 0, 1, 1);
+
 
         gridLayout->addLayout(mainGridLayout, 0, 0, 1, 1);
 
-        horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName("horizontalLayout");
+        verticalLayout = new QVBoxLayout();
+        verticalLayout->setObjectName("verticalLayout");
+        verticalLayout->setContentsMargins(-1, -1, 0, -1);
         listExperimentsPushButton = new QPushButton(ExperimentManagerWidget);
         listExperimentsPushButton->setObjectName("listExperimentsPushButton");
 
-        horizontalLayout->addWidget(listExperimentsPushButton);
+        verticalLayout->addWidget(listExperimentsPushButton);
 
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
+        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
 
-        horizontalLayout->addItem(horizontalSpacer);
+        verticalLayout->addItem(verticalSpacer);
 
         createPushButton = new QPushButton(ExperimentManagerWidget);
         createPushButton->setObjectName("createPushButton");
@@ -67,20 +73,20 @@ public:
         sizePolicy1.setHeightForWidth(createPushButton->sizePolicy().hasHeightForWidth());
         createPushButton->setSizePolicy(sizePolicy1);
 
-        horizontalLayout->addWidget(createPushButton);
+        verticalLayout->addWidget(createPushButton);
 
         edtExperimentPushButton = new QPushButton(ExperimentManagerWidget);
         edtExperimentPushButton->setObjectName("edtExperimentPushButton");
 
-        horizontalLayout->addWidget(edtExperimentPushButton);
+        verticalLayout->addWidget(edtExperimentPushButton);
 
         delExperimentPushButton = new QPushButton(ExperimentManagerWidget);
         delExperimentPushButton->setObjectName("delExperimentPushButton");
 
-        horizontalLayout->addWidget(delExperimentPushButton);
+        verticalLayout->addWidget(delExperimentPushButton);
 
 
-        gridLayout->addLayout(horizontalLayout, 1, 0, 1, 1);
+        gridLayout->addLayout(verticalLayout, 0, 1, 1, 1);
 
 
         retranslateUi(ExperimentManagerWidget);
@@ -91,7 +97,7 @@ public:
     void retranslateUi(QWidget *ExperimentManagerWidget)
     {
         ExperimentManagerWidget->setWindowTitle(QCoreApplication::translate("ExperimentManagerWidget", "Form", nullptr));
-        listExperimentsPushButton->setText(QCoreApplication::translate("ExperimentManagerWidget", "List Experiments", nullptr));
+        listExperimentsPushButton->setText(QCoreApplication::translate("ExperimentManagerWidget", "Experiment List", nullptr));
         createPushButton->setText(QCoreApplication::translate("ExperimentManagerWidget", "Create Experiment", nullptr));
         edtExperimentPushButton->setText(QCoreApplication::translate("ExperimentManagerWidget", "Edit Experiment", nullptr));
         delExperimentPushButton->setText(QCoreApplication::translate("ExperimentManagerWidget", "Delete Experiment", nullptr));

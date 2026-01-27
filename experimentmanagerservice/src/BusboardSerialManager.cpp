@@ -299,6 +299,30 @@ void BusboardSerialManager::serialRecieved()
             continue;
         }
 
+        QStringList statusParts = dataString.split('#', Qt::KeepEmptyParts);
+        if (statusParts.size() == 6 && statusParts.at(0).startsWith("bbb_", Qt::CaseInsensitive)) {
+            QVector<int> slotStates;
+            slotStates.reserve(5);
+            bool okAll = true;
+            for (int i = 1; i < statusParts.size(); ++i) {
+                bool ok = false;
+                int val = statusParts.at(i).toInt(&ok);
+                if (!ok || (val != 0 && val != 1)) {
+                    okAll = false;
+                    break;
+                }
+                slotStates.push_back(val);
+            }
+            if (okAll && slotStates.size() == 5) {
+                QString busboardId = QString::fromStdString(m_recievedBusboardSerial);
+                if (busboardId.isEmpty()) {
+                    busboardId = QString::fromStdString(normalizeBusboardId(statusParts.at(0).toStdString()));
+                }
+                emit sgn_machineStatusUpdate(busboardId, slotStates);
+                continue;
+            }
+        }
+
         if (dataString.count("#") < 8) {
             continue;
         }

@@ -1,6 +1,8 @@
 #include "RedisDBManager.h"
 #include <chrono>
 #include <optional>
+#include <algorithm>
+#include <cctype>
 
 namespace {
 constexpr std::chrono::seconds kRedisTimeout(1);
@@ -29,10 +31,103 @@ std::vector<std::string> parseCellIdArray(const Value& arrayValue) {
     }
     return cellIds;
 }
+
+struct BusboardLocator {
+    std::string machineId;
+    std::string side;
+};
+
+std::optional<BusboardLocator> parseBusboardLocator(const std::string& busboardId) {
+    if (busboardId.empty()) {
+        return std::nullopt;
+    }
+
+    std::string upper = busboardId;
+    std::transform(upper.begin(), upper.end(), upper.begin(), [](unsigned char c) {
+        return static_cast<char>(std::toupper(c));
+    });
+
+    std::string side;
+    if (upper.find("LHS") != std::string::npos) {
+        side = "LHS";
+    } else if (upper.find("RHS") != std::string::npos) {
+        side = "RHS";
+    } else {
+        return std::nullopt;
+    }
+
+    std::string digits;
+    for (char c : upper) {
+        if (std::isdigit(static_cast<unsigned char>(c))) {
+            digits.push_back(c);
+        }
+    }
+    if (digits.empty()) {
+        return std::nullopt;
+    }
+    if (digits.size() < 3) {
+        digits.insert(digits.begin(), 3 - digits.size(), '0');
+    }
+
+    return BusboardLocator{digits, side};
+}
+
+Value* ensureBusboardsObject(Document& doc, Document::AllocatorType& allocator) {
+    if (!doc.HasMember(DB_MACHINE_BUSBOARDS_KEY) || !doc[DB_MACHINE_BUSBOARDS_KEY].IsObject()) {
+        doc.RemoveMember(DB_MACHINE_BUSBOARDS_KEY);
+        doc.AddMember(DB_MACHINE_BUSBOARDS_KEY, Value(kObjectType), allocator);
+    }
+    return &doc[DB_MACHINE_BUSBOARDS_KEY];
+}
+
+Value* ensureBusboardEntry(Value& busboards,
+                           const BusboardLocator& locator,
+                           Document::AllocatorType& allocator) {
+    if (!busboards.HasMember(locator.side.c_str())) {
+        Value key(locator.side.c_str(), allocator);
+        busboards.AddMember(key, Value(kObjectType), allocator);
+    }
+    Value& entry = busboards[locator.side.c_str()];
+    if (!entry.IsObject()) {
+        entry.SetObject();
+    }
+    return &entry;
+}
+
+Value buildSlotsArray(const std::vector<int>& slotStates,
+                      Document::AllocatorType& allocator,
+                      const Value* existingSlots) {
+    Value mslots(kArrayType);
+    const SizeType count = static_cast<SizeType>(slotStates.size());
+    mslots.Reserve(count, allocator);
+
+    for (SizeType i = 0; i < count; ++i) {
+        Value slot(kObjectType);
+        bool plugged = slotStates.at(i) == 1;
+        std::string cellId;
+        if (existingSlots && existingSlots->IsArray() && i < existingSlots->Size()) {
+            const Value& existingSlot = (*existingSlots)[i];
+            if (existingSlot.IsObject()
+                && existingSlot.HasMember(DB_MACHINE_SLOT_CELLID_KEY)
+                && existingSlot[DB_MACHINE_SLOT_CELLID_KEY].IsString()) {
+                cellId = existingSlot[DB_MACHINE_SLOT_CELLID_KEY].GetString();
+            }
+        }
+        if (!plugged) {
+            cellId.clear();
+        }
+        slot.AddMember(DB_MACHINE_SLOT_PLUGGED_KEY, plugged, allocator);
+        slot.AddMember(DB_MACHINE_SLOT_CELLID_KEY, Value(cellId.c_str(), allocator), allocator);
+        mslots.PushBack(slot, allocator);
+    }
+    return mslots;
+}
 } // namespace
 
 
 RedisDBManager* RedisDBManager::m_instance = nullptr;
+std::string RedisDBManager::m_defaultHost = "127.0.0.1";
+int RedisDBManager::m_defaultPort = 6379;
 
 RedisDBManager::RedisDBManager(): QObject() {
 
@@ -48,6 +143,26 @@ RedisDBManager* RedisDBManager::getInstance()
     return m_instance;
 }
 
+void RedisDBManager::setDefaultConnection(const std::string &hostname, int port)
+{
+    if (!hostname.empty()) {
+        m_defaultHost = hostname;
+    }
+    if (port > 0 && port <= 65535) {
+        m_defaultPort = port;
+    }
+}
+
+const std::string &RedisDBManager::defaultHost()
+{
+    return m_defaultHost;
+}
+
+int RedisDBManager::defaultPort()
+{
+    return m_defaultPort;
+}
+
 bool RedisDBManager::connectToDB(std::string hostname, int port)
 {
     m_client.connect(hostname, port);
@@ -55,6 +170,14 @@ bool RedisDBManager::connectToDB(std::string hostname, int port)
         return false;
     }
     return initializeSchema(false);
+}
+
+bool RedisDBManager::connectToDefault()
+{
+    if (m_client.is_connected()) {
+        return true;
+    }
+    return connectToDB(m_defaultHost, m_defaultPort);
 }
 
 bool RedisDBManager::initializeSchema(bool reset)
@@ -109,7 +232,7 @@ bool RedisDBManager::initializeSchema(bool reset)
     if (!ensureHashKey(DB_EXPERIMENTS_TABLE_KEY)) {
         return false;
     }
-    if (!ensureHashKey(DB_BUSBOARD_TABLE_KEY)) {
+    if (!ensureHashKey(DB_MACHINE_TABLE_KEY)) {
         return false;
     }
     if (!ensureHashKey(DB_CELLVISUALS_TABLE_KEY)) {
@@ -186,6 +309,91 @@ std::vector<Cell> RedisDBManager::getCellList(std::vector<std::string> cellIDLis
         cells.push_back(cell);
     }
     return cells;
+}
+
+std::vector<std::string> RedisDBManager::getMachineIds()
+{
+    std::vector<std::string> ids;
+    std::future<cpp_redis::reply> future_reply = m_client.hkeys(DB_MACHINE_TABLE_KEY);
+    m_client.sync_commit();
+
+    if (replyTimedOut(future_reply)) {
+        return ids;
+    }
+
+    cpp_redis::reply reply = future_reply.get();
+    if (!reply.is_array()) {
+        return ids;
+    }
+
+    for (const auto& item : reply.as_array()) {
+        if (item.is_string()) {
+            std::string id = item.as_string();
+            if (id == "__schema__") {
+                continue;
+            }
+            ids.push_back(id);
+        }
+    }
+
+    return ids;
+}
+
+bool RedisDBManager::getMachineBusboardIds(const std::string &machineId, std::string *lhsId, std::string *rhsId)
+{
+    if (lhsId) {
+        lhsId->clear();
+    }
+    if (rhsId) {
+        rhsId->clear();
+    }
+
+    if (machineId.empty()) {
+        return false;
+    }
+
+    std::future<cpp_redis::reply> future_reply = m_client.hget(DB_MACHINE_TABLE_KEY, machineId);
+    m_client.sync_commit();
+
+    if (replyTimedOut(future_reply)) {
+        return false;
+    }
+
+    cpp_redis::reply reply = future_reply.get();
+    if (!reply.is_string()) {
+        return false;
+    }
+
+    Document doc;
+    doc.Parse(reply.as_string().c_str());
+    if (!doc.IsObject() || !doc.HasMember(DB_MACHINE_BUSBOARDS_KEY)) {
+        return false;
+    }
+
+    const Value& busboards = doc[DB_MACHINE_BUSBOARDS_KEY];
+    if (!busboards.IsObject()) {
+        return false;
+    }
+
+    auto readBusboardId = [&busboards](const char *side) -> std::string {
+        if (!busboards.HasMember(side)) {
+            return {};
+        }
+        const Value& entry = busboards[side];
+        if (!entry.IsObject() || !entry.HasMember("busboardID") || !entry["busboardID"].IsString()) {
+            return {};
+        }
+        return entry["busboardID"].GetString();
+    };
+
+    if (lhsId) {
+        *lhsId = readBusboardId("LHS");
+    }
+    if (rhsId) {
+        *rhsId = readBusboardId("RHS");
+    }
+
+    return true;
 }
 
 
@@ -489,9 +697,120 @@ bool RedisDBManager::deleteUser(const std::string &username)
     return true;
 }
 
+bool RedisDBManager::pushMachineStatus(const std::string& busboardID, const std::vector<int>& slotStates)
+{
+    auto locator = parseBusboardLocator(busboardID);
+    if (!locator.has_value() || slotStates.empty()) {
+        return false;
+    }
+
+    Document doc;
+    std::future<cpp_redis::reply> future_reply = m_client.hget(DB_MACHINE_TABLE_KEY, locator->machineId);
+    m_client.sync_commit();
+
+    if (!replyTimedOut(future_reply)) {
+        cpp_redis::reply reply = future_reply.get();
+        if (reply.is_string()) {
+            doc.Parse(reply.as_string().c_str());
+        }
+    }
+
+    if (!doc.IsObject()) {
+        doc.SetObject();
+    }
+
+    Document::AllocatorType& allocator = doc.GetAllocator();
+    if (!doc.HasMember("machineId")) {
+        doc.AddMember("machineId", Value(locator->machineId.c_str(), allocator), allocator);
+    }
+
+    Value *busboards = ensureBusboardsObject(doc, allocator);
+    Value *busboardEntry = ensureBusboardEntry(*busboards, locator.value(), allocator);
+
+    const Value* existingSlots = nullptr;
+    if (busboardEntry->HasMember(DB_MACHINE_SLOTS_KEY)) {
+        existingSlots = &(*busboardEntry)[DB_MACHINE_SLOTS_KEY];
+    }
+
+    Value mslots = buildSlotsArray(slotStates, allocator, existingSlots);
+    if (busboardEntry->HasMember(DB_MACHINE_SLOTS_KEY)) {
+        (*busboardEntry)[DB_MACHINE_SLOTS_KEY].CopyFrom(mslots, allocator);
+    } else {
+        busboardEntry->AddMember(DB_MACHINE_SLOTS_KEY, mslots, allocator);
+    }
+
+    if (!busboardEntry->HasMember("busboardID")) {
+        busboardEntry->AddMember("busboardID", Value(busboardID.c_str(), allocator), allocator);
+    }
+
+    busboardEntry->RemoveMember(DB_BUSBOARD_LAST_UPDATED_KEY);
+    busboardEntry->AddMember(DB_BUSBOARD_LAST_UPDATED_KEY,
+                             static_cast<uint64_t>(Cell::getCurrentTimeMillis()),
+                             allocator);
+
+    StringBuffer buffer;
+    Writer<StringBuffer> writer(buffer);
+    doc.Accept(writer);
+
+    std::string jsonString = buffer.GetString();
+    m_client.hset(DB_MACHINE_TABLE_KEY, locator->machineId, jsonString);
+    m_client.sync_commit();
+    return true;
+}
+
+bool RedisDBManager::removeBusboardFromMachine(const std::string& busboardID)
+{
+    auto locator = parseBusboardLocator(busboardID);
+    if (!locator.has_value()) {
+        return false;
+    }
+
+    std::future<cpp_redis::reply> future_reply = m_client.hget(DB_MACHINE_TABLE_KEY, locator->machineId);
+    m_client.sync_commit();
+
+    if (replyTimedOut(future_reply)) {
+        return false;
+    }
+
+    cpp_redis::reply reply = future_reply.get();
+    if (!reply.is_string()) {
+        return false;
+    }
+
+    Document doc;
+    doc.Parse(reply.as_string().c_str());
+    if (!doc.IsObject() || !doc.HasMember(DB_MACHINE_BUSBOARDS_KEY)) {
+        return false;
+    }
+
+    Value& busboards = doc[DB_MACHINE_BUSBOARDS_KEY];
+    if (!busboards.IsObject() || !busboards.HasMember(locator->side.c_str())) {
+        return false;
+    }
+
+    busboards.RemoveMember(locator->side.c_str());
+    if (busboards.MemberCount() == 0) {
+        m_client.hdel(DB_MACHINE_TABLE_KEY, {locator->machineId});
+        m_client.sync_commit();
+        return true;
+    }
+
+    StringBuffer buffer;
+    Writer<StringBuffer> writer(buffer);
+    doc.Accept(writer);
+    m_client.hset(DB_MACHINE_TABLE_KEY, locator->machineId, buffer.GetString());
+    m_client.sync_commit();
+    return true;
+}
+
 std::vector<std::string> RedisDBManager::getBusboardCellIds(std::string busboardID)
 {
-    std::future<cpp_redis::reply> future_reply = m_client.hget(DB_BUSBOARD_TABLE_KEY, busboardID);
+    auto locator = parseBusboardLocator(busboardID);
+    if (!locator.has_value()) {
+        return {};
+    }
+
+    std::future<cpp_redis::reply> future_reply = m_client.hget(DB_MACHINE_TABLE_KEY, locator->machineId);
     m_client.sync_commit();
 
     if (replyTimedOut(future_reply)) {
@@ -505,17 +824,50 @@ std::vector<std::string> RedisDBManager::getBusboardCellIds(std::string busboard
 
     Document doc;
     doc.Parse(reply.as_string().c_str());
-    if (!doc.IsObject() || !doc.HasMember(DB_BUSBOARD_CELLIDS_KEY)) {
+    if (!doc.IsObject() || !doc.HasMember(DB_MACHINE_BUSBOARDS_KEY)) {
         return {};
     }
 
-    return parseCellIdArray(doc[DB_BUSBOARD_CELLIDS_KEY]);
+    const Value& busboards = doc[DB_MACHINE_BUSBOARDS_KEY];
+    if (!busboards.IsObject() || !busboards.HasMember(locator->side.c_str())) {
+        return {};
+    }
+
+    const Value& busboardEntry = busboards[locator->side.c_str()];
+    if (!busboardEntry.IsObject() || !busboardEntry.HasMember(DB_MACHINE_SLOTS_KEY)) {
+        return {};
+    }
+
+    const Value& mslots = busboardEntry[DB_MACHINE_SLOTS_KEY];
+    if (!mslots.IsArray()) {
+        return {};
+    }
+
+    std::vector<std::string> cellIds;
+    for (SizeType i = 0; i < mslots.Size(); ++i) {
+        const Value& slot = mslots[i];
+        if (!slot.IsObject()) {
+            continue;
+        }
+        if (slot.HasMember(DB_MACHINE_SLOT_PLUGGED_KEY) && slot[DB_MACHINE_SLOT_PLUGGED_KEY].IsBool()
+            && !slot[DB_MACHINE_SLOT_PLUGGED_KEY].GetBool()) {
+            continue;
+        }
+        if (slot.HasMember(DB_MACHINE_SLOT_CELLID_KEY) && slot[DB_MACHINE_SLOT_CELLID_KEY].IsString()) {
+            std::string id = slot[DB_MACHINE_SLOT_CELLID_KEY].GetString();
+            if (!id.empty()) {
+                cellIds.push_back(id);
+            }
+        }
+    }
+
+    return cellIds;
 }
 
 std::vector<std::string> RedisDBManager::getBusboardIds()
 {
     std::vector<std::string> ids;
-    std::future<cpp_redis::reply> future_reply = m_client.hkeys(DB_BUSBOARD_TABLE_KEY);
+    std::future<cpp_redis::reply> future_reply = m_client.hkeys(DB_MACHINE_TABLE_KEY);
     m_client.sync_commit();
 
     if (replyTimedOut(future_reply)) {
@@ -528,8 +880,40 @@ std::vector<std::string> RedisDBManager::getBusboardIds()
     }
 
     for (const auto& item : reply.as_array()) {
-        if (item.is_string()) {
-            ids.push_back(item.as_string());
+        if (!item.is_string()) {
+            continue;
+        }
+
+        std::future<cpp_redis::reply> machine_reply = m_client.hget(DB_MACHINE_TABLE_KEY, item.as_string());
+        m_client.sync_commit();
+        if (replyTimedOut(machine_reply)) {
+            continue;
+        }
+        cpp_redis::reply machineValue = machine_reply.get();
+        if (!machineValue.is_string()) {
+            continue;
+        }
+
+        Document doc;
+        doc.Parse(machineValue.as_string().c_str());
+        if (!doc.IsObject() || !doc.HasMember(DB_MACHINE_BUSBOARDS_KEY)) {
+            continue;
+        }
+        const Value& busboards = doc[DB_MACHINE_BUSBOARDS_KEY];
+        if (!busboards.IsObject()) {
+            continue;
+        }
+        for (const char *side : {"LHS", "RHS"}) {
+            if (!busboards.HasMember(side)) {
+                continue;
+            }
+            const Value& entry = busboards[side];
+            if (entry.IsObject() && entry.HasMember("busboardID") && entry["busboardID"].IsString()) {
+                std::string id = entry["busboardID"].GetString();
+                if (!id.empty()) {
+                    ids.push_back(id);
+                }
+            }
         }
     }
 
@@ -563,12 +947,13 @@ std::vector<std::string> RedisDBManager::getCellIds()
 
 bool RedisDBManager::pushFlowStatus(const std::string& busboardID, const FlowStatus& flowStatus)
 {
-    if (busboardID.empty()) {
+    auto locator = parseBusboardLocator(busboardID);
+    if (!locator.has_value()) {
         return false;
     }
 
     Document document;
-    std::future<cpp_redis::reply> future_reply = m_client.hget(DB_BUSBOARD_TABLE_KEY, busboardID);
+    std::future<cpp_redis::reply> future_reply = m_client.hget(DB_MACHINE_TABLE_KEY, locator->machineId);
     m_client.sync_commit();
 
     if (!replyTimedOut(future_reply)) {
@@ -583,29 +968,34 @@ bool RedisDBManager::pushFlowStatus(const std::string& busboardID, const FlowSta
     }
 
     Document::AllocatorType& allocator = document.GetAllocator();
-    document.RemoveMember("flowRateLpm");
-    document.RemoveMember("flowTemp");
-    document.RemoveMember("timestamp");
-    document.RemoveMember("flowstatus");
+    if (!document.HasMember("machineId")) {
+        document.AddMember("machineId", Value(locator->machineId.c_str(), allocator), allocator);
+    }
+
+    Value *busboards = ensureBusboardsObject(document, allocator);
+    Value *busboardEntry = ensureBusboardEntry(*busboards, locator.value(), allocator);
 
     Value flowJSON = flowStatus.toJSON(allocator);
-    if (document.HasMember(DB_BUSBOARD_FLOW_KEY)) {
-        document[DB_BUSBOARD_FLOW_KEY].CopyFrom(flowJSON, allocator);
+    if (busboardEntry->HasMember(DB_BUSBOARD_FLOW_KEY)) {
+        (*busboardEntry)[DB_BUSBOARD_FLOW_KEY].CopyFrom(flowJSON, allocator);
     } else {
-        document.AddMember(DB_BUSBOARD_FLOW_KEY, flowJSON, allocator);
+        busboardEntry->AddMember(DB_BUSBOARD_FLOW_KEY, flowJSON, allocator);
     }
-    if (!document.HasMember("busboardID")) {
-        document.AddMember("busboardID", Value(busboardID.c_str(), allocator), allocator);
+    if (!busboardEntry->HasMember("busboardID")) {
+        busboardEntry->AddMember("busboardID", Value(busboardID.c_str(), allocator), allocator);
     }
 
-    document.RemoveMember(DB_BUSBOARD_LAST_UPDATED_KEY);
-    document.AddMember(DB_BUSBOARD_LAST_UPDATED_KEY, static_cast<uint64_t>(Cell::getCurrentTimeMillis()), allocator);
+    busboardEntry->RemoveMember(DB_BUSBOARD_LAST_UPDATED_KEY);
+    busboardEntry->AddMember(DB_BUSBOARD_LAST_UPDATED_KEY,
+                             static_cast<uint64_t>(Cell::getCurrentTimeMillis()),
+                             allocator);
+
     StringBuffer buffer;
     Writer<StringBuffer> writer(buffer);
     document.Accept(writer);
 
     std::string jsonString = buffer.GetString();
-    m_client.hset(DB_BUSBOARD_TABLE_KEY, busboardID, jsonString);
+    m_client.hset(DB_MACHINE_TABLE_KEY, locator->machineId, jsonString);
     m_client.sync_commit();
     return true;
 }
@@ -613,11 +1003,12 @@ bool RedisDBManager::pushFlowStatus(const std::string& busboardID, const FlowSta
 FlowStatus RedisDBManager::getFlowStatus(const std::string& busboardID)
 {
     FlowStatus flowStatus;
-    if (busboardID.empty()) {
+    auto locator = parseBusboardLocator(busboardID);
+    if (!locator.has_value()) {
         return flowStatus;
     }
 
-    std::future<cpp_redis::reply> future_reply = m_client.hget(DB_BUSBOARD_TABLE_KEY, busboardID);
+    std::future<cpp_redis::reply> future_reply = m_client.hget(DB_MACHINE_TABLE_KEY, locator->machineId);
     m_client.sync_commit();
 
     if (replyTimedOut(future_reply)) {
@@ -632,8 +1023,15 @@ FlowStatus RedisDBManager::getFlowStatus(const std::string& busboardID)
     Document document;
     document.Parse(reply.as_string().c_str());
     const Value* flowValue = nullptr;
-    if (document.IsObject() && document.HasMember(DB_BUSBOARD_FLOW_KEY) && document[DB_BUSBOARD_FLOW_KEY].IsObject()) {
-        flowValue = &document[DB_BUSBOARD_FLOW_KEY];
+    if (document.IsObject() && document.HasMember(DB_MACHINE_BUSBOARDS_KEY)) {
+        const Value& busboards = document[DB_MACHINE_BUSBOARDS_KEY];
+        if (busboards.IsObject() && busboards.HasMember(locator->side.c_str())) {
+            const Value& entry = busboards[locator->side.c_str()];
+            if (entry.IsObject() && entry.HasMember(DB_BUSBOARD_FLOW_KEY)
+                && entry[DB_BUSBOARD_FLOW_KEY].IsObject()) {
+                flowValue = &entry[DB_BUSBOARD_FLOW_KEY];
+            }
+        }
     }
 
     if (flowValue) {
@@ -644,12 +1042,13 @@ FlowStatus RedisDBManager::getFlowStatus(const std::string& busboardID)
 
 bool RedisDBManager::pushBusboardCellIds(std::string busboardID, std::vector<std::string> cellIDs)
 {
-    if (busboardID.empty()) {
+    auto locator = parseBusboardLocator(busboardID);
+    if (!locator.has_value()) {
         return false;
     }
 
     Document doc;
-    std::future<cpp_redis::reply> future_reply = m_client.hget(DB_BUSBOARD_TABLE_KEY, busboardID);
+    std::future<cpp_redis::reply> future_reply = m_client.hget(DB_MACHINE_TABLE_KEY, locator->machineId);
     m_client.sync_commit();
 
     if (!replyTimedOut(future_reply)) {
@@ -664,33 +1063,71 @@ bool RedisDBManager::pushBusboardCellIds(std::string busboardID, std::vector<std
     }
 
     Document::AllocatorType& allocator = doc.GetAllocator();
-    if (!doc.HasMember("busboardID")) {
-        doc.AddMember("busboardID", Value(busboardID.c_str(), allocator), allocator);
+    if (!doc.HasMember("machineId")) {
+        doc.AddMember("machineId", Value(locator->machineId.c_str(), allocator), allocator);
     }
 
-    Value cellIdArray(kArrayType);
-    for (const auto& str : cellIDs) {
-        if (str.empty()) {
-            continue;
+    Value *busboards = ensureBusboardsObject(doc, allocator);
+    Value *busboardEntry = ensureBusboardEntry(*busboards, locator.value(), allocator);
+
+    const Value* existingSlots = nullptr;
+    if (busboardEntry->HasMember(DB_MACHINE_SLOTS_KEY)) {
+        existingSlots = &(*busboardEntry)[DB_MACHINE_SLOTS_KEY];
+    }
+
+    Value mslots(kArrayType);
+    mslots.Reserve(static_cast<SizeType>(cellIDs.size()), allocator);
+    for (SizeType i = 0; i < cellIDs.size(); ++i) {
+        const auto& cellId = cellIDs.at(i);
+        bool plugged = false;
+        std::string storedCellId = cellId;
+
+        if (existingSlots && existingSlots->IsArray() && i < existingSlots->Size()) {
+            const Value& existingSlot = (*existingSlots)[i];
+            if (existingSlot.IsObject()) {
+                if (existingSlot.HasMember(DB_MACHINE_SLOT_PLUGGED_KEY)
+                    && existingSlot[DB_MACHINE_SLOT_PLUGGED_KEY].IsBool()) {
+                    plugged = existingSlot[DB_MACHINE_SLOT_PLUGGED_KEY].GetBool();
+                }
+                if (storedCellId.empty()
+                    && existingSlot.HasMember(DB_MACHINE_SLOT_CELLID_KEY)
+                    && existingSlot[DB_MACHINE_SLOT_CELLID_KEY].IsString()) {
+                    storedCellId = existingSlot[DB_MACHINE_SLOT_CELLID_KEY].GetString();
+                }
+            }
         }
-        cellIdArray.PushBack(Value(str.c_str(), allocator), allocator);
+
+        if (!storedCellId.empty()) {
+            plugged = true;
+        }
+
+        Value slot(kObjectType);
+        slot.AddMember(DB_MACHINE_SLOT_PLUGGED_KEY, plugged, allocator);
+        slot.AddMember(DB_MACHINE_SLOT_CELLID_KEY, Value(storedCellId.c_str(), allocator), allocator);
+        mslots.PushBack(slot, allocator);
     }
 
-    if (doc.HasMember(DB_BUSBOARD_CELLIDS_KEY)) {
-        doc[DB_BUSBOARD_CELLIDS_KEY].CopyFrom(cellIdArray, allocator);
+    if (busboardEntry->HasMember(DB_MACHINE_SLOTS_KEY)) {
+        (*busboardEntry)[DB_MACHINE_SLOTS_KEY].CopyFrom(mslots, allocator);
     } else {
-        doc.AddMember(DB_BUSBOARD_CELLIDS_KEY, cellIdArray, allocator);
+        busboardEntry->AddMember(DB_MACHINE_SLOTS_KEY, mslots, allocator);
     }
 
-    doc.RemoveMember(DB_BUSBOARD_LAST_UPDATED_KEY);
-    doc.AddMember(DB_BUSBOARD_LAST_UPDATED_KEY, static_cast<uint64_t>(Cell::getCurrentTimeMillis()), allocator);
+    if (!busboardEntry->HasMember("busboardID")) {
+        busboardEntry->AddMember("busboardID", Value(busboardID.c_str(), allocator), allocator);
+    }
+
+    busboardEntry->RemoveMember(DB_BUSBOARD_LAST_UPDATED_KEY);
+    busboardEntry->AddMember(DB_BUSBOARD_LAST_UPDATED_KEY,
+                             static_cast<uint64_t>(Cell::getCurrentTimeMillis()),
+                             allocator);
 
     StringBuffer buffer;
     Writer<StringBuffer> writer(buffer);
     doc.Accept(writer);
 
     std::string jsonString = buffer.GetString();
-    m_client.hset(DB_BUSBOARD_TABLE_KEY, busboardID, jsonString);
+    m_client.hset(DB_MACHINE_TABLE_KEY, locator->machineId, jsonString);
     m_client.sync_commit();
     return true;
 }
@@ -734,6 +1171,16 @@ bool RedisDBManager::pushCellList(std::vector<Cell> cells)
 
         m_client.sync_commit();
     }
+    return true;
+}
+
+bool RedisDBManager::deleteCell(const std::string& cellID)
+{
+    if (cellID.empty()) {
+        return false;
+    }
+    m_client.hdel(DB_CELLTABLE_KEY, {cellID});
+    m_client.sync_commit();
     return true;
 }
 

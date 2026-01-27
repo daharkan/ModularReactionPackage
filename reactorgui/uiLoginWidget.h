@@ -16,11 +16,13 @@ public:
     explicit LoginWidget(bool isMachineConnected, QWidget *parent = nullptr);
     ~LoginWidget();
     User currentUser() const;
+    std::string selectedMachineId() const;
 
 private:
     Ui::LoginWidget *ui;
     bool m_isMachineConnected;
     User m_currentUser;
+    void refreshMachineList();
 
 private slots:
     void loginPressed();

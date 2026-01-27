@@ -78,7 +78,7 @@ void TempCellViewWidget::refreshCellData()
 void TempCellViewWidget::ensureRedisConnection()
 {
     if (!RedisDBManager::getInstance()->isConnected()) {
-        RedisDBManager::getInstance()->connectToDB("127.0.0.1", 6379);
+        RedisDBManager::getInstance()->connectToDefault();
     }
 }
 
