@@ -81,6 +81,14 @@ volatile uint16_t motorCtr = 0;
 volatile int8_t peltierDutyPercent = 0;
 volatile uint8_t heaterDutyPercent = 0;
 
+enum PeltierMode : uint8_t {
+  PELTIER_MODE_UNKNOWN = 0,
+  PELTIER_MODE_COOLING,
+  PELTIER_MODE_HEATING
+};
+
+PeltierMode peltierMode = PELTIER_MODE_UNKNOWN;
+
 // ===================== STATE =====================
 float currentTempInner = 0.0f;
 float currentTempExternal = 0.0f;
@@ -191,14 +199,19 @@ void disablePeltier() {
   digitalWrite(PELTIER_EN_PIN, LOW);
   digitalWrite(PELTIER_SWITCH_1_PIN, LOW);
   digitalWrite(PELTIER_SWITCH_2_PIN, LOW);
+  peltierMode = PELTIER_MODE_UNKNOWN;
 }
 
 void enablePeltier(int8_t percent) {
   bool heating = (percent < 0);
   uint8_t duty = abs(percent);
 
-  if (heating) setPeltierHeating();
-  else setPeltierCooling();
+  PeltierMode nextMode = heating ? PELTIER_MODE_HEATING : PELTIER_MODE_COOLING;
+  if (peltierMode != nextMode) {
+    if (heating) setPeltierHeating();
+    else setPeltierCooling();
+    peltierMode = nextMode;
+  }
 
   noInterrupts();
   peltierOnTicks = dutyToTicks(duty);
