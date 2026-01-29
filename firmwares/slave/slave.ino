@@ -459,11 +459,20 @@ bool handlePollCommand(const char* line) {
     line++;
   }
   if (*line == '\0') return false;
-  if (strcmp(line, "GO") == 0) {
+
+  char trimmed[16];
+  size_t len = strnlen(line, sizeof(trimmed) - 1);
+  while (len > 0 && isspace(static_cast<unsigned char>(line[len - 1]))) {
+    len--;
+  }
+  memcpy(trimmed, line, len);
+  trimmed[len] = '\0';
+
+  if (strcmp(trimmed, "GO") == 0) {
     sendStatus();
     return true;
   }
-  if (strcmp(line, "DEBUG") == 0) {
+  if (strcmp(trimmed, "DEBUG") == 0) {
     sendDebug();
     return true;
   }
