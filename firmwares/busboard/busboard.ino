@@ -43,6 +43,7 @@ static const uint8_t PIN_IL5 = 14;
 // ---------- Flow sensor pins ----------
 static const uint8_t PIN_FLOW_TEMP  = 17; // A3
 static const uint8_t PIN_FLOW_PULSE = 25; // digital 25
+static const bool FLOW_ENABLED = false;
 
 // Flow conversion
 static const float FLOW_PULSES_PER_LITER = 450.0f; // TODO: calibrate
@@ -112,6 +113,12 @@ static void IRAM_ATTR flow_isr() {
 }
 
 static void flow_update() {
+  if (!FLOW_ENABLED) {
+    flow_hz = 0.0f;
+    flow_lpm = 0.0f;
+    flow_lastCalcMs = millis();
+    return;
+  }
   uint32_t now = millis();
   if ((uint32_t)(now - flow_lastCalcMs) < FLOW_CALC_PERIOD_MS) return;
 
@@ -133,6 +140,7 @@ static void flow_update() {
 }
 
 static float flow_temp_mv() {
+  if (!FLOW_ENABLED) return 0.0f;
   uint16_t adc = (uint16_t)analogRead(PIN_FLOW_TEMP);
   const float vref = 5.0f;
   return (adc * (vref * 1000.0f)) / 1023.0f;
@@ -350,14 +358,16 @@ void setup() {
     SSS[i]->begin(SLAVE_BAUD);
   }
 
-  pinMode(PIN_FLOW_PULSE, INPUT_PULLUP);
-  pinMode(PIN_FLOW_TEMP, INPUT);
+  if (FLOW_ENABLED) {
+    pinMode(PIN_FLOW_PULSE, INPUT_PULLUP);
+    pinMode(PIN_FLOW_TEMP, INPUT);
 
-  int irq = digitalPinToInterrupt(PIN_FLOW_PULSE);
-  if (irq != NOT_AN_INTERRUPT) {
-    attachInterrupt(irq, flow_isr, RISING);
+    int irq = digitalPinToInterrupt(PIN_FLOW_PULSE);
+    if (irq != NOT_AN_INTERRUPT) {
+      attachInterrupt(irq, flow_isr, RISING);
+    }
+    flow_lastCalcMs = millis();
   }
-  flow_lastCalcMs = millis();
 
   Serial.println(BUSBOARD_HELLO);
   for (uint8_t i = 0; i < SLOT_COUNT; i++) {
