@@ -224,9 +224,9 @@ static void feedCharToLine(uint8_t slotIdx, char c) {
 static void rrPollOnce() {
   for (uint8_t k = 0; k < SLOT_COUNT; k++) {
     uint8_t i = (rrIndex + k) % SLOT_COUNT;
-    rrIndex = (i + 1) % SLOT_COUNT;
-
     if (!present[i]) continue;
+
+    rrIndex = (i + 1) % SLOT_COUNT;
     SoftwareSerial* ss = SSS[i];
     ss->listen();
     ss->print(F("GO\n"));
@@ -238,9 +238,10 @@ static void rrPollOnce() {
         char c = (char)ss->read();
         feedCharToLine(i, c);
       }
-      delay(1);
     }
+    return;
   }
+  rrIndex = (rrIndex + 1) % SLOT_COUNT;
 }
 
 static void pollInterlocks() {
