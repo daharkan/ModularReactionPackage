@@ -229,7 +229,7 @@ static void rrPollOnce() {
     if (!present[i]) continue;
     SoftwareSerial* ss = SSS[i];
     ss->listen();
-    ss->println(F("GO"));
+    ss->print(F("GO\n"));
     ss->flush();
 
     uint32_t tStart = micros();
