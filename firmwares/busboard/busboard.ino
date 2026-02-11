@@ -229,24 +229,31 @@ static void feedCharToLine(uint8_t slotIdx, char c) {
   }
 }
 
+static void pollSlot(uint8_t slotIdx, bool forcePoll) {
+  if (slotIdx >= SLOT_COUNT) return;
+  if (!forcePoll && !present[slotIdx]) return;
+
+  SoftwareSerial* ss = SSS[slotIdx];
+  ss->listen();
+  ss->print(F("GO\n"));
+  ss->flush();
+
+  uint32_t tStart = micros();
+  while ((uint32_t)(micros() - tStart) < RR_LISTEN_US) {
+    while (ss->available() > 0) {
+      char c = (char)ss->read();
+      feedCharToLine(slotIdx, c);
+    }
+  }
+}
+
 static void rrPollOnce() {
   for (uint8_t k = 0; k < SLOT_COUNT; k++) {
     uint8_t i = (rrIndex + k) % SLOT_COUNT;
     if (!present[i]) continue;
 
     rrIndex = (i + 1) % SLOT_COUNT;
-    SoftwareSerial* ss = SSS[i];
-    ss->listen();
-    ss->print(F("GO\n"));
-    ss->flush();
-
-    uint32_t tStart = micros();
-    while ((uint32_t)(micros() - tStart) < RR_LISTEN_US) {
-      while (ss->available() > 0) {
-        char c = (char)ss->read();
-        feedCharToLine(i, c);
-      }
-    }
+    pollSlot(i, false);
     return;
   }
   rrIndex = (rrIndex + 1) % SLOT_COUNT;
@@ -288,6 +295,26 @@ static char* trimLine(char* line) {
     len--;
   }
   return line;
+}
+
+static bool handlePollCommand(char* line) {
+  if (!line) return false;
+  char* trimmed = trimLine(line);
+  if (trimmed[0] == '\0') return false;
+  if (strcmp(trimmed, "GO") == 0) {
+    rrPollOnce();
+    return true;
+  }
+
+  char* dash = strchr(trimmed, '-');
+  if (!dash) return false;
+  *dash = '\0';
+  if (strcmp(dash + 1, "GO") != 0) return false;
+
+  int slot = atoi(trimmed);
+  if (slot < 1 || slot > SLOT_COUNT) return false;
+  pollSlot((uint8_t)(slot - 1), true);
+  return true;
 }
 
 static bool parseUpdateCommand(char* line, int* positionIdx, float* targetTemp, int* targetRpm, int* motorSelect, int* checksumRec) {
@@ -396,6 +423,8 @@ void loop() {
         Serial.print(F("#"));
         Serial.println(checksumRec);
       }
+    } else {
+      handlePollCommand(line);
     }
   }
 
