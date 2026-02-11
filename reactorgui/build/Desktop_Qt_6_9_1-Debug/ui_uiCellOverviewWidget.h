@@ -42,6 +42,10 @@ public:
     QLabel *rpmValueLabel;
     QLabel *tempLabel;
     QLabel *tempValueLabel;
+    QLabel *heaterDutyLabel;
+    QLabel *heaterDutyValueLabel;
+    QLabel *peltierDutyLabel;
+    QLabel *peltierDutyValueLabel;
 
     void setupUi(QWidget *CellOverviewWidget)
     {
@@ -159,6 +163,28 @@ public:
 
         metricsLayout->addWidget(tempValueLabel, 0, 3, 1, 1);
 
+        heaterDutyLabel = new QLabel(CellOverviewWidget);
+        heaterDutyLabel->setObjectName("heaterDutyLabel");
+        heaterDutyLabel->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        metricsLayout->addWidget(heaterDutyLabel, 1, 0, 1, 1);
+
+        heaterDutyValueLabel = new QLabel(CellOverviewWidget);
+        heaterDutyValueLabel->setObjectName("heaterDutyValueLabel");
+
+        metricsLayout->addWidget(heaterDutyValueLabel, 1, 1, 1, 1);
+
+        peltierDutyLabel = new QLabel(CellOverviewWidget);
+        peltierDutyLabel->setObjectName("peltierDutyLabel");
+        peltierDutyLabel->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+
+        metricsLayout->addWidget(peltierDutyLabel, 1, 2, 1, 1);
+
+        peltierDutyValueLabel = new QLabel(CellOverviewWidget);
+        peltierDutyValueLabel->setObjectName("peltierDutyValueLabel");
+
+        metricsLayout->addWidget(peltierDutyValueLabel, 1, 3, 1, 1);
+
 
         verticalLayout->addLayout(metricsLayout);
 
@@ -185,6 +211,10 @@ public:
         rpmValueLabel->setText(QCoreApplication::translate("CellOverviewWidget", "--", nullptr));
         tempLabel->setText(QCoreApplication::translate("CellOverviewWidget", "Temp:", nullptr));
         tempValueLabel->setText(QCoreApplication::translate("CellOverviewWidget", "--", nullptr));
+        heaterDutyLabel->setText(QCoreApplication::translate("CellOverviewWidget", "Heater %:", nullptr));
+        heaterDutyValueLabel->setText(QCoreApplication::translate("CellOverviewWidget", "--", nullptr));
+        peltierDutyLabel->setText(QCoreApplication::translate("CellOverviewWidget", "Peltier %:", nullptr));
+        peltierDutyValueLabel->setText(QCoreApplication::translate("CellOverviewWidget", "--", nullptr));
     } // retranslateUi
 
 };

@@ -85,9 +85,12 @@ void CellOverviewWidget::setCellData(const Cell &cell)
     ui->assignedAtValueLabel->setText(assignedAt);
     ui->finishesAtValueLabel->setText(finishesAt);
 
-    float temp = cell.isExtTempPlugged() ? cell.currentTempExt() : cell.currentTempInner();
     ui->rpmValueLabel->setText(QString::number(cell.currentRPM()));
-    ui->tempValueLabel->setText(QString::number(temp, 'f', 1));
+    ui->tempValueLabel->setText(QString("Ext %1 / Blk %2")
+                                    .arg(cell.currentTempExt(), 0, 'f', 1)
+                                    .arg(cell.currentTempInner(), 0, 'f', 1));
+    ui->heaterDutyValueLabel->setText(cell.heaterDutyPercent() < 0 ? "--" : QString::number(cell.heaterDutyPercent()));
+    ui->peltierDutyValueLabel->setText(cell.peltierDutyPercent() < 0 ? "--" : QString::number(cell.peltierDutyPercent()));
 
     if (stateKey.isEmpty()) {
         m_stateKey = "active";
@@ -112,6 +115,8 @@ void CellOverviewWidget::setInactive()
     ui->finishesAtValueLabel->setText("--");
     ui->rpmValueLabel->setText("--");
     ui->tempValueLabel->setText("--");
+    ui->heaterDutyValueLabel->setText("--");
+    ui->peltierDutyValueLabel->setText("--");
 
     setSelected(false);
     applyStateStyle("empty");
@@ -204,7 +209,7 @@ void CellOverviewWidget::applyActiveStyle(bool active)
         return;
     }
 
-    applyStyle("rgb(24, 33, 59)", "rgb(168, 184, 214)", "rgb(44, 58, 94)");
+    applyStyle("rgb(238, 242, 248)", "rgb(152, 164, 186)", "rgb(214, 224, 239)");
 }
 
 void CellOverviewWidget::applyStateStyle(const QString &stateKey)

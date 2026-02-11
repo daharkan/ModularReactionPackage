@@ -26,7 +26,7 @@ public:
 
     //View operations...
     void setCurrentExtTempView(float temp);
-    void setCurrentInnerTempView(float temp);
+    void setCurrentBlockTempView(float temp);
     void setCurrentRPMView(int rpm);
     void setTargetTempView(float temp);
     void setTargetRPMView(int rpm);
@@ -53,6 +53,7 @@ private:
     void loadVisualHistoryIfNeeded(const Experiment &experiment);
     void clearExperimentGraph();
     bool hasExperimentAssigned(const Experiment &experiment) const;
+    void updateTargetSyncStatus(const Cell &cell);
 
 };
 

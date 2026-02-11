@@ -48,7 +48,7 @@ void CellWidget::setCurrentExtTempView(float temp)
 }
 
 
-void CellWidget::setCurrentInnerTempView(float temp)
+void CellWidget::setCurrentBlockTempView(float temp)
 {
     ui->currentInnerTempLabel->setText(QString::number(temp, 'f', 1));
 }
@@ -123,7 +123,7 @@ void CellWidget::updateCell(Cell &cell)
     }
 
     float currentTempExt = cell.currentTempExt();
-    float currentTempInner = cell.currentTempInner();
+    float currentTempBlock = cell.currentTempInner();
     int currentRPM = cell.currentRPM();
     float targetTemp = cell.assignedTemp();
     int targetRPM = cell.assignedRPM();
@@ -132,7 +132,7 @@ void CellWidget::updateCell(Cell &cell)
     setTargetRPMView(targetRPM);
     setTargetTempView(targetTemp);
     setCurrentExtTempView(currentTempExt);
-    setCurrentInnerTempView(currentTempInner);
+    setCurrentBlockTempView(currentTempBlock);
     setCurrentRPMView(currentRPM);
 
     Experiment experiment = cell.asignedExperiment();
@@ -202,6 +202,8 @@ void CellWidget::updateCell(Cell &cell)
 
     ui->expStateLabel->setText(stateText);
     ui->experimentProgressValueLabel->setText(progressText);
+
+    updateTargetSyncStatus(cell);
 
     if (stateText == "RUNNING" && m_cellGraph != nullptr && !m_cellGraph->isDataPushStarted()) {
         m_cellGraph->initilizeExperimentGraph();
@@ -278,4 +280,43 @@ void CellWidget::clearExperimentGraph()
 bool CellWidget::hasExperimentAssigned(const Experiment &experiment) const
 {
     return !(experiment.experimentId().empty() && experiment.name().empty());
+}
+
+void CellWidget::updateTargetSyncStatus(const Cell &cell)
+{
+    if (ui->assignmentStatusLabel == nullptr) {
+        return;
+    }
+
+    Experiment experiment = cell.asignedExperiment();
+    if (!hasExperimentAssigned(experiment) || cell.cellID().empty()) {
+        ui->assignmentStatusLabel->clear();
+        ui->assignmentStatusLabel->setVisible(false);
+        return;
+    }
+
+    QString dotColor;
+
+    switch (cell.targetSyncState()) {
+    case Cell::TargetSyncPending:
+        dotColor = "#F1C40F";
+        break;
+    case Cell::TargetSyncFailed:
+        dotColor = "#E74C3C";
+        break;
+    case Cell::TargetSyncSynced:
+        dotColor = "#2ECC71";
+        break;
+    case Cell::TargetSyncUnknown:
+    default:
+        ui->assignmentStatusLabel->clear();
+        ui->assignmentStatusLabel->setVisible(false);
+        return;
+    }
+
+    ui->assignmentStatusLabel->setText(QString());
+    ui->assignmentStatusLabel->setVisible(true);
+    ui->assignmentStatusLabel->setFixedSize(12, 12);
+    ui->assignmentStatusLabel->setStyleSheet(QString("QLabel { background: %1; border-radius: 6px; }")
+                                              .arg(dotColor));
 }

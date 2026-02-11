@@ -39,6 +39,7 @@ private slots:
     void cellStatusUpdated(Cell& cell);
     void presenceStatusUpdated(int slotIndex, bool isPresent);
     void machineStatusUpdated(const QString &busboardId, const QVector<int> &slotStates);
+    void dutyStatusUpdated(int slotIndex, int heaterDuty, int peltierDuty);
 
 };
 

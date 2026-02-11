@@ -1,0 +1,36 @@
+[1mdiff --git a/firmwares/slave/slave.ino b/firmwares/slave/slave.ino[m
+[1mindex 4d902d7..ae80ab7 100644[m
+[1m--- a/firmwares/slave/slave.ino[m
+[1m+++ b/firmwares/slave/slave.ino[m
+[36m@@ -40,7 +40,7 @@[m [mconstexpr float TEMP_HYSTERESIS = 0.3f;[m
+ constexpr float HEAT_K = 8.0f; // duty per degC[m
+ constexpr float COOL_K = 8.0f;[m
+ constexpr float MOTOR_KP = 0.08f; // pwm step per rpm error[m
+[31m-constexpr uint8_t DUTY_MIN = 15; // higher voltage limit (~15V)[m
+[32m+[m[32mconstexpr uint8_t DUTY_MIN = 19; // higher voltage limit (~15V)[m
+ constexpr uint8_t DUTY_MAX = 70; // lower voltage limit (~5V)[m
+ constexpr float HEAT_ASSIST_THRESHOLD = 6.0f; // degC, enable peltier heating assist[m
+ constexpr float PELTIER_HEAT_K = 6.0f;[m
+[36m@@ -49,7 +49,7 @@[m [mAdafruit_MAX31865 rtdInner = Adafruit_MAX31865(RTD_CS_INNER);[m
+ Adafruit_MAX31865 rtdExternal = Adafruit_MAX31865(RTD_CS_EXTERNAL);[m
+ [m
+ // ===================== PWM STATE =====================[m
+[31m-constexpr uint8_t PWM_DUTY_STEPS = 50;[m
+[32m+[m[32mconstexpr uint8_t PWM_DUTY_STEPS = 100;[m
+ [m
+ struct FastPin {[m
+   volatile uint8_t* out;[m
+[36m@@ -97,10 +97,10 @@[m [mfloat currentRpm = 0.0f;[m
+ uint8_t motorDutyPercent = 0;[m
+ [m
+ [m
+[31m-static inline uint16_t dutyToTicks(uint8_t percent) {[m
+[32m+[m[32mstatic inline uint16_t dutyToTicks(uint8_t percent)[m
+[32m+[m[32m{[m
+   if (percent > 100) percent = 100;[m
+[31m-  uint8_t steps = (uint32_t)percent * PWM_DUTY_STEPS / 100u;[m
+[31m-  return (uint32_t)steps * T1_PERIOD_TICKS / PWM_DUTY_STEPS;[m
+[32m+[m[32m  return (uint32_t)percent * T1_PERIOD_TICKS / 100u;[m
+ }[m
+ [m
+ static uint8_t clampDuty(uint8_t duty) {[m

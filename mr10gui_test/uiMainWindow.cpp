@@ -55,8 +55,8 @@ void MainWindow::updateTable()
             QTableWidgetItem* cellIDItem = new QTableWidgetItem(QString::fromStdString(m_cells.at(i).cellID()));
             ui->tableWidget->setItem(0, i, cellIDItem);
 
-            QTableWidgetItem* innerTempItem = new QTableWidgetItem(QString::number(m_cells.at(i).currentTempInner()));
-            ui->tableWidget->setItem(1, i, innerTempItem);
+            QTableWidgetItem* blockTempItem = new QTableWidgetItem(QString::number(m_cells.at(i).currentTempInner()));
+            ui->tableWidget->setItem(1, i, blockTempItem);
 
             QTableWidgetItem* extTempItem = new QTableWidgetItem(QString::number(m_cells.at(i).currentTempExt()));
             ui->tableWidget->setItem(2, i, extTempItem);

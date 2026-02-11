@@ -43,6 +43,7 @@ private:
     bool queueUpdateCommand(const QString &command);
     bool waitForAckToken(const QString &token, int timeoutMs);
     void delay(int msec);
+    void releasePort();
 
 
     std::string m_recievedBusboardSerial;
@@ -55,6 +56,7 @@ signals:
     void sgn_updateCell(Cell& cell);
     void sgn_presenceUpdate(int slotIndex, bool isPresent);
     void sgn_machineStatusUpdate(const QString &busboardId, const QVector<int> &slotStates);
+    void sgn_dutyUpdate(int slotIndex, int heaterDuty, int peltierDuty);
 
 };
 

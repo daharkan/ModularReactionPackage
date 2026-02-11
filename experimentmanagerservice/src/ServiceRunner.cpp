@@ -14,6 +14,10 @@
 
 #define MIN_CELL_UPDATE_INTERVAL_MSECS 100
 #define TEMP_EPSILON 0.5
+constexpr unsigned long long kTargetSyncRetryIntervalMs = 1000;
+constexpr unsigned long long kTargetSyncTimeoutMs = 3000;
+// Change this to adjust how far ahead we compute the future target temperature.
+constexpr unsigned long long kFutureTargetLeadMs = 60ULL * 1000ULL;
 
 namespace {
 constexpr const char *kStateUnplugged = "UNPLUGGED";
@@ -21,7 +25,7 @@ constexpr const char *kStateIdle = "IDLE";
 constexpr const char *kStatePreheat = "PREHEAT";
 constexpr const char *kStateRunning = "RUNNING";
 constexpr const char *kStateCompleted = "COMPLETED";
-constexpr unsigned int kMaxMissedMachineStatus = 5;
+constexpr unsigned int kMaxMissedMachineStatus = 15;
 constexpr unsigned long long kMachineStatusCheckIntervalMs = 500;
 
 struct BusboardMeta {
@@ -75,6 +79,14 @@ unsigned long long totalExperimentDurationMs(Experiment& experiment)
     return totalDurationMs;
 }
 
+unsigned long long clampElapsedMs(unsigned long long elapsedMs, unsigned long long totalDurationMs)
+{
+    if (totalDurationMs > 0 && elapsedMs > totalDurationMs) {
+        return totalDurationMs;
+    }
+    return elapsedMs;
+}
+
 bool hasExperimentAssigned(Experiment& experiment)
 {
     return !(experiment.experimentId().empty() && experiment.name().empty());
@@ -115,7 +127,10 @@ bool updateExperimentStartIfReady(Experiment &experiment, const Cell &cell, unsi
     }
 
     float startTemp = tempArcs.front().startTemp();
-    float currentTemp = cell.isExtTempPlugged() ? cell.currentTempExt() : cell.currentTempInner();
+    float currentTemp = cell.currentTempExt();
+    if (!std::isfinite(currentTemp)) {
+        currentTemp = cell.currentTempInner();
+    }
     if (std::abs(currentTemp - startTemp) <= TEMP_EPSILON) {
         experiment.setStartSystemTimeMSecs(nowMs);
         return true;
@@ -214,13 +229,16 @@ bool ServiceRunner::initService()
         m_busboards.push_back(rhsBusboard);
     }
     succ = !m_busboards.empty();
+    qInfo() << "initService busboards:" << m_busboards.size() << "succ:" << succ;
 
     bool succDB = false;
 
     if(RedisDBManager::getInstance()->isConnected()){
+        qInfo() << "initService redis already connected";
         return succ;
     }
     succDB = RedisDBManager::getInstance()->connectToDB(m_redisHost, m_redisPort);
+    qInfo() << "initService redis connect result:" << succDB;
     return succ && succDB;
 }
 
@@ -230,6 +248,7 @@ void ServiceRunner::startServiceLoop()
         bool anyHealthy = false;
         for (const auto& busboard : m_busboards) {
             if (!busboard->checkHealth()) {
+                qWarning() << "busboard health check failed:" << QString::fromStdString(busboard->busboardID());
                 continue;
             }
             anyHealthy = true;
@@ -237,6 +256,7 @@ void ServiceRunner::startServiceLoop()
         }
 
         if (!anyHealthy) {
+            qWarning() << "no healthy busboards; exiting service loop";
             break;
         }
     }
@@ -359,11 +379,14 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
             if (tempArcs.empty()) {
                 experiment.setState(determineExperimentState(dbCell, experiment, nowMs));
                 dbCell.setAsignedExperiment(experiment);
+                dbCell.setTargetSyncState(Cell::TargetSyncUnknown);
+                m_targetSync.erase(cellID);
                 continue;
             }
 
             bool startReady = updateExperimentStartIfReady(experiment, dbCell, nowMs);
             double targetTemp = preheatTargetTemp(experiment);
+            double targetTempFuture = targetTemp;
             int targetRpm = 0;
             unsigned long long totalDurationMs = totalExperimentDurationMs(experiment);
             unsigned long long startMs = experiment.startSystemTimeMSecs();
@@ -372,40 +395,100 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
             std::string experimentState = determineExperimentState(dbCell, experiment, nowMs);
             if (startReady && startMs > 0
                 && (experimentState == kStateRunning || experimentState == kStateCompleted)) {
-                unsigned long long effectiveElapsed = elapsedMs;
-                if (totalDurationMs > 0 && effectiveElapsed > totalDurationMs) {
-                    effectiveElapsed = totalDurationMs;
-                }
+                unsigned long long effectiveElapsed = clampElapsedMs(elapsedMs, totalDurationMs);
                 calculateExperimentTargets(experiment, effectiveElapsed, &targetTemp, &targetRpm);
+                unsigned long long futureElapsed = clampElapsedMs(effectiveElapsed + kFutureTargetLeadMs, totalDurationMs);
+                targetTempFuture = experiment.profile().calculateTemp(futureElapsed);
             }
 
-            dbCell.setAssignedRPM(targetRpm);
-            dbCell.setAssignedTemp(targetTemp);
-
-            unsigned int motorSelect = 0;
+            unsigned int motorSelect = 1;
             bool motorSelectChanged = false;
             auto motorSelectIt = m_lastMotorSelect.find(cellID);
             if (motorSelectIt == m_lastMotorSelect.end() || motorSelectIt->second != motorSelect) {
                 motorSelectChanged = true;
             }
 
+            auto boardIt = boardCellMap.find(cellID);
+            if (boardIt == boardCellMap.end()) {
+                experiment.setState(experimentState);
+                dbCell.setAsignedExperiment(experiment);
+                dbCell.setTargetSyncState(Cell::TargetSyncUnknown);
+                continue;
+            }
+            Cell &boardCell = boardIt->second;
+
+            TargetSyncInfo &sync = m_targetSync[cellID];
+            if (sync.experimentId != experiment.experimentId()) {
+                sync = TargetSyncInfo{};
+                sync.experimentId = experiment.experimentId();
+            }
+
+            bool targetMatchLive = std::abs(targetTemp - boardCell.assignedTemp()) <= TEMP_EPSILON
+                && targetRpm == static_cast<int>(boardCell.assignedRPM());
+            bool desiredChanged = !sync.pending
+                || std::abs(sync.desiredTemp - targetTemp) > TEMP_EPSILON
+                || std::abs(sync.desiredTempFuture - targetTempFuture) > TEMP_EPSILON
+                || sync.desiredRpm != targetRpm
+                || sync.motorSelect != motorSelect;
+
+            bool shouldSend = motorSelectChanged || !targetMatchLive || desiredChanged;
+            if (shouldSend) {
+                bool canSend = desiredChanged
+                    || sync.lastSendMs == 0
+                    || (nowMs - sync.lastSendMs >= kTargetSyncRetryIntervalMs);
+                if (canSend) {
+                    std::string updateString = boardCell.generateUpdateDataStringToBoard(static_cast<float>(targetTemp),
+                                                                                         static_cast<float>(targetTempFuture),
+                                                                                         targetRpm,
+                                                                                         motorSelect);
+                    QCoreApplication::processEvents();
+
+                    QString str = QString::fromStdString(updateString);
+                    busboard->sendUpdateString(str);
+                    m_lastMotorSelect[cellID] = motorSelect;
+
+                    if (desiredChanged || !sync.pending) {
+                        sync.firstSendMs = nowMs;
+                        sync.attempt = 0;
+                    }
+                    sync.desiredTemp = targetTemp;
+                    sync.desiredTempFuture = targetTempFuture;
+                    sync.desiredRpm = targetRpm;
+                    sync.motorSelect = motorSelect;
+                    sync.lastSendMs = nowMs;
+                    sync.pending = true;
+                    sync.attempt++;
+                }
+            }
+
+            int syncState = Cell::TargetSyncUnknown;
+            if (sync.pending) {
+                bool matchLastSent = std::abs(boardCell.assignedTemp() - sync.desiredTemp) <= TEMP_EPSILON
+                    && static_cast<int>(boardCell.assignedRPM()) == sync.desiredRpm;
+                if (matchLastSent) {
+                    sync.pending = false;
+                    sync.firstSendMs = 0;
+                    sync.attempt = 0;
+                    syncState = Cell::TargetSyncSynced;
+                } else if (sync.firstSendMs > 0 && nowMs - sync.firstSendMs >= kTargetSyncTimeoutMs) {
+                    syncState = Cell::TargetSyncFailed;
+                } else {
+                    syncState = Cell::TargetSyncPending;
+                }
+            } else {
+                syncState = targetMatchLive ? Cell::TargetSyncSynced : Cell::TargetSyncPending;
+            }
+
+            dbCell.setTargetSyncState(syncState);
+
             experiment.setState(experimentState);
             dbCell.setAsignedExperiment(experiment);
-
-            if(targetRpm != boardCellMap[cellID].assignedRPM()
-                || abs(targetTemp - boardCellMap[cellID].assignedTemp()) > TEMP_EPSILON
-                || motorSelectChanged){
-                std::string updateString = boardCellMap[cellID].generateUpdateDataStringToBoard(targetTemp, targetRpm, motorSelect);
-                QCoreApplication::processEvents();
-
-                QString str = QString::fromStdString(updateString);
-                busboard->sendUpdateString(str);
-                m_lastMotorSelect[cellID] = motorSelect;
-            }
             QCoreApplication::processEvents();
             continue;
         }
 
+        m_targetSync.erase(cellID);
+        dbCell.setTargetSyncState(Cell::TargetSyncUnknown);
         experiment.setState(determineExperimentState(dbCell, experiment, nowMs));
         dbCell.setAsignedExperiment(experiment);
     }

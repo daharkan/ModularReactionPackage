@@ -226,6 +226,9 @@ bool RedisDBManager::initializeSchema(bool reset)
     if (!ensureHashKey(DB_CELLTABLE_KEY)) {
         return false;
     }
+    if (!ensureHashKey(DB_CELL_ASSIGNMENTS_TABLE_KEY)) {
+        return false;
+    }
     if (!ensureHashKey(DB_USERS_TABLE_KEY)) {
         return false;
     }
@@ -260,32 +263,90 @@ std::vector<Cell> RedisDBManager::getCellList(std::vector<std::string> cellIDLis
 
 
     std::vector<Cell> cells;
+    if (!m_client.is_connected()) {
+        return cells;
+    }
+
+    auto fetchAssignedExperiment = [&](const std::string &cellId) -> std::optional<Experiment> {
+        if (cellId.empty()) {
+            return std::nullopt;
+        }
+
+        std::future<cpp_redis::reply> future_reply = m_client.hget(DB_CELL_ASSIGNMENTS_TABLE_KEY, cellId);
+        m_client.sync_commit();
+
+        if (replyTimedOut(future_reply)) {
+            return std::nullopt;
+        }
+
+        cpp_redis::reply reply = future_reply.get();
+        if (!reply.is_string()) {
+            return std::nullopt;
+        }
+
+        std::string jsonString = reply.as_string();
+        if (jsonString.empty()) {
+            return std::nullopt;
+        }
+
+        Document jsonDocument;
+        jsonDocument.Parse(jsonString.c_str());
+
+        const Value* experimentValue = nullptr;
+        if (jsonDocument.IsObject() && jsonDocument.HasMember(DB_EXPERIMENTJSON_KEY) && jsonDocument[DB_EXPERIMENTJSON_KEY].IsObject()) {
+            experimentValue = &jsonDocument[DB_EXPERIMENTJSON_KEY];
+        } else if (jsonDocument.IsObject()) {
+            experimentValue = &jsonDocument;
+        }
+
+        if (!experimentValue) {
+            return std::nullopt;
+        }
+
+        Experiment experiment;
+        experiment.fromJSON(*experimentValue);
+        if (experiment.experimentId().empty() && experiment.name().empty()) {
+            return std::nullopt;
+        }
+        return experiment;
+    };
+
     for(int i = 0; i < cellIDList.size(); i++){
         //std::cout << "fetching: " << busboardID << "  i: " << i << std::endl;
         if (cellIDList.at(i).empty()) {
             continue;
         }
 
+        const std::string &cellId = cellIDList.at(i);
         std::string jsonString;
-        std::future<cpp_redis::reply> future_reply = m_client.hget(DB_CELLTABLE_KEY, cellIDList.at(i));
+        std::future<cpp_redis::reply> future_reply = m_client.hget(DB_CELLTABLE_KEY, cellId);
         m_client.sync_commit();
 
         // Wait for the reply with a timeout of 1 second
         if (replyTimedOut(future_reply)) {
-            cells.push_back(Cell());
-            continue;
-        } else {
-            // Get the reply
-            cpp_redis::reply reply = future_reply.get();
-
-            // Check if the reply is a string
-            if (reply.is_string()) {
-                jsonString = reply.as_string();
-            } else {
-                cells.push_back(Cell());
-                continue;
+            Cell cell;
+            cell.setCellID(cellId);
+            auto assignedOpt = fetchAssignedExperiment(cellId);
+            if (assignedOpt.has_value()) {
+                cell.setAsignedExperiment(assignedOpt.value());
             }
+            cells.push_back(cell);
+            continue;
         }
+
+        cpp_redis::reply reply = future_reply.get();
+        if (!reply.is_string()) {
+            Cell cell;
+            cell.setCellID(cellId);
+            auto assignedOpt = fetchAssignedExperiment(cellId);
+            if (assignedOpt.has_value()) {
+                cell.setAsignedExperiment(assignedOpt.value());
+            }
+            cells.push_back(cell);
+            continue;
+        }
+
+        jsonString = reply.as_string();
         Cell cell;
 
         // Parse the JSON string into a RapidJSON Value object
@@ -300,12 +361,45 @@ std::vector<Cell> RedisDBManager::getCellList(std::vector<std::string> cellIDLis
         }
 
         if (!cellValue) {
-            cells.push_back(Cell());
+            Cell emptyCell;
+            emptyCell.setCellID(cellId);
+            auto assignedOpt = fetchAssignedExperiment(cellId);
+            if (assignedOpt.has_value()) {
+                emptyCell.setAsignedExperiment(assignedOpt.value());
+            }
+            cells.push_back(emptyCell);
             continue;
         }
 
         // Pass the Value object from the parsed JSON to fromJSON method
         cell.fromJSON(*cellValue);
+        auto assignedOpt = fetchAssignedExperiment(cellId);
+        if (assignedOpt.has_value()) {
+            Experiment merged = assignedOpt.value();
+            Experiment runtimeExp = cell.asignedExperiment();
+            bool sameExperiment = false;
+            if (!runtimeExp.experimentId().empty() && !merged.experimentId().empty()) {
+                sameExperiment = runtimeExp.experimentId() == merged.experimentId();
+            } else if (!runtimeExp.name().empty() && !merged.name().empty()) {
+                sameExperiment = runtimeExp.name() == merged.name();
+            }
+
+            if (sameExperiment) {
+                if (!runtimeExp.state().empty()) {
+                    merged.setState(runtimeExp.state());
+                }
+                if (runtimeExp.startSystemTimeMSecs() > 0) {
+                    merged.setStartSystemTimeMSecs(runtimeExp.startSystemTimeMSecs());
+                }
+                if (!runtimeExp.cellID().empty()) {
+                    merged.setCellID(runtimeExp.cellID());
+                }
+                if (!runtimeExp.busboardID().empty()) {
+                    merged.setBusboardID(runtimeExp.busboardID());
+                }
+            }
+            cell.setAsignedExperiment(merged);
+        }
         cells.push_back(cell);
     }
     return cells;
@@ -1169,6 +1263,41 @@ bool RedisDBManager::pushCellList(std::vector<Cell> cells)
 
         //std::cout << "FROMBOARD <--- pushing jsonString: " << jsonString << std::endl;
 
+        m_client.sync_commit();
+    }
+    return true;
+}
+
+bool RedisDBManager::pushCellAssignments(std::vector<Cell> cells)
+{
+    if (!m_client.is_connected()) {
+        return false;
+    }
+
+    for (const auto &cell : cells) {
+        if (cell.cellID().empty()) {
+            continue;
+        }
+
+        const Experiment exp = cell.asignedExperiment();
+        if (exp.experimentId().empty() && exp.name().empty()) {
+            m_client.hdel(DB_CELL_ASSIGNMENTS_TABLE_KEY, {cell.cellID()});
+            m_client.sync_commit();
+            continue;
+        }
+
+        Document document;
+        document.SetObject();
+        Document::AllocatorType &allocator = document.GetAllocator();
+        Value expJSON = exp.toJSON(allocator);
+        Value expWrapper(expJSON, allocator);
+        document.AddMember(DB_EXPERIMENTJSON_KEY, expWrapper, allocator);
+
+        StringBuffer buffer;
+        Writer<StringBuffer> writer(buffer);
+        document.Accept(writer);
+
+        m_client.hset(DB_CELL_ASSIGNMENTS_TABLE_KEY, cell.cellID(), buffer.GetString());
         m_client.sync_commit();
     }
     return true;

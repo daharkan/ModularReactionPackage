@@ -15,6 +15,7 @@
 
 #define DB_MACHINE_TABLE_KEY "mr10:machines"
 #define DB_CELLTABLE_KEY "mr10:cells"
+#define DB_CELL_ASSIGNMENTS_TABLE_KEY "mr10:cell_assignments"
 #define DB_USERS_TABLE_KEY "mr10:users"
 #define DB_EXPERIMENTS_TABLE_KEY "mr10:experiments"
 #define DB_CELLVISUALS_TABLE_KEY "mr10:cell_visuals"
@@ -64,6 +65,7 @@ public:
     bool removeBusboardFromMachine(const std::string& busboardID);
     bool pushBusboardCellIds(std::string busboardID, std::vector<std::string> cellIDs);
     bool pushCellList(std::vector<Cell> cells);
+    bool pushCellAssignments(std::vector<Cell> cells);
     bool deleteCell(const std::string& cellID);
     bool pushCellVisuals(std::string cellID, CellVisualsHistory history);
     CellVisualsHistory getCellVisualsHistory(std::string cellID);

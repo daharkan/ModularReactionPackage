@@ -31,7 +31,7 @@
       </row>
       <row>
        <property name="text">
-        <string>Inner Temp</string>
+        <string>Block Temperature</string>
        </property>
       </row>
       <row>

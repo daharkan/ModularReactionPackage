@@ -13,6 +13,13 @@ public:
 
     Cell& operator=(const Cell& other);
 
+    enum TargetSyncState {
+        TargetSyncUnknown = 0,
+        TargetSyncPending = 1,
+        TargetSyncFailed = 2,
+        TargetSyncSynced = 3
+    };
+
     int positionIdx() const;
     void setPositionIdx(int newPositionIdx);
 
@@ -33,7 +40,7 @@ public:
     void fromJSON(const Value& json);
 
     void updateStatusFromBoard(std::string statusDataStringFromBoard);
-    std::string generateUpdateDataStringToBoard(float targetTemp, unsigned int targetRPM, unsigned int motorSelect);
+    std::string generateUpdateDataStringToBoard(float targetTemp, float targetTempFuture, unsigned int targetRPM, unsigned int motorSelect);
 
     float currentTempInner() const;
     void setCurrentTempInner(float newCurrentTempInner);
@@ -75,6 +82,15 @@ public:
     float flowTemp() const;
     void setFlowTemp(float newFlowTemp);
 
+    int heaterDutyPercent() const;
+    void setHeaterDutyPercent(int newHeaterDutyPercent);
+
+    int peltierDutyPercent() const;
+    void setPeltierDutyPercent(int newPeltierDutyPercent);
+
+    int targetSyncState() const;
+    void setTargetSyncState(int newTargetSyncState);
+
 private:
     int m_positionIdx = -1;
     bool m_isPlugged = false;
@@ -93,6 +109,9 @@ private:
     unsigned long m_peltierUseMinute = 0;
     unsigned long m_heaterUseMinute = 0;
     unsigned long m_motorUseMinute = 0;
+    int m_heaterDutyPercent = -1;
+    int m_peltierDutyPercent = -1;
+    int m_targetSyncState = TargetSyncUnknown;
 
 };
 

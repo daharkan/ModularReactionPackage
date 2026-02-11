@@ -11,6 +11,7 @@ BusboardV1::BusboardV1()
     QObject::connect(m_serialManager, &BusboardSerialManager::sgn_updateCell, this, &BusboardV1::cellStatusUpdated);
     QObject::connect(m_serialManager, &BusboardSerialManager::sgn_presenceUpdate, this, &BusboardV1::presenceStatusUpdated);
     QObject::connect(m_serialManager, &BusboardSerialManager::sgn_machineStatusUpdate, this, &BusboardV1::machineStatusUpdated);
+    QObject::connect(m_serialManager, &BusboardSerialManager::sgn_dutyUpdate, this, &BusboardV1::dutyStatusUpdated);
 }
 
 BusboardV1::~BusboardV1()
@@ -87,6 +88,9 @@ void BusboardV1::cellStatusUpdated(Cell &cell)
 {
     int idx = cell.positionIdx();
     if(idx > 0 && idx < CELL_COUNT+1){
+        Cell &existing = m_cellArray[idx - 1];
+        int heaterDuty = existing.heaterDutyPercent();
+        int peltierDuty = existing.peltierDutyPercent();
         cell.setLastUpdatedTimestamp(Cell::getCurrentTimeMillis());
         if (!m_busboardID.empty() && !cell.cellID().empty()) {
             std::string prefixedId = m_busboardID + "_" + cell.cellID();
@@ -95,8 +99,10 @@ void BusboardV1::cellStatusUpdated(Cell &cell)
             }
         }
 
-        //qDebug() << "updating cell status pos " << idx << " with inner: " << cell.currentTempInner() << " with rpm: " << cell.currentRPM();
+        //qDebug() << "updating cell status pos " << idx << " with block: " << cell.currentTempInner() << " with rpm: " << cell.currentRPM();
         m_cellArray[idx-1] = cell;
+        m_cellArray[idx-1].setHeaterDutyPercent(heaterDuty);
+        m_cellArray[idx-1].setPeltierDutyPercent(peltierDuty);
         m_flowStatus.setFlowRateLpm(cell.flowRateLpm());
         m_flowStatus.setFlowTemp(cell.flowTemp());
         m_flowStatus.setTimestamp(Cell::getCurrentTimeMillis());
@@ -116,6 +122,12 @@ void BusboardV1::presenceStatusUpdated(int slotIndex, bool isPresent)
 
 void BusboardV1::machineStatusUpdated(const QString &busboardId, const QVector<int> &slotStates)
 {
+    if (!busboardId.isEmpty()
+        && (m_busboardID.empty()
+            || (m_busboardID.size() >= 4
+                && m_busboardID.rfind("_000") == m_busboardID.size() - 4))) {
+        setBusboardID(busboardId.toStdString());
+    }
     if (!busboardId.isEmpty() && busboardId.toStdString() != m_busboardID) {
         return;
     }
@@ -131,4 +143,15 @@ void BusboardV1::machineStatusUpdated(const QString &busboardId, const QVector<i
         }
     }
     m_machineStatusSequence++;
+}
+
+void BusboardV1::dutyStatusUpdated(int slotIndex, int heaterDuty, int peltierDuty)
+{
+    if (slotIndex < 1 || slotIndex > CELL_COUNT) {
+        return;
+    }
+    Cell &cell = m_cellArray[slotIndex - 1];
+    cell.setHeaterDutyPercent(heaterDuty);
+    cell.setPeltierDutyPercent(peltierDuty);
+    cell.setLastUpdatedTimestamp(Cell::getCurrentTimeMillis());
 }

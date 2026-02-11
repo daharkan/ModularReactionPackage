@@ -1014,7 +1014,7 @@ void ExperimentCreateWidget::assignExperimentToCells()
     }
 
     if (!updatedCells.empty()) {
-        RedisDBManager::getInstance()->pushCellList(updatedCells);
+        RedisDBManager::getInstance()->pushCellAssignments(updatedCells);
     }
 }
 

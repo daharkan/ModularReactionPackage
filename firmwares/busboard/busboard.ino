@@ -1,408 +1,209 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
-#include <ctype.h>
 
-#ifndef IRAM_ATTR
-  #define IRAM_ATTR
-#endif
-
-// ---------- Config ----------
-static const uint32_t PC_BAUD = 9600;
-static const uint32_t SLAVE_BAUD = 19200;
-
-static const uint16_t RR_LISTEN_US = 70000;
+static const uint32_t PC_BAUD = 19200;
+static const uint32_t SLAVE_BAUD = 9600;
+static const uint32_t RR_LISTEN_US = 100000; 
 static const uint16_t GO_INTERVAL_MS = 200;
-static const bool INTERLOCK_ACTIVE_LOW = false;
-
-// ---------- Machine ID (single define) ----------
+static const uint16_t POLL_LIMIT_MS = 250; // Slave'i sürekli sorgulayıp yormamak için
+static const size_t LINE_BUF_SIZE = 160; 
 #define MACHINE_ID "bbb_LHS_001"
 
-// ---------- Pin map (new board) ----------
-static const uint8_t PIN_S1_RX = 2;
-static const uint8_t PIN_S1_TX = 3;
-
-static const uint8_t PIN_S2_RX = 4;
-static const uint8_t PIN_S2_TX = 5;
-
-static const uint8_t PIN_S3_RX = 6;
-static const uint8_t PIN_S3_TX = 7;
-
-static const uint8_t PIN_S4_RX = 8;
-static const uint8_t PIN_S4_TX = 9;
-
-static const uint8_t PIN_S5_RX = 10;
-static const uint8_t PIN_S5_TX = 23;
-
-// ---------- Interlocks ----------
-static const uint8_t PIN_IL1 = 26;
-static const uint8_t PIN_IL2 = 19;
-static const uint8_t PIN_IL3 = 18;
-static const uint8_t PIN_IL4 = 16;
-static const uint8_t PIN_IL5 = 14;
-
-// ---------- Flow sensor pins ----------
-static const uint8_t PIN_FLOW_TEMP  = 17; // A3
-static const uint8_t PIN_FLOW_PULSE = 25; // digital 25
-static const bool FLOW_ENABLED = false;
-
-// Flow conversion
-static const float FLOW_PULSES_PER_LITER = 450.0f; // TODO: calibrate
-static const uint16_t FLOW_CALC_PERIOD_MS = 500;
-
-// ---------- SoftwareSerial instances ----------
-SoftwareSerial ss1(PIN_S1_RX, PIN_S1_TX);
-SoftwareSerial ss2(PIN_S2_RX, PIN_S2_TX);
-SoftwareSerial ss3(PIN_S3_RX, PIN_S3_TX);
-SoftwareSerial ss4(PIN_S4_RX, PIN_S4_TX);
-SoftwareSerial ss5(PIN_S5_RX, PIN_S5_TX);
-
+static const uint8_t PIN_IL_PINS[5] = { 26, 19, 18, 16, 14 };
+SoftwareSerial ss1(2, 3); SoftwareSerial ss2(4, 5); SoftwareSerial ss3(6, 7);
+SoftwareSerial ss4(8, 9); SoftwareSerial ss5(10, 23);
 static SoftwareSerial* const SSS[5] = { &ss1, &ss2, &ss3, &ss4, &ss5 };
 
-static const uint8_t SLOT_COUNT = 5;
-static const char BUSBOARD_PREFIX[] = MACHINE_ID "#";
-static const char BUSBOARD_HELLO[]  = MACHINE_ID "#HELLO";
+static char lineBuf[5][LINE_BUF_SIZE];
+static uint8_t lineLen[5] = {0};
+static char pcBuf[LINE_BUF_SIZE];
+static uint8_t pcLen = 0;
+static char sharedCopy[LINE_BUF_SIZE];
 
-static const uint8_t IL_PINS[5] = { PIN_IL1, PIN_IL2, PIN_IL3, PIN_IL4, PIN_IL5 };
-static bool present[5] = { false, false, false, false, false };
-static bool presentPrev[5] = { false, false, false, false, false };
-
-// per-slot line buffers
-static char lineBuf[5][128];
-static uint8_t lineLen[5] = {0, 0, 0, 0, 0};
-
+static bool present[5] = { false };
+static bool presentPrev[5] = { false };
 static uint8_t rrIndex = 0;
-static uint32_t lastGoMs = 0;
+static uint32_t lastGoMs = 0, lastPollMs = 0;
 
-// ---------- Flow measurement state ----------
-static volatile uint32_t g_flowPulses = 0;
-static uint32_t flow_lastCalcMs = 0;
-static uint32_t flow_lastPulses = 0;
-static float flow_hz = 0.0f;
-static float flow_lpm = 0.0f;
-
-static inline bool readInterlock1Present() {
-  return (PINE & (1 << PE3)) != 0;
+static inline bool readInterlockPresent(uint8_t idx) {
+  if (idx == 0) return (PINE & (1 << PE3)) != 0;
+  return digitalRead(PIN_IL_PINS[idx]) == HIGH;
 }
 
-static inline bool readInterlockPresent(uint8_t pin) {
-  int v = digitalRead(pin);
-  if (INTERLOCK_ACTIVE_LOW) return (v == LOW);
-  return (v == HIGH);
+static int calculateChecksum(const char* m) {
+  int c = 0; while(*m) c += *m++; return c;
 }
 
-static void logPresenceChange(uint8_t slot1based, bool isPresent) {
-  Serial.print(F("presence#"));
-  Serial.print(slot1based);
-  Serial.print(F("#"));
-  Serial.println(isPresent ? F("1") : F("0"));
-}
-
-static void sendMachineStatus() {
-  Serial.print(BUSBOARD_PREFIX);
-  for (uint8_t i = 0; i < SLOT_COUNT; i++) {
-    Serial.print(present[i] ? 1 : 0);
-    if (i + 1 < SLOT_COUNT) {
-      Serial.print('#');
-    }
-  }
-  Serial.println();
-}
-
-static void IRAM_ATTR flow_isr() {
-  g_flowPulses++;
-}
-
-static void flow_update() {
-  if (!FLOW_ENABLED) {
-    flow_hz = 0.0f;
-    flow_lpm = 0.0f;
-    flow_lastCalcMs = millis();
-    return;
-  }
-  uint32_t now = millis();
-  if ((uint32_t)(now - flow_lastCalcMs) < FLOW_CALC_PERIOD_MS) return;
-
-  uint32_t pulses;
-  noInterrupts();
-  pulses = g_flowPulses;
-  interrupts();
-
-  uint32_t dp = pulses - flow_lastPulses;
-  float dt = (now - flow_lastCalcMs) / 1000.0f;
-
-  if (dt > 0.0f) {
-    flow_hz = dp / dt;
-    flow_lpm = (flow_hz * 60.0f) / FLOW_PULSES_PER_LITER;
-  }
-
-  flow_lastPulses = pulses;
-  flow_lastCalcMs = now;
-}
-
-static float flow_temp_mv() {
-  if (!FLOW_ENABLED) return 0.0f;
-  uint16_t adc = (uint16_t)analogRead(PIN_FLOW_TEMP);
-  const float vref = 5.0f;
-  return (adc * (vref * 1000.0f)) / 1023.0f;
-}
-
-static int calculateChecksum(const char* message) {
-  int checksum = 0;
-  for (int i = 0; message[i] != '\0'; ++i) {
-    checksum += message[i];
-  }
-  return checksum;
-}
-
-static bool parseMessageAndCRC(char* input, char* message, int* crc) {
-  char* token = strtok(input, "*");
-  if (!token) return false;
-  strcpy(message, token);
-  token = strtok(nullptr, "*");
-  if (!token) return false;
-  *crc = atoi(token);
+static bool extractChecksum(const char* framed, int* checksumOut) {
+  if (!framed || !checksumOut) return false;
+  size_t len = strlen(framed);
+  if (len < 3 || framed[0] != '>' || framed[len - 1] != '<') return false;
+  const char* lastHash = strrchr(framed, '#');
+  if (!lastHash || lastHash >= framed + len - 1) return false;
+  *checksumOut = atoi(lastHash + 1);
   return true;
 }
 
-static void flushLine(uint8_t slotIdx) {
+static bool buildUpdateForSlave(const char* in, char* out, size_t outSize) {
+  size_t len = strlen(in);
+  if (len < 3 || in[0] != '>' || in[len - 1] != '<') return false;
+
+  if (len + 1 > outSize) return false;
+
+  char payload[LINE_BUF_SIZE];
+  size_t payloadLen = len - 2;
+  if (payloadLen >= sizeof(payload)) return false;
+  memcpy(payload, in + 1, payloadLen);
+  payload[payloadLen] = '\0';
+
+  uint8_t hashCount = 0;
+  for (size_t i = 0; i < payloadLen; i++) {
+    if (payload[i] == '#') hashCount++;
+  }
+
+  if (hashCount == 5) {
+    strcpy(out, in);
+    return true;
+  }
+
+  if (hashCount != 4) return false;
+
+  char* tok0 = strtok(payload, "#");
+  char* tok1 = strtok(nullptr, "#");
+  char* tok2 = strtok(nullptr, "#");
+  char* tok3 = strtok(nullptr, "#");
+  char* tok4 = strtok(nullptr, "#");
+  if (!tok0 || !tok1 || !tok2 || !tok3 || !tok4) return false;
+
+  int pos = atoi(tok0);
+  float temp = atof(tok1);
+  int rpm = atoi(tok2);
+  int motor = atoi(tok3);
+
+  int oldChecksum = pos + (int)temp + rpm + motor;
+  int lastVal = atoi(tok4);
+  const char* futureStr = (lastVal == oldChecksum) ? tok1 : tok4;
+  float future = atof(futureStr);
+  int newChecksum = pos + (int)temp + rpm + motor + (int)future;
+
+  snprintf(out, outSize, ">%d#%s#%d#%d#%s#%d<",
+           pos, tok1, rpm, motor, futureStr, newChecksum);
+  return true;
+}
+
+void flushLine(uint8_t slotIdx) {
   if (lineLen[slotIdx] == 0) return;
   lineBuf[slotIdx][lineLen[slotIdx]] = '\0';
-
-  char msg[128];
-  int incomingChecksum = 0;
-  int calculatedChecksum = 0;
-
-  char lineCopy[128];
-  strncpy(lineCopy, lineBuf[slotIdx], sizeof(lineCopy));
-  lineCopy[sizeof(lineCopy) - 1] = '\0';
-
-  if (!parseMessageAndCRC(lineCopy, msg, &incomingChecksum)) {
-    lineLen[slotIdx] = 0;
-    return;
-  }
-
-  calculatedChecksum = calculateChecksum(msg);
-  if (incomingChecksum != calculatedChecksum) {
-    lineLen[slotIdx] = 0;
-    return;
-  }
-
-  const char* delimiter = strchr(msg, '#');
-  if (!delimiter) {
-    lineLen[slotIdx] = 0;
-    return;
-  }
-
-  char forwardedMsg[128];
-  size_t prefixLen = (size_t)(delimiter - msg);
-  int wrote = snprintf(forwardedMsg, sizeof(forwardedMsg), "%.*s#%u%s",
-                       (int)prefixLen,
-                       msg,
-                       (unsigned)(slotIdx + 1),
-                       delimiter);
-  if (wrote < 0 || (size_t)wrote >= sizeof(forwardedMsg)) {
-    lineLen[slotIdx] = 0;
-    return;
-  }
-
-  Serial.print(BUSBOARD_PREFIX);
-  Serial.print(forwardedMsg);
-  Serial.print('#');
-  Serial.print(flow_lpm, 3);
-  Serial.print('#');
-  Serial.println(flow_temp_mv(), 1);
-
+  strncpy(sharedCopy, lineBuf[slotIdx], LINE_BUF_SIZE);
   lineLen[slotIdx] = 0;
+
+  char* token = strtok(sharedCopy, "*");
+  if (!token) return;
+  char* msgPtr = token;
+  token = strtok(nullptr, "*");
+  if (!token) return;
+
+  if (atoi(token) == calculateChecksum(msgPtr)) {
+    char* delim = strchr(msgPtr, '#');
+    if (delim) {
+      Serial.print(F(MACHINE_ID "#"));
+      for(char* p = msgPtr; p < delim; p++) Serial.print(*p);
+      Serial.print('#');
+      Serial.print(slotIdx + 1);
+      Serial.print(delim);
+      Serial.println(F("#0.00#0.0"));
+    }
+  }
 }
 
-static void feedCharToLine(uint8_t slotIdx, char c) {
-  if (c == '\r') return;
-  if (c == '\n') {
-    flushLine(slotIdx);
-    return;
-  }
-  if (lineLen[slotIdx] < sizeof(lineBuf[slotIdx]) - 1) {
-    lineBuf[slotIdx][lineLen[slotIdx]++] = c;
-  } else {
-    flushLine(slotIdx);
-    lineBuf[slotIdx][lineLen[slotIdx]++] = c;
-  }
-}
-
-static void rrPollOnce() {
-  for (uint8_t k = 0; k < SLOT_COUNT; k++) {
-    uint8_t i = (rrIndex + k) % SLOT_COUNT;
+void rrPollOnce() {
+  if (millis() - lastPollMs < POLL_LIMIT_MS) return; // Spam koruması
+  
+  for (uint8_t k = 0; k < 5; k++) {
+    uint8_t i = (rrIndex + k) % 5;
     if (!present[i]) continue;
 
-    rrIndex = (i + 1) % SLOT_COUNT;
-    SoftwareSerial* ss = SSS[i];
-    ss->listen();
-    ss->print(F("GO\n"));
-    ss->flush();
-
+    rrIndex = (i + 1) % 5;
+    lastPollMs = millis();
+    SSS[i]->listen();
+    SSS[i]->print(F("GO\n")); // Sadece \n gönder
+    
     uint32_t tStart = micros();
     while ((uint32_t)(micros() - tStart) < RR_LISTEN_US) {
-      while (ss->available() > 0) {
-        char c = (char)ss->read();
-        feedCharToLine(i, c);
+      if (Serial.available()) return;
+      while (SSS[i]->available()) {
+        char c = (char)SSS[i]->read();
+        if (c == '\r') continue;
+        if (c == '\n') { flushLine(i); return; }
+        if (lineLen[i] < LINE_BUF_SIZE - 1) lineBuf[i][lineLen[i]++] = c;
       }
     }
     return;
   }
-  rrIndex = (rrIndex + 1) % SLOT_COUNT;
-}
-
-static void pollInterlocks() {
-  for (uint8_t i = 1; i < SLOT_COUNT; i++) {
-    present[i] = readInterlockPresent(IL_PINS[i]);
-    if (present[i] != presentPrev[i]) {
-      presentPrev[i] = present[i];
-      logPresenceChange(i + 1, present[i]);
-      if (!present[i]) flushLine(i);
-    }
-  }
-
-  present[0] = readInterlock1Present();
-  if (present[0] != presentPrev[0]) {
-    presentPrev[0] = present[0];
-    logPresenceChange(1, present[0]);
-    if (!present[0]) flushLine(0);
-  }
-}
-
-static bool readLineFromPC(char* out, size_t outSize) {
-  if (!Serial.available()) return false;
-  size_t len = Serial.readBytesUntil('\n', out, outSize - 1);
-  out[len] = '\0';
-  return len > 0;
-}
-
-static char* trimLine(char* line) {
-  if (!line) return line;
-  while (*line && isspace(static_cast<unsigned char>(*line))) {
-    line++;
-  }
-  size_t len = strlen(line);
-  while (len > 0 && isspace(static_cast<unsigned char>(line[len - 1]))) {
-    line[len - 1] = '\0';
-    len--;
-  }
-  return line;
-}
-
-static bool parseUpdateCommand(char* line, int* positionIdx, float* targetTemp, int* targetRpm, int* motorSelect, int* checksumRec) {
-  if (!line || line[0] == '\0') return false;
-  line = trimLine(line);
-  if (line[0] == '\0') return false;
-  if (line[0] != '>' || line[strlen(line) - 1] != '<') return false;
-
-  char payload[128];
-  strncpy(payload, line + 1, sizeof(payload));
-  payload[sizeof(payload) - 1] = '\0';
-  size_t payloadLen = strlen(payload);
-  if (payloadLen == 0) return false;
-  payload[payloadLen - 1] = '\0';
-
-  char* token = strtok(payload, "#");
-  if (!token) return false;
-  int pos = atoi(token);
-
-  token = strtok(nullptr, "#");
-  if (!token) return false;
-  float tTemp = atof(token);
-
-  token = strtok(nullptr, "#");
-  if (!token) return false;
-  int tRpm = atoi(token);
-
-  token = strtok(nullptr, "#");
-  if (!token) return false;
-  int tMotorSelect = atoi(token);
-
-  token = strtok(nullptr, "#");
-  if (!token) return false;
-  int checksum = atoi(token);
-
-  int checksumCalc = pos + (int)tTemp + tRpm + tMotorSelect;
-  if (checksum != checksumCalc) return false;
-
-  *positionIdx = pos;
-  *targetTemp = tTemp;
-  *targetRpm = tRpm;
-  *motorSelect = tMotorSelect;
-  *checksumRec = checksum;
-  return true;
-}
-
-static void sendUpdateToSlot(uint8_t slotIdx, const char* line) {
-  if (slotIdx >= SLOT_COUNT) return;
-  SSS[slotIdx]->listen();
-  SSS[slotIdx]->print(line);
-  SSS[slotIdx]->write('\n');
-  SSS[slotIdx]->flush();
 }
 
 void setup() {
   Serial.begin(PC_BAUD);
-
-  for (uint8_t i = 1; i < SLOT_COUNT; i++) {
-    pinMode(IL_PINS[i], INPUT_PULLUP);
-    present[i] = presentPrev[i] = readInterlockPresent(IL_PINS[i]);
-  }
-
-  DDRE  &= ~(1 << PE3);
-  PORTE |=  (1 << PE3);
-  present[0] = presentPrev[0] = readInterlock1Present();
-
-  for (uint8_t i = 0; i < SLOT_COUNT; i++) {
+  for (uint8_t i = 0; i < 5; i++) {
+    if (i > 0) pinMode(PIN_IL_PINS[i], INPUT_PULLUP);
+    else { DDRE &= ~(1 << PE3); PORTE &= ~(1 << PE3); }
     SSS[i]->begin(SLAVE_BAUD);
   }
-
-  if (FLOW_ENABLED) {
-    pinMode(PIN_FLOW_PULSE, INPUT_PULLUP);
-    pinMode(PIN_FLOW_TEMP, INPUT);
-
-    int irq = digitalPinToInterrupt(PIN_FLOW_PULSE);
-    if (irq != NOT_AN_INTERRUPT) {
-      attachInterrupt(irq, flow_isr, RISING);
-    }
-    flow_lastCalcMs = millis();
-  }
-
-  Serial.println(BUSBOARD_HELLO);
-  for (uint8_t i = 0; i < SLOT_COUNT; i++) {
-    logPresenceChange(i + 1, present[i]);
-  }
-  lastGoMs = millis();
 }
 
 void loop() {
-  pollInterlocks();
-  rrPollOnce();
-  flow_update();
-
-  char line[128];
-  if (readLineFromPC(line, sizeof(line))) {
-    int positionIdx = -1;
-    float targetTemp = 0.0f;
-    int targetRpm = 0;
-    int motorSelect = 0;
-    int checksumRec = 0;
-    if (parseUpdateCommand(line, &positionIdx, &targetTemp, &targetRpm, &motorSelect, &checksumRec)) {
-      if (positionIdx >= 1 && positionIdx <= SLOT_COUNT) {
-        sendUpdateToSlot((uint8_t)(positionIdx - 1), line);
-        Serial.print(F("ACK#"));
-        Serial.print(positionIdx);
-        Serial.print(F("#"));
-        Serial.println(checksumRec);
-      }
+  for (uint8_t i = 0; i < 5; i++) {
+    present[i] = readInterlockPresent(i);
+    if (present[i] != presentPrev[i]) {
+      presentPrev[i] = present[i];
+      Serial.print(F("presence#")); Serial.print(i+1); Serial.print(F("#")); Serial.println(present[i]);
     }
   }
 
-  uint32_t now = millis();
-  if ((uint32_t)(now - lastGoMs) >= GO_INTERVAL_MS) {
-    sendMachineStatus();
-    Serial.println(F("GO"));
-    lastGoMs = now;
+  while (Serial.available()) {
+    char c = Serial.read();
+    if (c == '>') { pcLen = 0; pcBuf[pcLen++] = c; }
+    else if (c == '<' && pcLen > 0) {
+      pcBuf[pcLen++] = c; pcBuf[pcLen] = '\0';
+      int target = atoi(&pcBuf[1]);
+      if (target >= 1 && target <= 5) {
+        char outBuf[LINE_BUF_SIZE];
+        if (buildUpdateForSlave(pcBuf, outBuf, sizeof(outBuf))) {
+          // Debug: show what came from PC and what will be sent to slave
+          Serial.print(F("pc_in#"));
+          Serial.println(pcBuf);
+          Serial.print(F("to_slave#"));
+          Serial.println(outBuf);
+
+          SSS[target-1]->listen();
+          SSS[target-1]->print(outBuf);
+          SSS[target-1]->print('\n'); // Gizli \r eklenmesini engelle
+
+          int checksum = 0;
+          if (extractChecksum(outBuf, &checksum)) {
+            Serial.print(F("ACK#"));
+            Serial.print(target);
+            Serial.print('#');
+            Serial.println(checksum);
+          }
+        } else {
+          Serial.print(F("pc_bad#"));
+          Serial.println(pcBuf);
+        }
+      } else {
+        Serial.print(F("pc_target_bad#"));
+        Serial.println(pcBuf);
+      }
+      pcLen = 0;
+    } else if (pcLen < LINE_BUF_SIZE - 1) pcBuf[pcLen++] = c;
+  }
+
+  rrPollOnce();
+
+  if (millis() - lastGoMs >= GO_INTERVAL_MS) {
+    lastGoMs = millis();
+    Serial.print(F(MACHINE_ID "#"));
+    for(int i=0; i<5; i++) { Serial.print(present[i]); if(i<4) Serial.print('#'); }
+    Serial.println(F("\nGO"));
   }
 }

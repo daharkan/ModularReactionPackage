@@ -376,5 +376,5 @@ void TSMainWindow::assignExperimentToCell(const std::string &cellId)
     assignedExperiment.setOwner(m_currentUser);
     assignedExperiment.setStartSystemTimeMSecs(0);
     cell.setAsignedExperiment(assignedExperiment);
-    RedisDBManager::getInstance()->pushCellList({cell});
+    RedisDBManager::getInstance()->pushCellAssignments({cell});
 }

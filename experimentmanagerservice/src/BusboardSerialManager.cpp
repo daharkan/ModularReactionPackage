@@ -9,12 +9,12 @@
 #include <QSet>
 #include <QElapsedTimer>
 
-#define BAUDRATE 115200
+#define BAUDRATE 19200
 #define BUSBOARD_HANDSHAKE "bbb"
 
 namespace {
 QSet<QString> s_usedPorts;
-constexpr int kAckTimeoutMs = 250;
+constexpr int kAckTimeoutMs = 1500;
 
 std::string cleanBusboardToken(const std::string& str) {
     std::string result;
@@ -61,14 +61,14 @@ bool buildAckTokenFromCommand(const QString &command, QString *tokenOut) {
 
     QString payload = trimmed.mid(1, trimmed.size() - 2);
     QStringList parts = payload.split('#');
-    if (parts.size() < 5) {
+    if (parts.size() < 6) {
         return false;
     }
 
     bool okPos = false;
     bool okChecksum = false;
     int pos = parts.at(0).toInt(&okPos);
-    int checksum = parts.at(4).toInt(&okChecksum);
+    int checksum = parts.at(5).toInt(&okChecksum);
     if (!okPos || !okChecksum) {
         return false;
     }
@@ -88,6 +88,7 @@ BusboardSerialManager::~BusboardSerialManager()
     if (m_serialPort) {
         m_serialPort->close();
     }
+    releasePort();
 }
 bool BusboardSerialManager::connectAndAssignThePort()
 {    
@@ -98,6 +99,9 @@ bool BusboardSerialManager::connectAndAssignThePort()
         //qDebug() << " tss com port processing..." << comPorts.at(i).portName();
 
         QString portName = comPorts.at(i).portName();
+        if (!portName.startsWith("ttyUSB") && !portName.startsWith("ttyACM")) {
+            continue;
+        }
         if (s_usedPorts.contains(portName)) {
             continue;
         }
@@ -108,7 +112,7 @@ bool BusboardSerialManager::connectAndAssignThePort()
         tmpSerial->setDataBits(QSerialPort::Data8);
         tmpSerial->setParity(QSerialPort::NoParity);
         tmpSerial->setStopBits(QSerialPort::OneStop);
-        tmpSerial->setFlowControl(QSerialPort::SoftwareControl);
+        tmpSerial->setFlowControl(QSerialPort::NoFlowControl);
         tmpSerial->open(QIODevice::ReadWrite);
        // tmpSerial->set(500, 500, 500); // Set read, write, and event timeouts (in milliseconds)
 
@@ -165,9 +169,31 @@ bool BusboardSerialManager::isSerialPortOK()
 {
     //qDebug() << "::: " << m_serialPort->error();
     if (!m_serialPort) {
+        releasePort();
         return false;
     }
-    return (m_serialPort->isOpen() && (m_serialPort->error() == QSerialPort::NoError));
+    if (!m_serialPort->isOpen()) {
+        releasePort();
+        return false;
+    }
+
+    QSerialPort::SerialPortError err = m_serialPort->error();
+    if (err == QSerialPort::NoError) {
+        return true;
+    }
+
+    if (err == QSerialPort::ResourceError
+        || err == QSerialPort::DeviceNotFoundError
+        || err == QSerialPort::PermissionError
+        || err == QSerialPort::OpenError) {
+        qWarning() << "serial port error" << err << "on" << m_portName;
+        m_serialPort->close();
+        releasePort();
+        return false;
+    }
+
+    m_serialPort->clearError();
+    return m_serialPort->isOpen();
 }
 
 bool BusboardSerialManager::writeCellUpdateString(QString str)
@@ -299,6 +325,34 @@ void BusboardSerialManager::serialRecieved()
             continue;
         }
 
+        if (dataString.startsWith("bbb_", Qt::CaseInsensitive) && dataString.contains("#DEBUG#", Qt::CaseInsensitive)) {
+            QStringList parts = dataString.split('#', Qt::KeepEmptyParts);
+            if (parts.size() >= 4 && parts.at(1).compare("DEBUG", Qt::CaseInsensitive) == 0) {
+                bool okSlot = false;
+                int slotIndex = parts.at(2).toInt(&okSlot);
+                int heaterDuty = 0;
+                int peltierDuty = 0;
+                bool hasHeater = false;
+                bool hasPeltier = false;
+                for (int i = 3; i < parts.size(); ++i) {
+                    const QString part = parts.at(i);
+                    if (part.startsWith("HEATER:", Qt::CaseInsensitive)) {
+                        bool okVal = false;
+                        heaterDuty = part.mid(7).toInt(&okVal);
+                        hasHeater = okVal;
+                    } else if (part.startsWith("PELTIER:", Qt::CaseInsensitive)) {
+                        bool okVal = false;
+                        peltierDuty = part.mid(8).toInt(&okVal);
+                        hasPeltier = okVal;
+                    }
+                }
+                if (okSlot && (hasHeater || hasPeltier)) {
+                    emit sgn_dutyUpdate(slotIndex, heaterDuty, peltierDuty);
+                    continue;
+                }
+            }
+        }
+
         QStringList statusParts = dataString.split('#', Qt::KeepEmptyParts);
         if (statusParts.size() == 6 && statusParts.at(0).startsWith("bbb_", Qt::CaseInsensitive)) {
             QVector<int> slotStates;
@@ -314,9 +368,17 @@ void BusboardSerialManager::serialRecieved()
                 slotStates.push_back(val);
             }
             if (okAll && slotStates.size() == 5) {
+                std::string normalized = normalizeBusboardId(statusParts.at(0).toStdString());
                 QString busboardId = QString::fromStdString(m_recievedBusboardSerial);
+                bool hasInvalidId = m_recievedBusboardSerial.empty()
+                    || (m_recievedBusboardSerial.size() >= 4
+                        && m_recievedBusboardSerial.rfind("_000") == m_recievedBusboardSerial.size() - 4);
+                if (hasInvalidId) {
+                    m_recievedBusboardSerial = normalized;
+                    busboardId = QString::fromStdString(m_recievedBusboardSerial);
+                }
                 if (busboardId.isEmpty()) {
-                    busboardId = QString::fromStdString(normalizeBusboardId(statusParts.at(0).toStdString()));
+                    busboardId = QString::fromStdString(normalized);
                 }
                 emit sgn_machineStatusUpdate(busboardId, slotStates);
                 continue;
@@ -448,6 +510,14 @@ void BusboardSerialManager::delay(int msec)
     }
 
     m_sleeping = false;
+}
+
+void BusboardSerialManager::releasePort()
+{
+    if (!m_portName.isEmpty()) {
+        s_usedPorts.remove(m_portName);
+        m_portName.clear();
+    }
 }
 
 std::string BusboardSerialManager::recievedBusboardSerial() const

@@ -25,7 +25,10 @@ Cell::Cell(const Cell& other)
     m_lastUpdatedTimestamp(other.m_lastUpdatedTimestamp),
     m_peltierUseMinute(other.m_peltierUseMinute),
     m_heaterUseMinute(other.m_heaterUseMinute),
-    m_motorUseMinute(other.m_motorUseMinute) {}
+    m_motorUseMinute(other.m_motorUseMinute),
+    m_heaterDutyPercent(other.m_heaterDutyPercent),
+    m_peltierDutyPercent(other.m_peltierDutyPercent),
+    m_targetSyncState(other.m_targetSyncState) {}
 
 // Assignment operator
 Cell& Cell::operator=(const Cell& other) {
@@ -45,8 +48,11 @@ Cell& Cell::operator=(const Cell& other) {
         m_assignedExperiment = other.m_assignedExperiment;
         m_peltierUseMinute = other.m_peltierUseMinute;
         m_heaterUseMinute = other.m_heaterUseMinute;
-        m_heaterUseMinute = other.m_heaterUseMinute;
+        m_motorUseMinute = other.m_motorUseMinute;
+        m_heaterDutyPercent = other.m_heaterDutyPercent;
+        m_peltierDutyPercent = other.m_peltierDutyPercent;
         m_lastUpdatedTimestamp = other.m_lastUpdatedTimestamp;
+        m_targetSyncState = other.m_targetSyncState;
     }
     return *this;
 }
@@ -119,6 +125,9 @@ Value Cell::toJSON(Document::AllocatorType& allocator) const {
     cellObject.AddMember("peltierUseMinute", m_peltierUseMinute, allocator);
     cellObject.AddMember("heaterUseMinute", m_heaterUseMinute, allocator);
     cellObject.AddMember("motorUseMinute", m_motorUseMinute, allocator);
+    cellObject.AddMember("heaterDutyPercent", m_heaterDutyPercent, allocator);
+    cellObject.AddMember("peltierDutyPercent", m_peltierDutyPercent, allocator);
+    cellObject.AddMember("targetSyncState", m_targetSyncState, allocator);
     cellObject.AddMember("lastUpdatedTimestamp", m_lastUpdatedTimestamp, allocator);
     return cellObject;
 }
@@ -140,12 +149,15 @@ void Cell::fromJSON(const Value& json) {
     m_peltierUseMinute = json["peltierUseMinute"].GetUint64();
     m_heaterUseMinute = json["heaterUseMinute"].GetUint64();
     m_motorUseMinute = json["motorUseMinute"].GetUint64();
+    m_heaterDutyPercent = json.HasMember("heaterDutyPercent") ? json["heaterDutyPercent"].GetInt() : -1;
+    m_peltierDutyPercent = json.HasMember("peltierDutyPercent") ? json["peltierDutyPercent"].GetInt() : -1;
+    m_targetSyncState = json.HasMember("targetSyncState") ? json["targetSyncState"].GetInt() : TargetSyncUnknown;
     m_lastUpdatedTimestamp = json["lastUpdatedTimestamp"].GetUint64();
 }
 
 void Cell::updateStatusFromBoard(std::string statusDataStringFromBoard)
 {
-    /// string::  cellID # posIdx # currentTempInner # currentTempExt # currentRPM # stirrerAmp
+    /// string::  cellID # posIdx # blockTemp(inner) # currentTempExt # currentRPM # stirrerAmp
     statusDataStringFromBoard.erase(std::remove_if(statusDataStringFromBoard.begin(),
                                               statusDataStringFromBoard.end(),
                                               ::isspace),
@@ -195,15 +207,16 @@ void Cell::updateStatusFromBoard(std::string statusDataStringFromBoard)
 
 }
 
-std::string Cell::generateUpdateDataStringToBoard(float targetTemp, unsigned int targetRPM, unsigned int motorSelect)
+std::string Cell::generateUpdateDataStringToBoard(float targetTemp, float targetTempFuture, unsigned int targetRPM, unsigned int motorSelect)
 {
-    ///  string:   cellID#positionIdx#targetTemp#targetRPM#motorSelect
+    ///  string:   positionIdx#targetTemp#targetRPM#motorSelect#targetTempFuture#checksum
     std::stringstream ss;
     ss << ">" << m_positionIdx
        << "#" << targetTemp
        << "#" << targetRPM
        << "#" << motorSelect
-       << "#" << (int)(m_positionIdx + targetTemp + targetRPM + motorSelect)
+       << "#" << targetTempFuture
+       << "#" << (int)(m_positionIdx + (int)targetTemp + targetRPM + motorSelect + (int)targetTempFuture)
        << "<";
     return ss.str();
 }
@@ -224,11 +237,8 @@ CellVisuals Cell::toCellVisuals()
     cellVs.setStirrerAmp(m_stirrerMotorAmp);
     cellVs.setTimestamp(getCurrentTimeMillis());
 
-    if(m_isExtTempPlugged){
-        cellVs.setTemperature(m_currentTempExt);
-    }else{
-        cellVs.setTemperature(m_currentTempInner);
-    }
+    // Graph visuals should reflect external temperature.
+    cellVs.setTemperature(m_currentTempExt);
     return cellVs;
 }
 
@@ -347,6 +357,8 @@ bool Cell::updateBoardRelatedAttributes(Cell other)
     m_stirrerMotorAmp = other.m_stirrerMotorAmp;
     m_flowRateLpm = other.m_flowRateLpm;
     m_flowTemp = other.m_flowTemp;
+    m_heaterDutyPercent = other.m_heaterDutyPercent;
+    m_peltierDutyPercent = other.m_peltierDutyPercent;
     m_lastUpdatedTimestamp = getCurrentTimeMillis();
 
     return true;
@@ -380,4 +392,34 @@ float Cell::flowTemp() const
 void Cell::setFlowTemp(float newFlowTemp)
 {
     m_flowTemp = newFlowTemp;
+}
+
+int Cell::heaterDutyPercent() const
+{
+    return m_heaterDutyPercent;
+}
+
+void Cell::setHeaterDutyPercent(int newHeaterDutyPercent)
+{
+    m_heaterDutyPercent = newHeaterDutyPercent;
+}
+
+int Cell::peltierDutyPercent() const
+{
+    return m_peltierDutyPercent;
+}
+
+void Cell::setPeltierDutyPercent(int newPeltierDutyPercent)
+{
+    m_peltierDutyPercent = newPeltierDutyPercent;
+}
+
+int Cell::targetSyncState() const
+{
+    return m_targetSyncState;
+}
+
+void Cell::setTargetSyncState(int newTargetSyncState)
+{
+    m_targetSyncState = newTargetSyncState;
 }

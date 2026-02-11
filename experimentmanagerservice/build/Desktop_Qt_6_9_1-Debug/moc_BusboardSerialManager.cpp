@@ -51,6 +51,9 @@ template <> constexpr inline auto BusboardSerialManager::qt_create_metaobjectdat
         "busboardId",
         "QList<int>",
         "slotStates",
+        "sgn_dutyUpdate",
+        "heaterDuty",
+        "peltierDuty",
         "serialRecieved"
     };
 
@@ -67,8 +70,12 @@ template <> constexpr inline auto BusboardSerialManager::qt_create_metaobjectdat
         QtMocHelpers::SignalData<void(const QString &, const QVector<int> &)>(8, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::QString, 9 }, { 0x80000000 | 10, 11 },
         }}),
+        // Signal 'sgn_dutyUpdate'
+        QtMocHelpers::SignalData<void(int, int, int)>(12, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 6 }, { QMetaType::Int, 13 }, { QMetaType::Int, 14 },
+        }}),
         // Slot 'serialRecieved'
-        QtMocHelpers::SlotData<void()>(12, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(15, 2, QMC::AccessPrivate, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -95,7 +102,8 @@ void BusboardSerialManager::qt_static_metacall(QObject *_o, QMetaObject::Call _c
         case 0: _t->sgn_updateCell((*reinterpret_cast< std::add_pointer_t<Cell&>>(_a[1]))); break;
         case 1: _t->sgn_presenceUpdate((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[2]))); break;
         case 2: _t->sgn_machineStatusUpdate((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QList<int>>>(_a[2]))); break;
-        case 3: _t->serialRecieved(); break;
+        case 3: _t->sgn_dutyUpdate((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[3]))); break;
+        case 4: _t->serialRecieved(); break;
         default: ;
         }
     }
@@ -117,6 +125,8 @@ void BusboardSerialManager::qt_static_metacall(QObject *_o, QMetaObject::Call _c
         if (QtMocHelpers::indexOfMethod<void (BusboardSerialManager::*)(int , bool )>(_a, &BusboardSerialManager::sgn_presenceUpdate, 1))
             return;
         if (QtMocHelpers::indexOfMethod<void (BusboardSerialManager::*)(const QString & , const QVector<int> & )>(_a, &BusboardSerialManager::sgn_machineStatusUpdate, 2))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (BusboardSerialManager::*)(int , int , int )>(_a, &BusboardSerialManager::sgn_dutyUpdate, 3))
             return;
     }
 }
@@ -140,14 +150,14 @@ int BusboardSerialManager::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 5)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 5;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 4)
+        if (_id < 5)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 5;
     }
     return _id;
 }
@@ -168,5 +178,11 @@ void BusboardSerialManager::sgn_presenceUpdate(int _t1, bool _t2)
 void BusboardSerialManager::sgn_machineStatusUpdate(const QString & _t1, const QVector<int> & _t2)
 {
     QMetaObject::activate<void>(this, &staticMetaObject, 2, nullptr, _t1, _t2);
+}
+
+// SIGNAL 3
+void BusboardSerialManager::sgn_dutyUpdate(int _t1, int _t2, int _t3)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 3, nullptr, _t1, _t2, _t3);
 }
 QT_WARNING_POP

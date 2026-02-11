@@ -159,7 +159,7 @@ void setup()
 
   setupTimer1CTC();
 
-  Serial.println(F("READY"));
+  Serial.println(F("READdddd--------ddddY"));
   Serial.println(F("Commands:"));
   Serial.println(F("P 30   -> Peltier COOL %30"));
   Serial.println(F("P -40  -> Peltier HEAT %40"));

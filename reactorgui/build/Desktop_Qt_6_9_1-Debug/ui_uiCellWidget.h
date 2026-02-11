@@ -48,18 +48,19 @@ public:
     QPushButton *assignExperimentButton;
     QGroupBox *metricsGroupBox;
     QGridLayout *metricsLayout;
-    QLabel *label_2;
-    QLabel *currentExtTempLabel;
-    QLabel *label_3;
-    QLabel *currentInnerTempLabel;
-    QLabel *label;
-    QLabel *targetTempLabel;
-    QLabel *label_5;
     QLabel *currentRPMLabel;
+    QLabel *currentExtTempLabel;
+    QLabel *label_2;
+    QLabel *label;
+    QLabel *label_3;
     QLabel *label_8;
-    QLabel *targetRPMLabel;
     QLabel *label_11;
+    QLabel *targetRPMLabel;
     QLabel *motorAmpLabel;
+    QLabel *label_5;
+    QLabel *targetTempLabel;
+    QLabel *currentInnerTempLabel;
+    QLabel *assignmentStatusLabel;
 
     void setupUi(QWidget *CellWidget)
     {
@@ -171,15 +172,16 @@ public:
         metricsGroupBox->setObjectName("metricsGroupBox");
         metricsLayout = new QGridLayout(metricsGroupBox);
         metricsLayout->setObjectName("metricsLayout");
-        label_2 = new QLabel(metricsGroupBox);
-        label_2->setObjectName("label_2");
+        currentRPMLabel = new QLabel(metricsGroupBox);
+        currentRPMLabel->setObjectName("currentRPMLabel");
         QSizePolicy sizePolicy(QSizePolicy::Policy::Preferred, QSizePolicy::Policy::Minimum);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(label_2->sizePolicy().hasHeightForWidth());
-        label_2->setSizePolicy(sizePolicy);
+        sizePolicy.setHeightForWidth(currentRPMLabel->sizePolicy().hasHeightForWidth());
+        currentRPMLabel->setSizePolicy(sizePolicy);
+        currentRPMLabel->setFont(font1);
 
-        metricsLayout->addWidget(label_2, 0, 0, 1, 1);
+        metricsLayout->addWidget(currentRPMLabel, 3, 1, 1, 1);
 
         currentExtTempLabel = new QLabel(metricsGroupBox);
         currentExtTempLabel->setObjectName("currentExtTempLabel");
@@ -189,16 +191,12 @@ public:
 
         metricsLayout->addWidget(currentExtTempLabel, 0, 1, 1, 1);
 
-        label_3 = new QLabel(metricsGroupBox);
-        label_3->setObjectName("label_3");
+        label_2 = new QLabel(metricsGroupBox);
+        label_2->setObjectName("label_2");
+        sizePolicy.setHeightForWidth(label_2->sizePolicy().hasHeightForWidth());
+        label_2->setSizePolicy(sizePolicy);
 
-        metricsLayout->addWidget(label_3, 1, 0, 1, 1);
-
-        currentInnerTempLabel = new QLabel(metricsGroupBox);
-        currentInnerTempLabel->setObjectName("currentInnerTempLabel");
-        currentInnerTempLabel->setFont(font1);
-
-        metricsLayout->addWidget(currentInnerTempLabel, 1, 1, 1, 1);
+        metricsLayout->addWidget(label_2, 0, 0, 1, 1);
 
         label = new QLabel(metricsGroupBox);
         label->setObjectName("label");
@@ -207,28 +205,10 @@ public:
 
         metricsLayout->addWidget(label, 2, 0, 1, 1);
 
-        targetTempLabel = new QLabel(metricsGroupBox);
-        targetTempLabel->setObjectName("targetTempLabel");
-        sizePolicy.setHeightForWidth(targetTempLabel->sizePolicy().hasHeightForWidth());
-        targetTempLabel->setSizePolicy(sizePolicy);
-        targetTempLabel->setFont(font1);
+        label_3 = new QLabel(metricsGroupBox);
+        label_3->setObjectName("label_3");
 
-        metricsLayout->addWidget(targetTempLabel, 2, 1, 1, 1);
-
-        label_5 = new QLabel(metricsGroupBox);
-        label_5->setObjectName("label_5");
-        sizePolicy.setHeightForWidth(label_5->sizePolicy().hasHeightForWidth());
-        label_5->setSizePolicy(sizePolicy);
-
-        metricsLayout->addWidget(label_5, 3, 0, 1, 1);
-
-        currentRPMLabel = new QLabel(metricsGroupBox);
-        currentRPMLabel->setObjectName("currentRPMLabel");
-        sizePolicy.setHeightForWidth(currentRPMLabel->sizePolicy().hasHeightForWidth());
-        currentRPMLabel->setSizePolicy(sizePolicy);
-        currentRPMLabel->setFont(font1);
-
-        metricsLayout->addWidget(currentRPMLabel, 3, 1, 1, 1);
+        metricsLayout->addWidget(label_3, 1, 0, 1, 1);
 
         label_8 = new QLabel(metricsGroupBox);
         label_8->setObjectName("label_8");
@@ -236,6 +216,13 @@ public:
         label_8->setSizePolicy(sizePolicy);
 
         metricsLayout->addWidget(label_8, 4, 0, 1, 1);
+
+        label_11 = new QLabel(metricsGroupBox);
+        label_11->setObjectName("label_11");
+        sizePolicy.setHeightForWidth(label_11->sizePolicy().hasHeightForWidth());
+        label_11->setSizePolicy(sizePolicy);
+
+        metricsLayout->addWidget(label_11, 5, 0, 1, 1);
 
         targetRPMLabel = new QLabel(metricsGroupBox);
         targetRPMLabel->setObjectName("targetRPMLabel");
@@ -245,13 +232,6 @@ public:
 
         metricsLayout->addWidget(targetRPMLabel, 4, 1, 1, 1);
 
-        label_11 = new QLabel(metricsGroupBox);
-        label_11->setObjectName("label_11");
-        sizePolicy.setHeightForWidth(label_11->sizePolicy().hasHeightForWidth());
-        label_11->setSizePolicy(sizePolicy);
-
-        metricsLayout->addWidget(label_11, 5, 0, 1, 1);
-
         motorAmpLabel = new QLabel(metricsGroupBox);
         motorAmpLabel->setObjectName("motorAmpLabel");
         sizePolicy.setHeightForWidth(motorAmpLabel->sizePolicy().hasHeightForWidth());
@@ -259,6 +239,34 @@ public:
         motorAmpLabel->setFont(font1);
 
         metricsLayout->addWidget(motorAmpLabel, 5, 1, 1, 1);
+
+        label_5 = new QLabel(metricsGroupBox);
+        label_5->setObjectName("label_5");
+        sizePolicy.setHeightForWidth(label_5->sizePolicy().hasHeightForWidth());
+        label_5->setSizePolicy(sizePolicy);
+
+        metricsLayout->addWidget(label_5, 3, 0, 1, 1);
+
+        targetTempLabel = new QLabel(metricsGroupBox);
+        targetTempLabel->setObjectName("targetTempLabel");
+        sizePolicy.setHeightForWidth(targetTempLabel->sizePolicy().hasHeightForWidth());
+        targetTempLabel->setSizePolicy(sizePolicy);
+        targetTempLabel->setFont(font1);
+
+        metricsLayout->addWidget(targetTempLabel, 2, 1, 1, 1);
+
+        currentInnerTempLabel = new QLabel(metricsGroupBox);
+        currentInnerTempLabel->setObjectName("currentInnerTempLabel");
+        currentInnerTempLabel->setFont(font1);
+
+        metricsLayout->addWidget(currentInnerTempLabel, 1, 1, 1, 1);
+
+        assignmentStatusLabel = new QLabel(metricsGroupBox);
+        assignmentStatusLabel->setObjectName("assignmentStatusLabel");
+        assignmentStatusLabel->setFont(font1);
+        assignmentStatusLabel->setAlignment(Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter);
+
+        metricsLayout->addWidget(assignmentStatusLabel, 0, 2, 1, 1);
 
 
         gridLayout->addWidget(metricsGroupBox);
@@ -288,18 +296,19 @@ public:
         experimentProgressValueLabel->setText(QCoreApplication::translate("CellWidget", "--", nullptr));
         assignExperimentButton->setText(QCoreApplication::translate("CellWidget", "Assign Experiment", nullptr));
         metricsGroupBox->setTitle(QCoreApplication::translate("CellWidget", "Live Readings", nullptr));
-        label_2->setText(QCoreApplication::translate("CellWidget", "Current Ext. Temperature:", nullptr));
-        currentExtTempLabel->setText(QString());
-        label_3->setText(QCoreApplication::translate("CellWidget", "Current Inner Temperature:", nullptr));
-        currentInnerTempLabel->setText(QString());
-        label->setText(QCoreApplication::translate("CellWidget", "Target Temperature:", nullptr));
-        targetTempLabel->setText(QString());
-        label_5->setText(QCoreApplication::translate("CellWidget", "Current RPM:", nullptr));
         currentRPMLabel->setText(QString());
+        currentExtTempLabel->setText(QString());
+        label_2->setText(QCoreApplication::translate("CellWidget", "Current Ext. Temperature:", nullptr));
+        label->setText(QCoreApplication::translate("CellWidget", "Target Temperature:", nullptr));
+        label_3->setText(QCoreApplication::translate("CellWidget", "Current Block Temperature:", nullptr));
         label_8->setText(QCoreApplication::translate("CellWidget", "Target RPM:", nullptr));
-        targetRPMLabel->setText(QString());
         label_11->setText(QCoreApplication::translate("CellWidget", "Motor Amp.:", nullptr));
+        targetRPMLabel->setText(QString());
         motorAmpLabel->setText(QString());
+        label_5->setText(QCoreApplication::translate("CellWidget", "Current RPM:", nullptr));
+        targetTempLabel->setText(QString());
+        currentInnerTempLabel->setText(QString());
+        assignmentStatusLabel->setText(QString());
     } // retranslateUi
 
 };
