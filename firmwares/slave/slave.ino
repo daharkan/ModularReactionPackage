@@ -44,6 +44,7 @@ constexpr uint8_t DUTY_MIN = 15; // higher voltage limit (~15V)
 constexpr uint8_t DUTY_MAX = 70; // lower voltage limit (~5V)
 constexpr float HEAT_ASSIST_THRESHOLD = 6.0f; // degC, enable peltier heating assist
 constexpr float PELTIER_HEAT_K = 6.0f;
+
 constexpr size_t SERIAL_LINE_SIZE = 192;
 constexpr size_t UPDATE_PAYLOAD_SIZE = 192;
 constexpr size_t STATUS_MSG_SIZE = 160;
@@ -110,34 +111,44 @@ uint8_t motorDutyPercent = 0;
 bool controlEnabled = false;
 
 // ===================== FUTURE TARGET =====================
-// 7-token komutta: pos#temp#rpm#motor#tempFuture#checksum
 float targetTempFuture = 0.0f;
 
-// ===================== SETPOINT SHAPING (NEW) =====================
-// PC targetTemp -> usedTargetTemp (shaped)
+// ===================== SETPOINT SHAPING =====================
 float usedTargetTemp = 25.0f;
 float lastPcTargetTemp = 25.0f;
 unsigned long lastPcTargetMs = 0;
 float lastPcRateAbs = 0.0f;            // degC/s
 unsigned long lastShapeMs = 0;
 
-// Shaping tuning (only logic; no pin/duty changes)
+// Shaping tuning
 constexpr uint16_t SHAPE_UPDATE_MS = 1000; // 1 Hz
-constexpr float SHAPE_STEP_RATE = 1.5f;    // degC/s (PC step atınca yürüsün)
-constexpr float SHAPE_MAX_RATE  = 3.0f;    // degC/s (limit)
+constexpr float SHAPE_STEP_RATE = 1.5f;    // degC/s
+constexpr float SHAPE_MAX_RATE  = 3.0f;    // degC/s
 
-// Sen dedin blok-sıvı farkı 20-30C olabiliyor -> ramp'ta lead band büyük olmalı
-constexpr float PC_RAMP_EPS = 0.005f;        // degC/s  (~0.3 C/min)
-constexpr float LEAD_BAND_PLATO = 8.0f;      // plato için
-constexpr float LEAD_BAND_RAMP  = 35.0f;     // ramp için
-constexpr float SHAPE_SLOW_GAIN = 0.25f;     // plato freni (blok öndeyse)
-constexpr float RAMP_SLOW_GAIN  = 0.85f;     // ramp freni (çok hafif)
-constexpr float SHAPE_FAST_GAIN = 1.6f;      // blok çok gerideyse hızlandır
+constexpr float PC_RAMP_EPS = 0.005f;        // degC/s
+constexpr float LEAD_BAND_PLATO = 8.0f;
+constexpr float LEAD_BAND_RAMP  = 35.0f;
+constexpr float SHAPE_SLOW_GAIN = 0.25f;
+constexpr float RAMP_SLOW_GAIN  = 0.85f;
+constexpr float SHAPE_FAST_GAIN = 1.6f;
 
-// Future trend etkisi (NEW)
-constexpr float FUTURE_TREND_EPS = 0.02f;    // degC (küçük gürültüyü ignore)
-constexpr float FUTURE_BRAKE_GAIN = 0.50f;   // yakın gelecekte ters yön varsa: rate *= 0.5
-constexpr float FUTURE_PUSH_GAIN  = 1.10f;   // future aynı yönde ve daha agresif ise: rate *= 1.10
+constexpr float FUTURE_TREND_EPS = 0.02f;
+constexpr float FUTURE_BRAKE_GAIN = 0.50f;
+constexpr float FUTURE_PUSH_GAIN  = 1.10f;
+
+// ===================== HEAT CONTROL (only) =====================
+float extRateFilt = 0.0f;
+float lastExtTemp = 0.0f;
+unsigned long lastExtRateMs = 0;
+
+// Update external rate at least every 1000ms, and keep it close to "raw"
+constexpr float EXT_RATE_ALPHA = 0.70f;   // closer to raw (was 0.25)
+
+// Deterministic "aban" rules
+constexpr float FUTURE_UPTREND_EPS = 0.2f;     // future > target threshold
+constexpr float UP_LAG_EPS = 0.5f;             // if external is below usedTarget by >0.5C
+constexpr float PLATO_LAG_EPS = 2.0f;          // plateau case (future ~ target): lag threshold
+constexpr float PLATO_MIN_POWER = 90.0f;       // plateau: if lag big, force at least 90%
 
 static inline uint16_t dutyToTicks(uint8_t percent) {
   if (percent > 100) percent = 100;
@@ -206,7 +217,6 @@ void setPeltierCooling() {
   digitalWrite(PELTIER_SWITCH_1_PIN, LOW);
   digitalWrite(PELTIER_SWITCH_2_PIN, LOW);
   delay(150);
-  // Hardware wired opposite: cooling uses switch 2
   digitalWrite(PELTIER_SWITCH_1_PIN, HIGH);
 }
 
@@ -216,7 +226,6 @@ void setPeltierHeating() {
   digitalWrite(PELTIER_SWITCH_1_PIN, LOW);
   digitalWrite(PELTIER_SWITCH_2_PIN, LOW);
   delay(150);
-  // Hardware wired opposite: heating uses switch 1
   digitalWrite(PELTIER_SWITCH_2_PIN, HIGH);
 }
 
@@ -337,6 +346,35 @@ float controlTemperature() {
   return currentTempInner;
 }
 
+// Update external slope no more often than 1 Hz (bigger dt => less derivative noise)
+void updateExternalRate() {
+  unsigned long now = millis();
+
+  if (!externalPresent) {
+    extRateFilt = 0.0f;
+    lastExtRateMs = now;
+    lastExtTemp = currentTempExternal;
+    return;
+  }
+
+  if (lastExtRateMs == 0) {
+    lastExtRateMs = now;
+    lastExtTemp = currentTempExternal;
+    extRateFilt = 0.0f;
+    return;
+  }
+
+  unsigned long dtMs = now - lastExtRateMs;
+  if (dtMs < 1000) return; // CHANGED: was 200ms
+
+  float dt = dtMs / 1000.0f;
+  float rate = (currentTempExternal - lastExtTemp) / dt; // degC/s
+  extRateFilt = (1.0f - EXT_RATE_ALPHA) * extRateFilt + EXT_RATE_ALPHA * rate;
+
+  lastExtRateMs = now;
+  lastExtTemp = currentTempExternal;
+}
+
 // ===================== SETPOINT SHAPING (uses future) =====================
 void updateUsedTargetTemp() {
   unsigned long now = millis();
@@ -345,7 +383,7 @@ void updateUsedTargetTemp() {
   float dt = (now - lastShapeMs) / 1000.0f;
   lastShapeMs = now;
 
-  float pc = targetTemp;                 // PC'nin istediği anlık hedef
+  float pc = targetTemp;
   float diff = pc - usedTargetTemp;
 
   if (fabs(diff) < 0.001f) {
@@ -354,17 +392,13 @@ void updateUsedTargetTemp() {
   }
 
   float dir = (diff > 0) ? 1.0f : -1.0f;
-
   bool pcMoving = (lastPcRateAbs > PC_RAMP_EPS);
 
-  // Future trend: 60s/120s vs ne gönderiyorsan fark etmez, sadece "yakında nereye gidiyoruz?"
   float trend = targetTempFuture - targetTemp;
   if (fabs(trend) < FUTURE_TREND_EPS) trend = 0.0f;
 
-  // şimdiki hedef yönü ile future yönü ters ise -> reversal
   bool futureReversal = ((dir > 0 && trend < 0.0f) || (dir < 0 && trend > 0.0f));
 
-  // PC ramp hızı varsa min takip hızı olarak kullan (reversal yoksa)
   float baseRate = max(lastPcRateAbs, SHAPE_STEP_RATE);
   if (baseRate > SHAPE_MAX_RATE) baseRate = SHAPE_MAX_RATE;
 
@@ -375,28 +409,19 @@ void updateUsedTargetTemp() {
 
   float rate = baseRate;
 
-  // lead'e göre hız modülasyonu (plato'da agresif fren, ramp'ta hafif)
   if (dir > 0) {
-    // Isınma
     if (lead > leadBand) rate *= slowGain;
     else if (lead < -leadBand) rate *= SHAPE_FAST_GAIN;
   } else {
-    // Soğuma
     if (lead < -leadBand) rate *= slowGain;
     else if (lead > leadBand) rate *= SHAPE_FAST_GAIN;
   }
 
-  // Future'e göre: ters yön yaklaşıyorsa erken fren
-  if (futureReversal) {
-    rate *= FUTURE_BRAKE_GAIN;
-  } else if (trend != 0.0f) {
-    // same-direction trend (yakında daha da yukarı/aşağı) -> hafif itme
-    rate *= FUTURE_PUSH_GAIN;
-  }
+  if (futureReversal) rate *= FUTURE_BRAKE_GAIN;
+  else if (trend != 0.0f) rate *= FUTURE_PUSH_GAIN;
 
   if (rate > SHAPE_MAX_RATE) rate = SHAPE_MAX_RATE;
 
-  // NEW: Ramp sırasında min-follow (AMA future reversal varsa bu kuralı bilinçli olarak gevşetiyoruz)
   if (pcMoving && !futureReversal) {
     if (rate < lastPcRateAbs) rate = lastPcRateAbs;
   }
@@ -404,7 +429,6 @@ void updateUsedTargetTemp() {
   float step = rate * dt;
   float next = usedTargetTemp + dir * step;
 
-  // pc target'ı geçme
   if (dir > 0) {
     if (next > pc) next = pc;
   } else {
@@ -414,10 +438,9 @@ void updateUsedTargetTemp() {
   usedTargetTemp = next;
 }
 
+// ===================== THERMAL CONTROL (ONLY CHANGED LOGIC) =====================
 void applyThermalControl() {
   float tempNow = controlTemperature();
-
-  // CHANGED: targetTemp yerine usedTargetTemp
   float err = usedTargetTemp - tempNow;
 
   if (fabs(err) <= TEMP_HYSTERESIS) {
@@ -427,7 +450,26 @@ void applyThermalControl() {
   }
 
   if (err > 0) {
-    uint8_t heaterPower = (uint8_t)min(100.0f, err * HEAT_K);
+    // Base power from error (kept)
+    float heaterPowerF = min(100.0f, err * HEAT_K);
+
+    if (externalPresent) {
+      float lag = usedTargetTemp - currentTempExternal;
+
+      bool futureUp = (targetTempFuture > targetTemp + FUTURE_UPTREND_EPS);
+
+      // 1) FUTURE UP: if external is below usedTarget -> FULL ABAN
+      if (futureUp && lag > UP_LAG_EPS) {
+        heaterPowerF = 100.0f;
+      }
+
+      // 2) PLATO: if future ~ target but external is far behind -> at least 90%
+      if (!futureUp && lag > PLATO_LAG_EPS) {
+        if (heaterPowerF < PLATO_MIN_POWER) heaterPowerF = PLATO_MIN_POWER;
+      }
+    }
+
+    uint8_t heaterPower = (uint8_t)heaterPowerF;
     uint8_t heaterDuty = dutyFromPower(heaterPower);
     if (heaterDuty == 0) {
       disableHeater();
@@ -438,11 +480,13 @@ void applyThermalControl() {
     if (err >= HEAT_ASSIST_THRESHOLD) {
       uint8_t assistPower = (uint8_t)min(100.0f, (err - HEAT_ASSIST_THRESHOLD) * PELTIER_HEAT_K);
       uint8_t assistDuty = dutyFromPower(assistPower);
-      if (assistDuty == 0) {
-        disablePeltier();
-      } else {
-        enablePeltier(-assistDuty);
-      }
+      if (assistDuty == 0) disablePeltier();
+      else enablePeltier(-assistDuty);
+    } else if (heaterPower > 80.0) {
+      uint8_t assistPower = (uint8_t)min(100.0f, (heaterPower / 100.0) * 80.0);
+      uint8_t assistDuty = dutyFromPower(assistPower);
+      if (assistDuty == 0) disablePeltier();
+      else enablePeltier(-assistDuty);
     } else {
       disablePeltier();
     }
@@ -450,11 +494,8 @@ void applyThermalControl() {
     uint8_t peltierPower = (uint8_t)min(100.0f, fabs(err) * COOL_K);
     uint8_t peltierDuty = dutyFromPower(peltierPower);
     disableHeater();
-    if (peltierDuty == 0) {
-      disablePeltier();
-    } else {
-      enablePeltier((int8_t)peltierDuty);
-    }
+    if (peltierDuty == 0) disablePeltier();
+    else enablePeltier((int8_t)peltierDuty);
   }
 }
 
@@ -484,9 +525,7 @@ void applyMotorControl() {
 
 int calculateChecksum(const char* message) {
   int checksum = 0;
-  for (int i = 0; message[i] != '\0'; ++i) {
-    checksum += message[i];
-  }
+  for (int i = 0; message[i] != '\0'; ++i) checksum += message[i];
   return checksum;
 }
 
@@ -552,7 +591,6 @@ bool handleUpdateCommand(const char* line) {
   if (!token) return false;
   int tMotorSelect = atoi(token);
 
-  // 7-token: tok5 = futureTemp, tok6 = checksum
   char* tok5 = strtok(nullptr, "#");
   if (!tok5) return false;
 
@@ -568,23 +606,18 @@ bool handleUpdateCommand(const char* line) {
 
   if (checksumRec != checksumCalc) return false;
 
-  // NEW: PC target değişim hızını ölç (degC/s) - tTemp üzerinden
   unsigned long nowMs = millis();
   if (lastPcTargetMs != 0 && nowMs > lastPcTargetMs) {
     float dt = (nowMs - lastPcTargetMs) / 1000.0f;
-    if (dt > 0.0f) {
-      lastPcRateAbs = fabs(tTemp - lastPcTargetTemp) / dt;
-    }
+    if (dt > 0.0f) lastPcRateAbs = fabs(tTemp - lastPcTargetTemp) / dt;
   }
   lastPcTargetTemp = tTemp;
   lastPcTargetMs = nowMs;
 
-  // Apply targets
   targetTemp = tTemp;
   targetRpm = tRpm;
   targetMotorSelect = (uint8_t)tMotorSelect;
 
-  // Future target store
   targetTempFuture = tFuture;
 
   controlEnabled = true;
@@ -593,16 +626,12 @@ bool handleUpdateCommand(const char* line) {
 
 bool handlePollCommand(const char* line) {
   if (!line) return false;
-  while (*line && isspace(static_cast<unsigned char>(*line))) {
-    line++;
-  }
+  while (*line && isspace(static_cast<unsigned char>(*line))) line++;
   if (*line == '\0') return false;
 
   char trimmed[16];
   size_t len = strnlen(line, sizeof(trimmed) - 1);
-  while (len > 0 && isspace(static_cast<unsigned char>(line[len - 1]))) {
-    len--;
-  }
+  while (len > 0 && isspace(static_cast<unsigned char>(line[len - 1]))) len--;
   memcpy(trimmed, line, len);
   trimmed[len] = '\0';
 
@@ -618,7 +647,6 @@ bool handlePollCommand(const char* line) {
 }
 
 void setup() {
-  // ASAP: force all drive pins low to avoid boot-time blips
   pinMode(PELTIER_PWM_PIN, OUTPUT);
   pinMode(PELTIER_SWITCH_1_PIN, OUTPUT);
   pinMode(PELTIER_SWITCH_2_PIN, OUTPUT);
@@ -663,13 +691,16 @@ void setup() {
 
   lastRpmMs = millis();
 
-  // Shaping init
   usedTargetTemp = targetTemp;
   lastPcTargetTemp = targetTemp;
   lastPcTargetMs = millis();
   lastShapeMs = millis();
 
   targetTempFuture = targetTemp;
+
+  lastExtRateMs = millis();
+  lastExtTemp = currentTempExternal;
+  extRateFilt = 0.0f;
 }
 
 void loop() {
@@ -687,7 +718,7 @@ void loop() {
     currentTempExternal = currentTempInner;
   }
 
-  // usedTargetTemp'i güncelle (future kullanılır)
+  updateExternalRate();
   updateUsedTargetTemp();
 
   updateRpm();
