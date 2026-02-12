@@ -29,8 +29,8 @@ public:
     std::string cellID() const;
     void setCellID(const std::string &newCellID);
 
-    unsigned int currentRPM() const;
-    void setCurrentRPM(unsigned int newCurrentRPM);
+    int currentRPM() const;
+    void setCurrentRPM(int newCurrentRPM);
 
     Experiment asignedExperiment() const;
     void setAsignedExperiment(const Experiment &newAsignedExperiment);
@@ -61,8 +61,8 @@ public:
     float assignedTemp() const;
     void setAssignedTemp(float newTargetTemp);
 
-    unsigned int assignedRPM() const;
-    void setAssignedRPM(unsigned int newTargetRPM);
+    int assignedRPM() const;
+    void setAssignedRPM(int newTargetRPM);
 
     float calculateTargetTemp();
     int calculateTargetRPM();

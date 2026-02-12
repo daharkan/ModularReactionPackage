@@ -14,8 +14,8 @@
 
 #define MIN_CELL_UPDATE_INTERVAL_MSECS 100
 #define TEMP_EPSILON 0.5
-constexpr unsigned long long kTargetSyncRetryIntervalMs = 1000;
-constexpr unsigned long long kTargetSyncTimeoutMs = 3000;
+constexpr unsigned long long kTargetSyncRetryIntervalMs = 400;
+constexpr unsigned long long kTargetSyncTimeoutMs = 12000;
 // Change this to adjust how far ahead we compute the future target temperature.
 constexpr unsigned long long kFutureTargetLeadMs = 60ULL * 1000ULL;
 
@@ -425,7 +425,8 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
 
             bool targetMatchLive = std::abs(targetTemp - boardCell.assignedTemp()) <= TEMP_EPSILON
                 && targetRpm == static_cast<int>(boardCell.assignedRPM());
-            bool desiredChanged = !sync.pending
+            bool hasSentDesiredBefore = sync.lastSendMs > 0;
+            bool desiredChanged = !hasSentDesiredBefore
                 || std::abs(sync.desiredTemp - targetTemp) > TEMP_EPSILON
                 || std::abs(sync.desiredTempFuture - targetTempFuture) > TEMP_EPSILON
                 || sync.desiredRpm != targetRpm
@@ -444,8 +445,10 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
                     QCoreApplication::processEvents();
 
                     QString str = QString::fromStdString(updateString);
-                    busboard->sendUpdateString(str);
-                    m_lastMotorSelect[cellID] = motorSelect;
+                    bool sent = busboard->sendUpdateString(str);
+                    if (sent) {
+                        m_lastMotorSelect[cellID] = motorSelect;
+                    }
 
                     if (desiredChanged || !sync.pending) {
                         sync.firstSendMs = nowMs;
@@ -455,9 +458,11 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
                     sync.desiredTempFuture = targetTempFuture;
                     sync.desiredRpm = targetRpm;
                     sync.motorSelect = motorSelect;
-                    sync.lastSendMs = nowMs;
                     sync.pending = true;
                     sync.attempt++;
+
+                    // If send/ACK failed, force a fast retry on next loop.
+                    sync.lastSendMs = sent ? nowMs : 0;
                 }
             }
 
@@ -470,7 +475,9 @@ void ServiceRunner::processBusboard(const std::shared_ptr<IBusboard>& busboard)
                     sync.firstSendMs = 0;
                     sync.attempt = 0;
                     syncState = Cell::TargetSyncSynced;
-                } else if (sync.firstSendMs > 0 && nowMs - sync.firstSendMs >= kTargetSyncTimeoutMs) {
+                } else if (sync.firstSendMs > 0
+                           && nowMs - sync.firstSendMs >= kTargetSyncTimeoutMs
+                           && sync.attempt >= 3) {
                     syncState = Cell::TargetSyncFailed;
                 } else {
                     syncState = Cell::TargetSyncPending;

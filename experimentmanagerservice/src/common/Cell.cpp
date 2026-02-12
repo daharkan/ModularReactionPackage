@@ -87,12 +87,12 @@ void Cell::setCellID(const std::string &newCellID)
     m_cellID = newCellID;
 }
 
-unsigned int Cell::currentRPM() const
+int Cell::currentRPM() const
 {
     return m_currentRPM;
 }
 
-void Cell::setCurrentRPM(unsigned int newCurrentRPM)
+void Cell::setCurrentRPM(int newCurrentRPM)
 {
     m_currentRPM = newCurrentRPM;
 }
@@ -262,12 +262,12 @@ void Cell::setAssignedTemp(float newAssignedTemp)
     m_assignedTemp = newAssignedTemp;
 }
 
-unsigned int Cell::assignedRPM() const
+int Cell::assignedRPM() const
 {
     return m_assignedRPM;
 }
 
-void Cell::setAssignedRPM(unsigned int newAssignedRPM)
+void Cell::setAssignedRPM(int newAssignedRPM)
 {
     m_assignedRPM = newAssignedRPM;
 }

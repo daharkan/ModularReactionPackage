@@ -18,7 +18,7 @@ ReactorViewWidget::ReactorViewWidget(QWidget *parent)
 
     m_flowTimer = new QTimer(this);
     connect(m_flowTimer, &QTimer::timeout, this, &ReactorViewWidget::updateFlowStatus);
-    m_flowTimer->start(1000);
+    m_flowTimer->start(500);
 }
 
 ReactorViewWidget::~ReactorViewWidget()
